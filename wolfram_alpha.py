@@ -40,6 +40,8 @@ class wolfram(object):
         answers = []
 
         for pod in root.findall('pod'):
-            answers.append(pod.find('subpod').find('plaintext').text)
+            potentialanswer = pod.find('subpod').find('plaintext').text
+            if potentialanswer is not None:
+                answers.append(potentialanswer)
 
         return answers
