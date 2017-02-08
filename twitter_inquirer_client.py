@@ -4,11 +4,6 @@ import tweepy
 import socket
 import sys
 
-host = '172.29.56.50'
-port = 50000
-size = 1024
-s = None
-
 auth = tweepy.OAuthHandler('M97QpyCyGJjIavBMODxvhIEVA', '2nEZhV1fb2DAwMxz9qvIt7ApVxMKXZKvcnjlIBoKNSo7vZbGNf')
 auth.set_access_token('827585219586879488-hXLr5DyfxyJkp61HVtLMHTn7dSfXqYr', 'hCWHmF3EKoXlt1ExEUA0j47JTNBfjGwk8weOOgWdoZ3rp')
 
@@ -28,6 +23,18 @@ class MyStreamListener(tweepy.StreamListener):
 
      # This method overrides the on_data method
     def on_status(self, status):
+        hashtag = status.text.split("#")
+        question = hashtag[1].split('_')[1].strip("\"")
+
+        print("\nTweet: " + status.text)
+        print("IP, Port: " + hashtag[1].split('_')[0])
+        print("Question: " + question)
+
+        host = hashtag[1].split('_')[0].split(':')[0]
+        port = int(hashtag[1].split('_')[0].split(':')[1])
+        size = 1024
+        s = None
+
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((host, port))
@@ -37,16 +44,8 @@ class MyStreamListener(tweepy.StreamListener):
             print("Unable to open socket: " + str(message))
             sys.exit(1)
 
-        hashtag = status.text.split("#")
-        question = hashtag[1].split('_')[1].strip("\"")
-
-        print("\nTweet: " + status.text)
-        print("IP, Port: " + hashtag[1].split('_')[0])
-        print("Question: " + question)
-
         try:
             s.send(question.encode())
-            print("Question sent.")
             data = s.recv(size)
             s.close()
             print("Answer: " + data.decode())
