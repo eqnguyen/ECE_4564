@@ -5,6 +5,8 @@
 
 import socket, json, sys, os
 import wolfram_alpha
+import pickle
+import hashlib
 
 # Thomas's appid
 appID = '43UVWL-U3JYWWV895'
@@ -30,20 +32,20 @@ while 1:
         client, address = s.accept()
         data = client.recv(size)
         print(b'Data recieved: ' + data)
-        data = data.decode()  # json.loads(data.decode())
-
-        # Queries user for input
-        query = data
+        tup = pickle.loads(data)
+        print(tup[0])
+        query = tup[0]
 
         # create a new instance of the wolfram class
         w = wolfram_alpha.wolfram(appID)
 
         answer = w.search(query)
+        tup = (answer[0], hashlib.md5(answer[0].encode()).digest());
 
         if answer:
             # just prints the json returned
-            print(answer)
-            client.send(answer.encode())
+            print(answer[0])
+            client.send(pickle.dumps(tup))
     except Exception as inst:
         print(type(inst))
         print(inst.args)

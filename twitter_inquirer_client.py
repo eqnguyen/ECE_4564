@@ -3,6 +3,8 @@
 import tweepy
 import socket
 import sys
+import pickle
+import hashlib
 
 auth = tweepy.OAuthHandler('M97QpyCyGJjIavBMODxvhIEVA', '2nEZhV1fb2DAwMxz9qvIt7ApVxMKXZKvcnjlIBoKNSo7vZbGNf')
 auth.set_access_token('827585219586879488-hXLr5DyfxyJkp61HVtLMHTn7dSfXqYr', 'hCWHmF3EKoXlt1ExEUA0j47JTNBfjGwk8weOOgWdoZ3rp')
@@ -25,6 +27,7 @@ class MyStreamListener(tweepy.StreamListener):
     def on_status(self, status):
         hashtag = status.text.split("#")
         question = hashtag[1].split('_')[1].strip("\"")
+        tup = (question, hashlib.md5(question.encode()).digest());
 
         print("\nTweet: " + status.text)
         print("IP, Port: " + hashtag[1].split('_')[0])
@@ -45,10 +48,11 @@ class MyStreamListener(tweepy.StreamListener):
             sys.exit(1)
 
         try:
-            s.send(question.encode())
+            s.send(pickle.dumps(tup))
             data = s.recv(size)
             s.close()
-            print("Answer: " + data.decode())
+            tup = pickle.loads(data)
+            print("Answer: " + tup[0])
         except socket.error as message:
             if s:
                 s.close()
