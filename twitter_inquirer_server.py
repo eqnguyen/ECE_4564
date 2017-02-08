@@ -13,10 +13,17 @@ host = ''
 port = 50000
 backlog = 5
 size = 1024
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((host, port))
 
-s.listen(backlog)
+try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.bind((host, port))
+    s.listen(backlog)
+except socket.error as message:
+    if s:
+        s.close()
+    print("Could not open socket: " + str(message))
+    sys.exit(1)
 
 while 1:
     try:
@@ -33,10 +40,10 @@ while 1:
 
         answer = w.search(query)
 
-        # just prints the json returned
-        print(answer)
-
-        client.send(answer.encode())
+        if answer:
+            # just prints the json returned
+            print(answer)
+            client.send(answer.encode())
     except Exception as inst:
         print(type(inst))
         print(inst.args)
