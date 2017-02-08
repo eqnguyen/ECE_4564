@@ -17,4 +17,4 @@ s.send(query.encode())
 
 data = s.recv(size)
 
-print(data)
+print(data.decode())

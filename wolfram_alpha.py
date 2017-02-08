@@ -4,7 +4,7 @@
 # http://products.wolframalpha.com/api/explorer/
 
 import urllib
-import json
+import xml.etree.ElementTree as ET
 from urllib.request import Request, urlopen
 
 class wolfram(object):
@@ -12,9 +12,9 @@ class wolfram(object):
         self.appID = appid;
         self.base_url = 'http://api.wolframalpha.com/v2/query?'
 
-    def _get_json(self, ip):
-        # Retrieves only the plain text answers and formats the stuff returned by the api call using JSON
-        url_params = {'input': ip, 'format': "plaintext", 'output': "JSON", 'appid': self.appID}
+    def _get_xml(self, ip):
+        # Retrieves only the plain text answers
+        url_params = {'input': ip, 'format': "plaintext", 'appid': self.appID}
 
         # encodes the parameters
         data = urllib.parse.urlencode(url_params).encode()
@@ -30,13 +30,13 @@ class wolfram(object):
             return "{}"
 
         # read gives a byte stream, decode makes a string
-        return url.read().decode()
+        return url.read()
 
     def search(self, ip):
-        answerjson = self._get_json(ip)
+        xml = self._get_xml(ip)
 
-        # TODO get the relevant information from the json
+        root = ET.fromstring(xml)
 
-        answer = json.loads(answerjson)
+        answer = root.find('pod').find('subpod').find('plaintext').text
 
-        return answerjson
+        return answer
