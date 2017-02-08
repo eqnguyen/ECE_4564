@@ -3,7 +3,7 @@
 # To explore what the W|A api call returns go to:
 # http://products.wolframalpha.com/api/explorer/
 
-import socket, json
+import socket, json, sys, os
 import wolfram_alpha
 
 # Thomas's appid
@@ -36,10 +36,14 @@ while 1:
         # just prints the json returned
         print(answer)
 
-        client.send(answer)
+        client.send(answer.encode())
     except Exception as inst:
         print(type(inst))
         print(inst.args)
         print(inst)
+
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno)
 
         client.send(b'ERROR')
