@@ -37,6 +37,9 @@ class wolfram(object):
 
         root = ET.fromstring(xml)
 
-        answer = root.find('pod').find('subpod').find('plaintext').text
+        answers = []
 
-        return answer
+        for pod in root.findall('pod'):
+            answers.append(pod.find('subpod').find('plaintext').text)
+
+        return answers
