@@ -11,19 +11,9 @@ auth.set_access_token('827585219586879488-hXLr5DyfxyJkp61HVtLMHTn7dSfXqYr', 'hCW
 
 api = tweepy.API(auth)
 
-""" Downloads home timeline tweets and prints each one out to the console """
-# public_tweets = api.home_timeline()
-#
-# for tweet in public_tweets:
-#     print (tweet.text)
-
-""" Calls a function to tweet """
-# api.update_status('This is a tweet from python boyz!')
-
-""" Streaming with tweepy - Create a StreamListener class """
 class MyStreamListener(tweepy.StreamListener):
 
-     # This method overrides the on_data method
+    # This method overrides the on_data method
     def on_status(self, status):
         hashtag = status.text.split("#")
         question = hashtag[1].split('_')[1].strip("\"")

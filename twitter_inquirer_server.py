@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#! /usr/bin/env python3
 
 # To explore what the W|A api call returns go to:
 # http://products.wolframalpha.com/api/explorer/
@@ -26,6 +26,8 @@ except socket.error as message:
         s.close()
     print("Could not open socket: " + str(message))
     sys.exit(1)
+
+print("Host: " + (os.popen("hostname -I").read()))
 
 while 1:
     try:
