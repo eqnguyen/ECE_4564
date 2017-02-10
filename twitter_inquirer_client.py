@@ -42,6 +42,9 @@ class MyStreamListener(tweepy.StreamListener):
             data = s.recv(size)
             s.close()
             tup = pickle.loads(data)
+            #post status
+            for item in tup[0]:
+                api.update_status('@VTNetApps '+ item)
             print("Answer: " + tup[0])
         except socket.error as message:
             if s:
@@ -59,3 +62,8 @@ stream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
 
 # Start a stream - async makes the stream run on a new thread
 myStream = stream.userstream()
+
+
+
+
+
