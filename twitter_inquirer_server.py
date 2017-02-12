@@ -27,7 +27,7 @@ except socket.error as message:
     print("Could not open socket: " + str(message))
     sys.exit(1)
 
-print("Host: " + (os.popen("hostname -I").read()).split(" ")[0])
+# print("Host: " + (os.popen("hostname -I").read()).split(" ")[0])
 
 while 1:
     try:
@@ -70,7 +70,7 @@ while 1:
         else:
             # if no answers were received
             print("W|A returned no answers")
-            tup = ("None", hashlib.md5("None".encode()).digest());
+            tup = ('["None"]', hashlib.md5('["None"]'.encode()).digest());
             client.send(pickle.dumps(tup))
     except Exception as inst:
         print(type(inst))
