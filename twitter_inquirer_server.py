@@ -61,12 +61,16 @@ while 1:
         w = wolfram_alpha.wolfram(appID)
 
         answer = w.search(query)
-        answertext = json.dumps(answer)
-        tup = (answertext, hashlib.md5(answertext.encode()).digest());
 
         if answer:
-            # just prints the json returned
+            answertext = json.dumps(answer)
+            tup = (answertext, hashlib.md5(answertext.encode()).digest());
             print(answertext)
+            client.send(pickle.dumps(tup))
+        else:
+            # if no answers were received
+            print("W|A returned no answers")
+            tup = ("None", hashlib.md5("None".encode()).digest());
             client.send(pickle.dumps(tup))
     except Exception as inst:
         print(type(inst))
