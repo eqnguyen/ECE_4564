@@ -24,21 +24,23 @@ def batch_delete():
     for status in tweepy.Cursor(api.user_timeline).items():
         try:
             api.destroy_status(status.id)
-        except:
+        except Exception as inst:
             print("Failed to delete:", status.id)
+            print(type(inst))
+            print(inst.args)
+            print(inst)
 
 
 # Receives all amounts of data from the server
 def recvall(sock):
-    buff_size = 1024  # 4 KiB
-    data = b''
-    while True:
-        part = sock.recv(buff_size)
-        data += part
-        if len(part) < buff_size:
-            # either 0 or end of data
-            break
-    return data
+    buff_size = 1024  # 1 KiB
+
+    # get size of incoming answer
+    sizeofmsg = sock.recv(buff_size)
+
+    # get the actual answer
+    msg = sock.recv(int(sizeofmsg))
+    return msg
 
 
 class MyStreamListener(tweepy.StreamListener):
@@ -135,11 +137,11 @@ def main():
 
     print("Now listening . . .")
     # Create a stream
-    myStreamListener = MyStreamListener()
-    stream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
+    mystreamlistener = MyStreamListener()
+    stream = tweepy.Stream(auth=api.auth, listener=mystreamlistener)
 
     # Start a stream - async makes the stream run on a new thread
-    myStream = stream.userstream(async=True)
+    stream.userstream(async=True)
 
 
 if __name__ == "__main__":
