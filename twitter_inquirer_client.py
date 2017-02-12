@@ -2,7 +2,7 @@
 
 import tweepy
 import socket
-import sys
+import sys, os
 import pickle
 import hashlib
 import json
@@ -82,6 +82,9 @@ class MyStreamListener(tweepy.StreamListener):
             if s:
                 s.close()
             print("ERROR: " + str(e))
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno)
             return
 
     def on_error(self, status_code):
