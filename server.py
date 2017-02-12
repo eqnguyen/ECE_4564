@@ -34,7 +34,7 @@ except socket.error as message:
     print("Could not open socket: " + str(message))
     sys.exit(1)
 
-# print("Host: " + (os.popen("hostname -I").read()).split(" ")[0])
+print("Host: " + (os.popen("hostname -I").read()).split(" ")[0])
 
 while 1:
     try:

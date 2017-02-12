@@ -108,7 +108,7 @@ class MyStreamListener(tweepy.StreamListener):
                 api.update_status(tweet1)
 
                 # Tweet to VTNetApps
-                # api.update_status(tweet2)
+                api.update_status(tweet2)
         except Exception as e:
             if s:
                 s.close()
