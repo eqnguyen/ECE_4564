@@ -32,22 +32,30 @@ print("Host: " + (os.popen("hostname -I").read()).split(" ")[0])
 while 1:
     try:
         client, address = s.accept()
-        badchecksum = True
-        while badchecksum:
+        badresponse = True
+        while badresponse:
             data = client.recv(size)
             tup = pickle.loads(data)
             print(tup)
 
-            if tup[1] == hashlib.md5(tup[0].encode()).digest():
+            if tup[0] == "ERROR CODE: 2":
+                # got a resend request
+                client.send(pickle.dumps(tup))
+                badresponse = True
+            elif tup[1] == hashlib.md5(tup[0].encode()).digest():
+                # checksum checks out
                 query = tup[0]
-                badchecksum = False
+                badresponse = False
             else:
-                # send request for resend
+                # make request for resend
                 errormsg = "ERROR CODE: 2"
                 errortup = (errormsg, hashlib.md5(errormsg.encode()).digest());
 
+                print("Error: checksum failed, requesting resend")
+
+                # send resend request
                 client.send(pickle.dumps(errortup))
-                badchecksum = True
+                badresponse = True
 
         # create a new instance of the wolfram class
         w = wolfram_alpha.wolfram(appID)
