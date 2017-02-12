@@ -11,6 +11,12 @@ import hashlib
 # Thomas's appid
 appID = '43UVWL-U3JYWWV895'
 
+
+def sendwithsize(sock, msgtup):
+    msg = pickle.dumps(msgtup)
+    sock.send(str(len(msg)).encode())
+    sock.send(msg)
+
 host = ''
 port = 50000
 backlog = 5
@@ -40,7 +46,8 @@ while 1:
 
             if tup[0] == "ERROR CODE: 2":
                 # got a resend request
-                client.send(pickle.dumps(tup))
+                # client.send(pickle.dumps(tup))
+                sendwithsize(client, tup)
                 badresponse = True
             elif tup[1] == hashlib.md5(tup[0].encode()).digest():
                 # checksum checks out
@@ -54,7 +61,8 @@ while 1:
                 print("Error: checksum failed, requesting resend")
 
                 # send resend request
-                client.send(pickle.dumps(errortup))
+                # client.send(pickle.dumps(errortup))
+                sendwithsize(client, errortup)
                 badresponse = True
 
         # create a new instance of the wolfram class
@@ -66,12 +74,14 @@ while 1:
             answertext = json.dumps(answer)
             tup = (answertext, hashlib.md5(answertext.encode()).digest())
             print(answertext)
-            client.send(pickle.dumps(tup))
+            # client.send(pickle.dumps(tup))
+            sendwithsize(client, tup)
         else:
             # if no answers were received
             print("W|A returned no answers")
             tup = ('["None"]', hashlib.md5('["None"]'.encode()).digest())
-            client.send(pickle.dumps(tup))
+            # client.send(pickle.dumps(tup))
+            sendwithsize(client, tup)
     except Exception as inst:
         print(type(inst))
         print(inst.args)
@@ -84,4 +94,5 @@ while 1:
         errormsg = "ERROR CODE: 1"
         errortup = (errormsg, hashlib.md5(errormsg.encode()).digest())
 
-        client.send(pickle.dumps(errortup))
+        # client.send(pickle.dumps(errortup))
+        sendwithsize(client, errortup)
