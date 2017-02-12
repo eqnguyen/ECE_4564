@@ -32,11 +32,22 @@ print("Host: " + (os.popen("hostname -I").read()).split(" ")[0])
 while 1:
     try:
         client, address = s.accept()
-        data = client.recv(size)
-        print(b'Data recieved: ' + data)
-        tup = pickle.loads(data)
-        print(tup[0])
-        query = tup[0]
+        badchecksum = True
+        while badchecksum:
+            data = client.recv(size)
+            tup = pickle.loads(data)
+            print(tup)
+
+            if tup[1] == hashlib.md5(tup[0].encode()).digest():
+                query = tup[0]
+                badchecksum = False
+            else:
+                # send request for resend
+                errormsg = "ERROR CODE: 2"
+                errortup = (errormsg, hashlib.md5(errormsg.encode()).digest());
+
+                client.send(pickle.dumps(errortup))
+                badchecksum = True
 
         # create a new instance of the wolfram class
         w = wolfram_alpha.wolfram(appID)
@@ -47,7 +58,7 @@ while 1:
 
         if answer:
             # just prints the json returned
-            print(answer[0])
+            print(answertext)
             client.send(pickle.dumps(tup))
     except Exception as inst:
         print(type(inst))
@@ -58,7 +69,7 @@ while 1:
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         print(exc_type, fname, exc_tb.tb_lineno)
 
-        errormsg = "ERROR"
+        errormsg = "ERROR CODE: 1"
         errortup = (errormsg, hashlib.md5(errormsg.encode()).digest());
 
         client.send(pickle.dumps(errortup))
