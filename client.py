@@ -96,8 +96,8 @@ class MyStreamListener(tweepy.StreamListener):
 
             # Iterate through all answers and post status
             for item in answers:
-                tweet1 = '@' + screen_name + ' #Team02_"' + item + '"'
-                tweet2 = '@VTNetApps' + ' #Team02_"' + item + '"'
+                tweet1 = '@' + screen_name + ' Team_02 "' + item + '"'
+                tweet2 = '@VTNetApps' + ' Team_02 "' + item + '"'
 
                 tweet1 = (tweet1[:138] + '..') if (len(tweet1) > 140) else tweet1
                 tweet2 = (tweet2[:138] + '..') if (len(tweet2) > 140) else tweet2
