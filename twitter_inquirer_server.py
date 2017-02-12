@@ -27,7 +27,7 @@ except socket.error as message:
     print("Could not open socket: " + str(message))
     sys.exit(1)
 
-print("Host: " + (os.popen("hostname -I").read()))
+print("Host: " + (os.popen("hostname -I").read()).split(" ")[0])
 
 while 1:
     try:
@@ -42,7 +42,8 @@ while 1:
         w = wolfram_alpha.wolfram(appID)
 
         answer = w.search(query)
-        tup = (answer[0], hashlib.md5(answer[0].encode()).digest());
+        answertext = json.dumps(answer)
+        tup = (answertext, hashlib.md5(answertext.encode()).digest());
 
         if answer:
             # just prints the json returned
@@ -57,4 +58,7 @@ while 1:
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         print(exc_type, fname, exc_tb.tb_lineno)
 
-        client.send(b'ERROR')
+        errormsg = "ERROR"
+        errortup = (errormsg, hashlib.md5(errormsg.encode()).digest());
+
+        client.send(pickle.dumps(errortup))

@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-import socket
+import socket, pickle
 
-host = '172.29.56.50'
+host = '192.168.0.104'
 port = 50000
 size = 1024
 
@@ -12,8 +12,9 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 query = input("Enter your question: ")
 
 s.connect((host,port))
-s.send(query.encode())
+s.send(pickle.dumps(query.encode()))
 
 data = s.recv(size)
 
-print(data.decode())
+tup = pickle.loads(data)
+print("Answer: " + tup[0])
