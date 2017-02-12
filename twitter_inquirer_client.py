@@ -15,6 +15,26 @@ auth.set_access_token('827585219586879488-hXLr5DyfxyJkp61HVtLMHTn7dSfXqYr',
 api = tweepy.API(auth)
 
 
+def batch_delete():
+    for status in tweepy.Cursor(api.user_timeline).items():
+        try:
+            api.destroy_status(status.id)
+        except:
+            print("Failed to delete:", status.id)
+
+
+def recvall(sock):
+    buff_size = 1024  # 4 KiB
+    data = b''
+    while True:
+        part = sock.recv(buff_size)
+        data += part
+        if len(part) < buff_size:
+            # either 0 or end of data
+            break
+    return data
+
+
 class MyStreamListener(tweepy.StreamListener):
     # This method overrides the on_data method
     def on_status(self, status):
@@ -28,7 +48,6 @@ class MyStreamListener(tweepy.StreamListener):
             # Set host and port for socket connection
             host = hashtag[1].split('_')[0].split(':')[0]
             port = int(hashtag[1].split('_')[0].split(':')[1])
-            size = 1024
             s = None
         except Exception as e:
             print(e)
@@ -47,7 +66,7 @@ class MyStreamListener(tweepy.StreamListener):
             s.send(pickle.dumps(tup))
 
             while badresponse:
-                data = s.recv(size)
+                data = recvall(s)
                 tup = pickle.loads(data)
 
                 if tup[0] == "ERROR CODE: 2":
@@ -65,13 +84,16 @@ class MyStreamListener(tweepy.StreamListener):
 
             s.close()
 
+            print(tup[0])
+            answers = json.loads(tup[0])
+
             # Iterate through all answers and post status
-            for item in json.loads(tup[0]):
+            for item in answers:
                 tweet1 = '@' + screen_name + ' #Team02_"' + item + '"'
                 tweet2 = '@VTNetApps' + ' #Team02_"' + item + '"'
 
-                # tweet1 = (tweet1[:138] + '..') if (len(tweet1) > 140) else tweet1
-                # tweet2 = (tweet2[:138] + '..') if (len(tweet2) > 140) else tweet2
+                tweet1 = (tweet1[:138] + '..') if (len(tweet1) > 140) else tweet1
+                tweet2 = (tweet2[:138] + '..') if (len(tweet2) > 140) else tweet2
 
                 # Tweet back to original sender
                 api.update_status(tweet1)
@@ -94,6 +116,9 @@ class MyStreamListener(tweepy.StreamListener):
 
 
 def main():
+    # Delete all tweets on timeline
+    batch_delete()
+
     # Create a stream
     myStreamListener = MyStreamListener()
     stream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
