@@ -13,6 +13,7 @@ auth.set_access_token('827585219586879488-hXLr5DyfxyJkp61HVtLMHTn7dSfXqYr',
                       'hCWHmF3EKoXlt1ExEUA0j47JTNBfjGwk8weOOgWdoZ3rp')
 
 api = tweepy.API(auth)
+my_screen_name = 'NetAppBoyz'
 
 
 def batch_delete():
@@ -41,6 +42,10 @@ class MyStreamListener(tweepy.StreamListener):
         try:
             # Parse tweet
             screen_name = status.user.screen_name
+
+            if screen_name == my_screen_name:
+                return
+
             hashtag = status.text.split('#')
             question = hashtag[1].split('_')[1].strip('"')
             tup = (question, hashlib.md5(question.encode()).digest())
@@ -50,7 +55,7 @@ class MyStreamListener(tweepy.StreamListener):
             port = int(hashtag[1].split('_')[0].split(':')[1])
             s = None
         except Exception as e:
-            print(e)
+            print("Is it here? ", e)
             return
 
         print("\nTweet: " + status.text)
