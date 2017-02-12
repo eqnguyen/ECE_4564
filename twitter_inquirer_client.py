@@ -6,6 +6,7 @@ import sys, os
 import pickle
 import hashlib
 import json
+import re
 
 # Twitter authentication
 auth = tweepy.OAuthHandler('M97QpyCyGJjIavBMODxvhIEVA', '2nEZhV1fb2DAwMxz9qvIt7ApVxMKXZKvcnjlIBoKNSo7vZbGNf')
@@ -13,8 +14,8 @@ auth.set_access_token('827585219586879488-hXLr5DyfxyJkp61HVtLMHTn7dSfXqYr',
                       'hCWHmF3EKoXlt1ExEUA0j47JTNBfjGwk8weOOgWdoZ3rp')
 
 api = tweepy.API(auth)
-my_screen_name = 'NetAppBoyz'
 
+pattern = re.compile("@NetAppBoyz #\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}_\".*\"")
 
 def batch_delete():
     for status in tweepy.Cursor(api.user_timeline).items():
@@ -41,11 +42,11 @@ class MyStreamListener(tweepy.StreamListener):
     def on_status(self, status):
         try:
             # Parse tweet
-            screen_name = status.user.screen_name
-
-            if screen_name == my_screen_name:
+            if not pattern.match(status.text):
+                print("Tweet is not a question")
                 return
 
+            screen_name = status.user.screen_name
             hashtag = status.text.split('#')
             question = hashtag[1].split('_')[1].strip('"')
             tup = (question, hashlib.md5(question.encode()).digest())
