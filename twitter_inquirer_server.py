@@ -49,7 +49,7 @@ while 1:
             else:
                 # make request for resend
                 errormsg = "ERROR CODE: 2"
-                errortup = (errormsg, hashlib.md5(errormsg.encode()).digest());
+                errortup = (errormsg, hashlib.md5(errormsg.encode()).digest())
 
                 print("Error: checksum failed, requesting resend")
 
@@ -64,13 +64,13 @@ while 1:
 
         if answer:
             answertext = json.dumps(answer)
-            tup = (answertext, hashlib.md5(answertext.encode()).digest());
+            tup = (answertext, hashlib.md5(answertext.encode()).digest())
             print(answertext)
             client.send(pickle.dumps(tup))
         else:
             # if no answers were received
             print("W|A returned no answers")
-            tup = ('["None"]', hashlib.md5('["None"]'.encode()).digest());
+            tup = ('["None"]', hashlib.md5('["None"]'.encode()).digest())
             client.send(pickle.dumps(tup))
     except Exception as inst:
         print(type(inst))
@@ -82,6 +82,6 @@ while 1:
         print(exc_type, fname, exc_tb.tb_lineno)
 
         errormsg = "ERROR CODE: 1"
-        errortup = (errormsg, hashlib.md5(errormsg.encode()).digest());
+        errortup = (errormsg, hashlib.md5(errormsg.encode()).digest())
 
         client.send(pickle.dumps(errortup))
