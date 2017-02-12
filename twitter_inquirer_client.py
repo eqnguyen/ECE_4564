@@ -15,8 +15,11 @@ auth.set_access_token('827585219586879488-hXLr5DyfxyJkp61HVtLMHTn7dSfXqYr',
 
 api = tweepy.API(auth)
 
+# Regex pattern for valid question syntax
 pattern = re.compile("@NetAppBoyz #\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}_\".*\"")
 
+
+# Deletes all tweets on the timeline
 def batch_delete():
     for status in tweepy.Cursor(api.user_timeline).items():
         try:
@@ -25,6 +28,7 @@ def batch_delete():
             print("Failed to delete:", status.id)
 
 
+# Receives all amounts of data from the server
 def recvall(sock):
     buff_size = 1024  # 4 KiB
     data = b''
@@ -40,24 +44,21 @@ def recvall(sock):
 class MyStreamListener(tweepy.StreamListener):
     # This method overrides the on_data method
     def on_status(self, status):
-        try:
-            # Parse tweet
-            if not pattern.match(status.text):
-                print("Tweet is not a question")
-                return
-
-            screen_name = status.user.screen_name
-            hashtag = status.text.split('#')
-            question = hashtag[1].split('_')[1].strip('"')
-            tup = (question, hashlib.md5(question.encode()).digest())
-
-            # Set host and port for socket connection
-            host = hashtag[1].split('_')[0].split(':')[0]
-            port = int(hashtag[1].split('_')[0].split(':')[1])
-            s = None
-        except Exception as e:
-            print("Is it here? ", e)
+        # Check the question for valid syntax
+        if not pattern.match(status.text):
+            print("Tweet is not a question")
             return
+
+        # Parse tweet
+        screen_name = status.user.screen_name
+        hashtag = status.text.split('#')
+        question = hashtag[1].split('_')[1].strip('"')
+        tup = (question, hashlib.md5(question.encode()).digest())
+
+        # Set host and port for socket connection
+        host = hashtag[1].split('_')[0].split(':')[0]
+        port = int(hashtag[1].split('_')[0].split(':')[1])
+        s = None
 
         print("\nTweet: " + status.text)
         print("IP, Port: " + host + ", " + str(port))
@@ -123,8 +124,16 @@ class MyStreamListener(tweepy.StreamListener):
 
 def main():
     # Delete all tweets on timeline
-    batch_delete()
+    while True:
+        delete = input("Delete all tweets? (Y/N): ").lower()
+        if delete == 'y':
+            batch_delete()
+            print("All tweets deleted")
+            break
+        elif delete == 'n':
+            break
 
+    print("Now listening . . .")
     # Create a stream
     myStreamListener = MyStreamListener()
     stream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
