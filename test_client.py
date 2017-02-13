@@ -30,6 +30,7 @@ while query != "quit":
         print("Unable to open socket: " + str(message))
         sys.exit(1)
 
+    print("Connected")
     tup = (query, hashlib.md5(query.encode()).digest())
     s.send(pickle.dumps(tup))
 
