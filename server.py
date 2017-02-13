@@ -39,7 +39,8 @@ print("Host: " + os.popen("hostname -I").read())
 print("Port: " + str(port))
 print("Now listening . . .")
 
-answertup = ('["idiot"]', hashlib.md5('["idiot"]'.encode()).digest())
+emptymsg = '["idiot"]'
+answertup = (emptymsg, hashlib.md5(emptymsg.encode()).digest())
 
 while 1:
     try:
@@ -84,8 +85,9 @@ while 1:
             sendwithsize(client, answertup)
         else:
             # if no answers were received
-            print("W|A returned no answers")
-            answertup = ('["None"]', hashlib.md5('["None"]'.encode()).digest())
+            noanswermsg = '["W|A returned no answers"]'
+            print(noanswermsg)
+            answertup = (noanswermsg, hashlib.md5(noanswermsg.encode()).digest())
             # client.send(pickle.dumps(tup))
             sendwithsize(client, answertup)
     except Exception as inst:
