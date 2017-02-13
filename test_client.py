@@ -8,7 +8,7 @@ def recvall(sock):
     buff_size = 1024  # 4 KiB
 
     sizeofmsg = sock.recv(buff_size)
-
+    print("SIZE: " + str(sizeofmsg))
     msg = sock.recv(int(sizeofmsg))
 
     # while True:
@@ -36,5 +36,11 @@ s.send(pickle.dumps(tup))
 
 data = recvall(s)
 
-tup = pickle.loads(data)
-print("Answer: " + tup[0])
+try:
+    tup = pickle.loads(data)
+    print("Answer: " + tup[0])
+except:
+    print("Pickle failure")
+    errormsg = "ERROR CODE: 2"
+    errortup = (errormsg, hashlib.md5(errormsg.encode()).digest())
+    s.send(errortup)
