@@ -48,6 +48,7 @@ while 1:
         badresponse = True
         while badresponse:
             data = client.recv(size)
+            print("Data: ", data)
             tup = pickle.loads(data)
             print(tup)
 
