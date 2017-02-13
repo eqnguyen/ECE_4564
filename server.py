@@ -50,6 +50,9 @@ while 1:
             data = client.recv(size)
 
             if not data:
+                client.close()
+                print("Empty message, aka client closed socket")
+                client, address = s.accept()
                 continue
 
             print("Data: ", data)
@@ -58,11 +61,12 @@ while 1:
 
             if tup[0] == "ERROR CODE: 2":
                 # got a resend request
-                # client.send(pickle.dumps(tup))
+                print("Resending message")
                 sendwithsize(client, answertup)
                 badresponse = True
             elif tup[1] == hashlib.md5(tup[0].encode()).digest():
                 # checksum checks out
+                print("Checksum checks out")
                 query = tup[0]
                 badresponse = False
             else:
@@ -80,7 +84,9 @@ while 1:
         # create a new instance of the wolfram class
         w = wolfram_alpha.wolfram(appID)
 
+        print("Starting search...")
         answer = w.search(query)
+        print("Search finished")
 
         if answer:
             answertext = json.dumps(answer)
