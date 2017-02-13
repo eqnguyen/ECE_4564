@@ -37,9 +37,11 @@ def recvall(sock):
 
     # get size of incoming answer
     sizeofmsg = sock.recv(buff_size)
+    print("SIZE: " + str(sizeofmsg))
 
     # get the actual answer
     msg = sock.recv(int(sizeofmsg))
+    print("\nMESSAGE: " + str(msg))
     return msg
 
 
@@ -85,7 +87,9 @@ class MyStreamListener(tweepy.StreamListener):
                 elif tup[1] != hashlib.md5(tup[0].encode()).digest():
                     # Request answer, checksum failed
                     print("Error: checksum failed, requesting resend")
-                    s.send("ERROR CODE: 2")
+                    errormsg = "ERROR CODE: 2"
+                    errortup = (errormsg, hashlib.md5(errormsg.encode()).digest())
+                    s.send(errortup)
                     badresponse = True
                 else:
                     # Checksum valid
@@ -93,7 +97,7 @@ class MyStreamListener(tweepy.StreamListener):
 
             s.close()
 
-            print(tup[0])
+            print("\nUNPICKLED: " + tup[0])
             answers = json.loads(tup[0])
 
             # Iterate through all answers and post status
@@ -105,10 +109,10 @@ class MyStreamListener(tweepy.StreamListener):
                 tweet2 = (tweet2[:138] + '..') if (len(tweet2) > 140) else tweet2
 
                 # Tweet back to original sender
-                api.update_status(tweet1)
+                # api.update_status(tweet1)
 
                 # Tweet to VTNetApps
-                api.update_status(tweet2)
+                # api.update_status(tweet2)
         except Exception as e:
             if s:
                 s.close()
