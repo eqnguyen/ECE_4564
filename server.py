@@ -34,7 +34,9 @@ except socket.error as message:
     print("Could not open socket: " + str(message))
     sys.exit(1)
 
-print("Host: " + (os.popen("hostname -I").read()).split(" ")[0])
+# Print host IP address
+print("Host: " + socket.gethostbyname(socket.gethostname()))
+print("Now listening . . .")
 
 while 1:
     try:
