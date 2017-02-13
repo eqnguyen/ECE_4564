@@ -36,6 +36,7 @@ except socket.error as message:
 
 # Print host IP address
 print("Host: " + socket.gethostbyname(socket.gethostname()))
+print("Port: " + str(port))
 print("Now listening . . .")
 
 while 1:
