@@ -5,19 +5,17 @@ import socket, pickle, hashlib, sys
 
 # Receives all amounts of data from the server
 def recvall(sock):
-    buff_size = 1024  # 4 KiB
+    buff_size = 1024  # 1 KiB
 
     sizeofmsg = int(sock.recv(buff_size))
     print("SIZE: " + str(sizeofmsg))
 
     msg = sock.recv(sizeofmsg)
-
-    if len(msg) < sizeofmsg:
-        print("Truncated pickle")
-        errormsg = "ERROR CODE: 2"
-        errortup = (errormsg, hashlib.md5(errormsg.encode()).digest())
-        s.send(pickle.dumps(errortup))
-        msg = recvall(sock)
+    counter = 1
+    while len(msg) < sizeofmsg:
+        print(counter)
+        msg += recvall(sock)
+        counter += 1
 
     # while True:
     # part = sock.recv(buff_size)
@@ -28,7 +26,7 @@ def recvall(sock):
     return msg
 
 
-host = '192.168.0.103'
+host = input("Enter server IP address: ")
 port = 50000
 size = 1024
 
