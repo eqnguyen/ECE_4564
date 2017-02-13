@@ -34,14 +34,10 @@ def batch_delete():
 # Receives all amounts of data from the server
 def recvall(sock):
     buff_size = 1024  # 1 KiB
-
-    # get size of incoming answer
-    sizeofmsg = sock.recv(buff_size)
-    print("SIZE: " + str(sizeofmsg))
-
-    # get the actual answer
-    msg = sock.recv(int(sizeofmsg))
-    print("\nMESSAGE: " + str(msg))
+    sizeofmsg = int(sock.recv(buff_size))
+    msg = sock.recv(sizeofmsg)
+    while len(msg) < sizeofmsg:
+        msg += sock.recv(buff_size)
     return msg
 
 
@@ -78,7 +74,15 @@ class MyStreamListener(tweepy.StreamListener):
 
             while badresponse:
                 data = recvall(s)
-                tup = pickle.loads(data)
+                try:
+                    tup = pickle.loads(data)
+                except Exception as inst:
+                    print(inst)
+                    print("Pickle load failure")
+                    errormsg = "ERROR CODE: 2"
+                    errortup = (errormsg, hashlib.md5(errormsg.encode()).digest())
+                    s.send(pickle.dumps(errortup))
+                    continue
 
                 if tup[0] == "ERROR CODE: 2":
                     # Resend question
@@ -97,7 +101,7 @@ class MyStreamListener(tweepy.StreamListener):
 
             s.close()
 
-            print("\nUNPICKLED: " + tup[0])
+            print("\nAnswer: " + tup[0])
             answers = json.loads(tup[0])
 
             # Iterate through all answers and post status
@@ -113,10 +117,10 @@ class MyStreamListener(tweepy.StreamListener):
 
                 # Tweet to VTNetApps
                 # api.update_status(tweet2)
-        except Exception as e:
+        except Exception as inst:
             if s:
                 s.close()
-            print("ERROR: " + str(e))
+            print("ERROR: " + str(inst))
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             print(exc_type, fname, exc_tb.tb_lineno)
