@@ -20,7 +20,7 @@ def recvall(sock):
     return msg
 
 
-host = '192.168.0.105'
+host = '192.168.0.101'
 port = 50000
 size = 1024
 

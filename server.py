@@ -35,9 +35,11 @@ except socket.error as message:
     sys.exit(1)
 
 # Print host IP address
-print("Host: " + socket.gethostbyname(socket.gethostname()))
+print("Host: " + os.popen("hostname -I").read())
 print("Port: " + str(port))
 print("Now listening . . .")
+
+answertup = ('["idiot"]', hashlib.md5('["idiot"]'.encode()).digest())
 
 while 1:
     try:
@@ -51,7 +53,7 @@ while 1:
             if tup[0] == "ERROR CODE: 2":
                 # got a resend request
                 # client.send(pickle.dumps(tup))
-                sendwithsize(client, tup)
+                sendwithsize(client, answertup)
                 badresponse = True
             elif tup[1] == hashlib.md5(tup[0].encode()).digest():
                 # checksum checks out
@@ -76,16 +78,16 @@ while 1:
 
         if answer:
             answertext = json.dumps(answer)
-            tup = (answertext, hashlib.md5(answertext.encode()).digest())
+            answertup = (answertext, hashlib.md5(answertext.encode()).digest())
             print(answertext)
             # client.send(pickle.dumps(tup))
-            sendwithsize(client, tup)
+            sendwithsize(client, answertup)
         else:
             # if no answers were received
             print("W|A returned no answers")
-            tup = ('["None"]', hashlib.md5('["None"]'.encode()).digest())
+            answertup = ('["None"]', hashlib.md5('["None"]'.encode()).digest())
             # client.send(pickle.dumps(tup))
-            sendwithsize(client, tup)
+            sendwithsize(client, answertup)
     except Exception as inst:
         print(type(inst))
         print(inst.args)
