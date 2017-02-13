@@ -136,6 +136,7 @@ def main():
             break
 
     print("Now listening . . .")
+
     # Create a stream
     mystreamlistener = MyStreamListener()
     stream = tweepy.Stream(auth=api.auth, listener=mystreamlistener)
@@ -145,8 +146,4 @@ def main():
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("Exiting client...")
-        sys.exit(2)
+    main()
