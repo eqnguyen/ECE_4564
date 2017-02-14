@@ -113,10 +113,10 @@ class MyStreamListener(tweepy.StreamListener):
                 tweet2 = (tweet2[:138] + '..') if (len(tweet2) > 140) else tweet2
 
                 # Tweet back to original sender
-                # api.update_status(tweet1)
+                api.update_status(tweet1)
 
                 # Tweet to VTNetApps
-                # api.update_status(tweet2)
+                api.update_status(tweet2)
         except Exception as inst:
             if s:
                 s.close()
