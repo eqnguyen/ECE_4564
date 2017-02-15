@@ -8,10 +8,47 @@ import hashlib
 import json
 import re
 
+# ------------ Authenticates Twitter credentials --------------
+oauthkey1 = ''
+oauthkey2 = ''
+accesstoken1 = ''
+accesstoken2 = ''
+f = ''
+
+try:
+    f = open("api_keys.txt", "r")
+except FileNotFoundError as inst:
+    print("The file 'api_keys.txt' was not found")
+    exit()
+except Exception as e:
+    print("ERROR: " + str(e))
+    exit()
+
+line = f.readline()
+while "Twitter OAuthHandler keys: " not in line:
+    line = f.readline()
+
+try:
+    oauthkey1 = line.split(': ')[1]
+    oauthkey2 = line.split(': ')[2]
+except IndexError as inst:
+    print("Could not find Twitter OAuth keys in 'api_keys.txt'")
+    exit()
+
+while "Twitter access tokens: " not in line:
+    line = f.readline()
+
+try:
+    accesstoken1 = line.split(': ')[1]
+    accesstoken2 = line.split(': ')[2]
+except IndexError as inst:
+    print("Could not find Twitter access tokens in 'api_keys.txt'")
+    exit()
+# -----------------------------------------------------------
+
 # Twitter authentication
-auth = tweepy.OAuthHandler('M97QpyCyGJjIavBMODxvhIEVA', '2nEZhV1fb2DAwMxz9qvIt7ApVxMKXZKvcnjlIBoKNSo7vZbGNf')
-auth.set_access_token('827585219586879488-hXLr5DyfxyJkp61HVtLMHTn7dSfXqYr',
-                      'hCWHmF3EKoXlt1ExEUA0j47JTNBfjGwk8weOOgWdoZ3rp')
+auth = tweepy.OAuthHandler(oauthkey1, oauthkey2)
+auth.set_access_token(accesstoken1, accesstoken2)
 
 api = tweepy.API(auth)
 
