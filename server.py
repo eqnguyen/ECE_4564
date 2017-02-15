@@ -8,8 +8,24 @@ import wolfram_alpha
 import pickle
 import hashlib
 
-# Thomas's appid
-appID = '43UVWL-U3JYWWV895'
+# --------------- GETS W|A api appID ------------------------
+try:
+    f = open("api_keys.txt", "r")
+except FileNotFoundError as inst:
+    print("The file 'api_keys.txt' was not found")
+    exit()
+
+line = f.readline()
+while "Wolfram|Alpha appID: " not in line:
+    line = f.readline()
+
+try:
+    appID = line.split(': ')[1]
+except IndexError as inst:
+    print("Could not find Wolfram|Alpha appID in 'api_keys.txt'")
+    exit()
+
+# -----------------------------------------------------------
 
 host = ''
 port = 50000
@@ -27,7 +43,7 @@ except socket.error as message:
     print("Could not open socket: " + str(message))
     sys.exit(1)
 
-# print("Host: " + (os.popen("hostname -I").read()).split(" ")[0])
+print("Host: " + (os.popen("hostname -I").read()).split(" ")[0])
 
 while 1:
     try:
@@ -40,6 +56,7 @@ while 1:
 
             if tup[0] == "ERROR CODE: 2":
                 # got a resend request
+                print("Received a resend request")
                 client.send(pickle.dumps(tup))
                 badresponse = True
             elif tup[1] == hashlib.md5(tup[0].encode()).digest():
