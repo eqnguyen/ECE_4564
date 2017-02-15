@@ -27,6 +27,13 @@ except IndexError as inst:
 
 # -----------------------------------------------------------
 
+
+def sendwithsize(sock, msgtup):
+    msg = pickle.dumps(msgtup)
+    sock.send(str(len(msg)).encode())
+    sock.send(msg)
+
+
 host = ''
 port = 50000
 backlog = 5
@@ -43,7 +50,13 @@ except socket.error as message:
     print("Could not open socket: " + str(message))
     sys.exit(1)
 
-print("Host: " + (os.popen("hostname -I").read()).split(" ")[0])
+# Print host IP address
+print("Host: " + os.popen("hostname -I").read())
+print("Port: " + str(port))
+print("Now listening . . .")
+
+emptymsg = '["idiot"]'
+answertup = (emptymsg, hashlib.md5(emptymsg.encode()).digest())
 
 while 1:
     try:
@@ -51,16 +64,25 @@ while 1:
         badresponse = True
         while badresponse:
             data = client.recv(size)
+
+            if not data:
+                client.close()
+                print("Empty message, aka client closed socket")
+                client, address = s.accept()
+                continue
+
+            print("Data: ", data)
             tup = pickle.loads(data)
             print(tup)
 
             if tup[0] == "ERROR CODE: 2":
                 # got a resend request
-                print("Received a resend request")
-                client.send(pickle.dumps(tup))
+                print("Resending message")
+                sendwithsize(client, answertup)
                 badresponse = True
             elif tup[1] == hashlib.md5(tup[0].encode()).digest():
                 # checksum checks out
+                print("Checksum checks out")
                 query = tup[0]
                 badresponse = False
             else:
@@ -71,24 +93,30 @@ while 1:
                 print("Error: checksum failed, requesting resend")
 
                 # send resend request
-                client.send(pickle.dumps(errortup))
+                # client.send(pickle.dumps(errortup))
+                sendwithsize(client, errortup)
                 badresponse = True
 
         # create a new instance of the wolfram class
         w = wolfram_alpha.wolfram(appID)
 
+        print("Starting search...")
         answer = w.search(query)
+        print("Search finished")
 
         if answer:
             answertext = json.dumps(answer)
-            tup = (answertext, hashlib.md5(answertext.encode()).digest())
+            answertup = (answertext, hashlib.md5(answertext.encode()).digest())
             print(answertext)
-            client.send(pickle.dumps(tup))
+            # client.send(pickle.dumps(tup))
+            sendwithsize(client, answertup)
         else:
             # if no answers were received
-            print("W|A returned no answers")
-            tup = ('["None"]', hashlib.md5('["None"]'.encode()).digest())
-            client.send(pickle.dumps(tup))
+            noanswermsg = '["W|A returned no answers"]'
+            print(noanswermsg)
+            answertup = (noanswermsg, hashlib.md5(noanswermsg.encode()).digest())
+            # client.send(pickle.dumps(tup))
+            sendwithsize(client, answertup)
     except Exception as inst:
         print(type(inst))
         print(inst.args)
@@ -101,4 +129,5 @@ while 1:
         errormsg = "ERROR CODE: 1"
         errortup = (errormsg, hashlib.md5(errormsg.encode()).digest())
 
-        client.send(pickle.dumps(errortup))
+        # client.send(pickle.dumps(errortup))
+        sendwithsize(client, errortup)

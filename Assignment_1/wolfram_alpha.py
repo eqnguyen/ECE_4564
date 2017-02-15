@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # To explore what the W|A api call returns go to:
 # http://products.wolframalpha.com/api/explorer/
@@ -7,9 +7,10 @@ import urllib
 import xml.etree.ElementTree as ET
 from urllib.request import Request, urlopen
 
+
 class wolfram(object):
     def __init__(self, appid):
-        self.appID = appid;
+        self.appID = appid
         self.base_url = 'http://api.wolframalpha.com/v2/query?'
 
     def _get_xml(self, ip):

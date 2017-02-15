@@ -61,21 +61,21 @@ def batch_delete():
     for status in tweepy.Cursor(api.user_timeline).items():
         try:
             api.destroy_status(status.id)
-        except:
+        except Exception as inst:
             print("Failed to delete:", status.id)
+            print(type(inst))
+            print(inst.args)
+            print(inst)
 
 
 # Receives all amounts of data from the server
 def recvall(sock):
-    buff_size = 1024  # 4 KiB
-    data = b''
-    while True:
-        part = sock.recv(buff_size)
-        data += part
-        if len(part) < buff_size:
-            # either 0 or end of data
-            break
-    return data
+    buff_size = 1024  # 1 KiB
+    sizeofmsg = int(sock.recv(buff_size))
+    msg = sock.recv(sizeofmsg)
+    while len(msg) < sizeofmsg:
+        msg += sock.recv(buff_size)
+    return msg
 
 
 class MyStreamListener(tweepy.StreamListener):
@@ -111,7 +111,15 @@ class MyStreamListener(tweepy.StreamListener):
 
             while badresponse:
                 data = recvall(s)
-                tup = pickle.loads(data)
+                try:
+                    tup = pickle.loads(data)
+                except Exception as inst:
+                    print(inst)
+                    print("Pickle load failure")
+                    errormsg = "ERROR CODE: 2"
+                    errortup = (errormsg, hashlib.md5(errormsg.encode()).digest())
+                    s.send(pickle.dumps(errortup))
+                    continue
 
                 if tup[0] == "ERROR CODE: 2":
                     # Resend question
@@ -120,7 +128,9 @@ class MyStreamListener(tweepy.StreamListener):
                 elif tup[1] != hashlib.md5(tup[0].encode()).digest():
                     # Request answer, checksum failed
                     print("Error: checksum failed, requesting resend")
-                    s.send("ERROR CODE: 2")
+                    errormsg = "ERROR CODE: 2"
+                    errortup = (errormsg, hashlib.md5(errormsg.encode()).digest())
+                    s.send(errortup)
                     badresponse = True
                 else:
                     # Checksum valid
@@ -128,13 +138,13 @@ class MyStreamListener(tweepy.StreamListener):
 
             s.close()
 
-            print(tup[0])
+            print("\nAnswer: " + tup[0])
             answers = json.loads(tup[0])
 
             # Iterate through all answers and post status
             for item in answers:
-                tweet1 = '@' + screen_name + ' #Team02_"' + item + '"'
-                tweet2 = '@VTNetApps' + ' #Team02_"' + item + '"'
+                tweet1 = '@' + screen_name + ' Team_02 "' + item + '"'
+                tweet2 = '@VTNetApps' + ' Team_02 "' + item + '"'
 
                 tweet1 = (tweet1[:138] + '..') if (len(tweet1) > 140) else tweet1
                 tweet2 = (tweet2[:138] + '..') if (len(tweet2) > 140) else tweet2
@@ -143,11 +153,11 @@ class MyStreamListener(tweepy.StreamListener):
                 api.update_status(tweet1)
 
                 # Tweet to VTNetApps
-                # api.update_status(tweet2)
-        except Exception as e:
+                api.update_status(tweet2)
+        except Exception as inst:
             if s:
                 s.close()
-            print("ERROR: " + str(e))
+            print("ERROR: " + str(inst))
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             print(exc_type, fname, exc_tb.tb_lineno)
@@ -171,17 +181,14 @@ def main():
             break
 
     print("Now listening . . .")
+
     # Create a stream
-    myStreamListener = MyStreamListener()
-    stream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
+    mystreamlistener = MyStreamListener()
+    stream = tweepy.Stream(auth=api.auth, listener=mystreamlistener)
 
     # Start a stream - async makes the stream run on a new thread
-    myStream = stream.userstream(async=True)
+    stream.userstream(async=True)
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("Exiting client...")
-        sys.exit(2)
+    main()
