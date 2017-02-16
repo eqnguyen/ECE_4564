@@ -16,11 +16,11 @@ except FileNotFoundError as inst:
     exit()
 
 line = f.readline()
-while "Wolfram|Alpha appID: " not in line:
+while "Wolfram|Alpha appID : " not in line and line != "":
     line = f.readline()
 
 try:
-    appID = line.split(': ')[1].rstrip('\n')
+    appID = line.split(' : ')[1].rstrip('\n')
 except IndexError as inst:
     print("Could not find Wolfram|Alpha appID in 'api_keys.txt'")
     exit()
