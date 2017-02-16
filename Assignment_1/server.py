@@ -20,7 +20,7 @@ while "Wolfram|Alpha appID: " not in line:
     line = f.readline()
 
 try:
-    appID = line.split(': ')[1]
+    appID = line.split(': ')[1].rstrip('\n')
 except IndexError as inst:
     print("Could not find Wolfram|Alpha appID in 'api_keys.txt'")
     exit()
@@ -57,6 +57,9 @@ print("Now listening . . .")
 
 emptymsg = '["idiot"]'
 answertup = (emptymsg, hashlib.md5(emptymsg.encode()).digest())
+
+# create a new instance of the wolfram class
+w = wolfram_alpha.wolfram(appID)
 
 while 1:
     try:
@@ -97,9 +100,6 @@ while 1:
                 sendwithsize(client, errortup)
                 badresponse = True
 
-        # create a new instance of the wolfram class
-        w = wolfram_alpha.wolfram(appID)
-
         print("Starting search...")
         answer = w.search(query)
         print("Search finished")
@@ -108,20 +108,20 @@ while 1:
             answertext = json.dumps(answer)
             answertup = (answertext, hashlib.md5(answertext.encode()).digest())
             print(answertext)
-            # client.send(pickle.dumps(tup))
-            sendwithsize(client, answertup)
         else:
             # if no answers were received
+            # noanswermsg is json formatted as a list containing one string, "W|A returned no answers"
             noanswermsg = '["W|A returned no answers"]'
             print(noanswermsg)
             answertup = (noanswermsg, hashlib.md5(noanswermsg.encode()).digest())
-            # client.send(pickle.dumps(tup))
-            sendwithsize(client, answertup)
+
+        sendwithsize(client, answertup)
     except Exception as inst:
         print(type(inst))
         print(inst.args)
         print(inst)
 
+        # this allows us to see the line number and filename where the exception ocurred
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         print(exc_type, fname, exc_tb.tb_lineno)

@@ -29,8 +29,8 @@ while "Twitter OAuthHandler keys: " not in line:
     line = f.readline()
 
 try:
-    oauthkey1 = line.split(': ')[1]
-    oauthkey2 = line.split(': ')[2]
+    oauthkey1 = line.split(': ')[1].rstrip('\n')
+    oauthkey2 = line.split(': ')[2].rstrip('\n')
 except IndexError as inst:
     print("Could not find Twitter OAuth keys in 'api_keys.txt'")
     exit()
@@ -39,8 +39,8 @@ while "Twitter access tokens: " not in line:
     line = f.readline()
 
 try:
-    accesstoken1 = line.split(': ')[1]
-    accesstoken2 = line.split(': ')[2]
+    accesstoken1 = line.split(': ')[1].rstrip('\n')
+    accesstoken2 = line.split(': ')[2].rstrip('\n')
 except IndexError as inst:
     print("Could not find Twitter access tokens in 'api_keys.txt'")
     exit()
