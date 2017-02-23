@@ -2,8 +2,6 @@
 
 import pymongo
 import psutil
-import datetime
-import json
 from pprint import pprint
 from pymongo import MongoClient
 
@@ -13,7 +11,7 @@ db = client.host_monitor_database
 posts = db.posts
 
 print('Deleting old entries')
-posts.delete_many({})
+posts.drop()
 
 
 def get_cpu_utils():
@@ -36,7 +34,7 @@ def get_cpu_utils():
 get_cpu_utils.last_idle, get_cpu_utils.last_total = 0, 0
 
 while 1:
-    msg = {'datetime': datetime.datetime.utcnow(), 'net': {}, 'cpu_usage': 0}
+    msg = {'net': {}, 'cpu_usage': 0}
 
     # gets the cpu utilization, blocking, runs every second
     msg['cpu_usage'] = psutil.cpu_percent(interval=1)
@@ -44,6 +42,7 @@ while 1:
     # gets the network info for each NIC
     network_io = psutil.net_io_counters(pernic=True)
 
+    # initialize dictionaries
     bytes_sent = {'wlan0': 0, 'eth0': 0, 'lo': 0}
     bytes_received = {'wlan0': 0, 'eth0': 0, 'lo': 0}
     bytes_sent_old = {'wlan0': 0, 'eth0': 0, 'lo': 0}
@@ -66,10 +65,16 @@ while 1:
     posts.insert(msg)
 
     print('\nHost_1:')
-    max_cpu = posts.find_one(sort=[('cpu_usage', -1)])['cpu_usage']
-    min_cpu = posts.find_one(sort=[('cpu_usage', 1)])['cpu_usage']
+    max_cpu = posts.find_one(sort=[('cpu_usage', pymongo.DESCENDING)])['cpu_usage']
+    min_cpu = posts.find_one(sort=[('cpu_usage', pymongo.ASCENDING)])['cpu_usage']
     print('cpu: ' + str(msg['cpu_usage']) + '[Hi: ' + str(max_cpu) + ', Lo: ' + str(min_cpu) + ']')
     for item in msg['net']:
-        print(
-            item + ': rx=' + str(msg['net'][item]['rx']) + ' B/s [Hi:, Lo:], tx=' + str(
-                msg['net'][item]['tx']) + ' B/s [Hi:, Lo:]')
+        max_rx = posts.find_one(sort=[('net.' + item + '.rx', pymongo.DESCENDING)])['net'][item]['rx']
+        min_rx = posts.find_one(sort=[('net.' + item + '.rx', pymongo.ASCENDING)])['net'][item]['rx']
+        max_tx = posts.find_one(sort=[('net.' + item + '.tx', pymongo.DESCENDING)])['net'][item]['tx']
+        min_tx = posts.find_one(sort=[('net.' + item + '.tx', pymongo.ASCENDING)])['net'][item]['tx']
+
+        print(item + ': rx=' + str(msg['net'][item]['rx']) + ' B/s ',
+              '[Hi: ' + str(max_rx) + ' B/s, Lo: ' + str(min_rx) + ' B/s], ',
+              'tx=' + str(msg['net'][item]['tx']) + ' B/s ',
+              '[Hi: ' + str(max_tx) + ' B/s, Lo: ' + str(min_tx) + ' B/s]')
