@@ -1,6 +1,19 @@
+#! /usr/bin/env python3
+
 import pymongo
 import psutil
+import datetime
+import json
+from pprint import pprint
+from pymongo import MongoClient
 
+print("Opening Mongo client")
+client = MongoClient()
+db = client.host_monitor_database
+posts = db.posts
+
+print("Deleting old entries")
+posts.delete_many({})
 
 def get_cpu_utils():
     with open('/proc/stat') as f:
@@ -19,16 +32,19 @@ def get_cpu_utils():
 
 
 bytes_sent, bytes_received = 0, 0
+
 # simulates a static variable for get_cpu_utils
 get_cpu_utils.last_idle, get_cpu_utils.last_total = 0, 0
 
-msg = {'net': {}, 'cpu_usage': 0}
-
 while 1:
+    msg = {'datetime': datetime.datetime.utcnow(), 'net': {}, 'cpu_usage': 0}
+
     # gets the cpu utilization, blocking, runs every second
     msg['cpu_usage'] = psutil.cpu_percent(interval=1)
+
     # gets the network info for each NIC
     network_io = psutil.net_io_counters(pernic=True)
+
     for nic in network_io:
         bytes_sent_old = bytes_sent
         bytes_received_old = bytes_received
@@ -40,5 +56,12 @@ while 1:
         rx_throughput = bytes_received - bytes_received_old
 
         msg['net'][nic] = {'tx': tx_throughput, 'rx': rx_throughput}
+    
+    posts.insert(msg)
+    
+    print("\nHost_1:")
+    max_cpu = posts.find_one(sort=[("cpu_usage",-1)])['cpu_usage']
+    print("cpu: " + str(msg['cpu_usage']) + " [Hi: " + str(max_cpu) + ", Lo: ]")
+    for item in msg['net']:
+        print(item + ": rx=" + str(msg['net'][item]['rx']) + " B/s [Hi: , Lo: ], tx=" + str(msg['net'][item]['tx']) + " B/s [Hi: , Lo: ]")
 
-        print(msg)
