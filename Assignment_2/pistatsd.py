@@ -1,6 +1,15 @@
 #! /usr/bin/env python3
 
 import argparse, psutil
+from time import sleep
+
+def get_cpu_utils(last_idle, last_total):
+    with open('/proc/stat') as f:
+        fields = [float(column) for column in f.readline().strip().split()[1:]]
+    idle, total = fields[3], sum(fields)
+    idle_delta, total_delta = idle - last_idle, total - last_total
+    last_idle, last_total = idle, total
+    utilisation = 1.0 - idle_delta / total_delta
 
 parser = argparse.ArgumentParser(description='Generate stats on network and CPU utilization')
 
@@ -14,8 +23,10 @@ args = parser.parse_args()
 bytes_sent = 0
 bytes_received = 0
 
+msg = {'net': {}, 'cpu_usage': 0}
+
 while 1:
-    cpu_usage = psutil.cpu_percent(interval=1)
+    msg['cpu_usage'] = psutil.cpu_percent(interval=1)
     network_io = psutil.net_io_counters(pernic=True)
     for nic in network_io:
         bytes_sent_old = bytes_sent
@@ -27,4 +38,6 @@ while 1:
         tx_throughput = bytes_sent - bytes_sent_old
         rx_throughput = bytes_received - bytes_received_old
 
-        print(nic, tx_throughput, rx_throughput)
+        msg['net'][nic] = {'tx': tx_throughput, 'rx': rx_throughput}
+
+    print(msg)
