@@ -44,9 +44,12 @@ while 1:
     # gets the network info for each NIC
     network_io = psutil.net_io_counters(pernic=True)
 
-    for nic in network_io:
-        bytes_sent[nic] = 0
-        bytes_received[nic] = 0
+    bytes_sent = {'wlan0': 0, 'eth0': 0, 'lo': 0}
+    bytes_received = {'wlan0': 0, 'eth0': 0, 'lo': 0}
+    bytes_sent_old = {'wlan0': 0, 'eth0': 0, 'lo': 0}
+    bytes_received_old = {'wlan0': 0, 'eth0': 0, 'lo': 0}
+    tx_throughput = {'wlan0': 0, 'eth0': 0, 'lo': 0}
+    rx_throughput = {'wlan0': 0, 'eth0': 0, 'lo': 0}
 
     for nic in network_io:
         bytes_sent_old[nic] = bytes_sent[nic]
