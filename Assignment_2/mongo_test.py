@@ -50,6 +50,7 @@ while 1:
     tx_throughput = {'wlan0': 0, 'eth0': 0, 'lo': 0}
     rx_throughput = {'wlan0': 0, 'eth0': 0, 'lo': 0}
 
+    # calculate network throughput for each interface
     for nic in network_io:
         bytes_sent_old[nic] = bytes_sent[nic]
         bytes_received_old[nic] = bytes_received[nic]
@@ -62,13 +63,17 @@ while 1:
 
         msg['net'][nic] = {'tx': tx_throughput[nic], 'rx': rx_throughput[nic]}
 
+    # post usage data to mongodb
     posts.insert(msg)
 
+    # print statistics
     print('\nHost_1:')
+    # get max and min cpu usage from mongo
     max_cpu = posts.find_one(sort=[('cpu_usage', pymongo.DESCENDING)])['cpu_usage']
     min_cpu = posts.find_one(sort=[('cpu_usage', pymongo.ASCENDING)])['cpu_usage']
     print('cpu: ' + str(msg['cpu_usage']) + '[Hi: ' + str(max_cpu) + ', Lo: ' + str(min_cpu) + ']')
     for item in msg['net']:
+        # get max and min rx/tx from mongo
         max_rx = posts.find_one(sort=[('net.' + item + '.rx', pymongo.DESCENDING)])['net'][item]['rx']
         min_rx = posts.find_one(sort=[('net.' + item + '.rx', pymongo.ASCENDING)])['net'][item]['rx']
         max_tx = posts.find_one(sort=[('net.' + item + '.tx', pymongo.DESCENDING)])['net'][item]['tx']
