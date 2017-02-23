@@ -43,7 +43,7 @@ while 1:
     network_io = psutil.net_io_counters(pernic=True)
 
     # initialize dictionaries
-    bytes_sent = {'wlan0': 0, 'eth0': 0, 'lo': 0}
+    bytes_sent = {'wlan0': network_io['wlan0'].bytes_sent, 'eth0': 0, 'lo': 0}
     bytes_received = {'wlan0': 0, 'eth0': 0, 'lo': 0}
     bytes_sent_old = {'wlan0': 0, 'eth0': 0, 'lo': 0}
     bytes_received_old = {'wlan0': 0, 'eth0': 0, 'lo': 0}
@@ -71,7 +71,7 @@ while 1:
     # get max and min cpu usage from mongo
     max_cpu = posts.find_one(sort=[('cpu', pymongo.DESCENDING)])['cpu']
     min_cpu = posts.find_one(sort=[('cpu', pymongo.ASCENDING)])['cpu']
-    print('cpu: ' + str(msg['cpu']) + '[Hi: ' + str(max_cpu) + ', Lo: ' + str(min_cpu) + ']')
+    print('cpu: \t' + str(msg['cpu']) + ' [Hi: ' + str(max_cpu) + ', Lo: ' + str(min_cpu) + ']')
     for item in msg['net']:
         # get max and min rx/tx from mongo
         max_rx = posts.find_one(sort=[('net.' + item + '.rx', pymongo.DESCENDING)])['net'][item]['rx']
@@ -79,7 +79,7 @@ while 1:
         max_tx = posts.find_one(sort=[('net.' + item + '.tx', pymongo.DESCENDING)])['net'][item]['tx']
         min_tx = posts.find_one(sort=[('net.' + item + '.tx', pymongo.ASCENDING)])['net'][item]['tx']
 
-        print(item + ': rx=' + str(msg['net'][item]['rx']) + ' B/s ',
+        print(item + ':\trx=' + str(msg['net'][item]['rx']) + ' B/s ',
               '[Hi: ' + str(max_rx) + ' B/s, Lo: ' + str(min_rx) + ' B/s], ',
               'tx=' + str(msg['net'][item]['tx']) + ' B/s ',
               '[Hi: ' + str(max_tx) + ' B/s, Lo: ' + str(min_tx) + ' B/s]')
