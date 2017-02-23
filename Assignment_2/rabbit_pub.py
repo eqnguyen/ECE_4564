@@ -3,12 +3,12 @@
 import pika
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
-               'localhost'))
+    'localhost'))
 channel = connection.channel()
 
 channel.queue_declare(queue='hello')
-channel.exchange_declare(exchange='host_stats', 
-			type='direct')
+channel.exchange_declare(exchange='host_stats',
+                         type='direct')
 
 channel.basic_publish(exchange='host_stats',
                       routing_key='woah',
