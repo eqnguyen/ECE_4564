@@ -1,0 +1,13 @@
+
+Assignment 2 Little Brother
+
+
+RabbitMQ installation and setup
+	sudo apt-get update
+	sudo apt-get install rabbitmq-server
+	sudo pip install pika
+
+	So far that was all that was necissary to get rabbitmq working, youll need to add user name once we are doing a remote host. This will be done with
+		sudo rabbitmqctl add_user "rabbit_user" "rabbit_pass"
+
+
