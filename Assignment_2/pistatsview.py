@@ -1,9 +1,6 @@
 #! /usr/bin/env python3
 
 import argparse
-import re
-
-pat = re.compile("\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}")
 
 
 def main():
