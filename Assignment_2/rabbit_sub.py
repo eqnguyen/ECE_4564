@@ -1,14 +1,20 @@
 #! /usr/bin/env python3
 
 import pika
+import sys
 
 
 def callback(ch, method, properties, body):
     print(" [x] %r:%r" % (method.routing_key, body))
 
+if(len(sys.argv) >= 2):
+        ip = sys.argv[1]
+else:
+        ip = 'localhost'
 
+credentials = pika.PlainCredentials('rabbit_user', 'rabbit_pass')
 connection = pika.BlockingConnection(pika.ConnectionParameters(
-    'localhost'))
+    ip, 5672, 'rabbit_vhost', credentials))
 channel = connection.channel()
 
 channel.exchange_declare(exchange='host_stats',

@@ -9,6 +9,12 @@ RabbitMQ installation and setup
 
 	So far that was all that was necessary to get rabbitmq working, you'll need to add user name once we are doing a remote host. This will be done with
 		sudo rabbitmqctl add_user "rabbit_user" "rabbit_pass"
+		sudo rabbitmqctl add_vhost "rabbit_vhost"
+		sudo rabbitmqctl set_permissions -p "rabbit_vhost" "rabbit_user"  ".*" ".*" ".*"
+
+	run rabbit scripts with destination ip like:
+		python rabbit_pub 127.0.0.1
+		
 
 Required External Libraries:
     pika
