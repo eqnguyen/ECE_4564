@@ -13,16 +13,15 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(
     ip, 5672, 'rabbit_vhost', credentials))
 channel = connection.channel()
 
-channel.queue_declare(queue='hello')
-channel.exchange_declare(exchange='host_stats',
+channel.exchange_declare(exchange='pi_utilization',
                          type='direct')
 
-channel.basic_publish(exchange='host_stats',
+channel.basic_publish(exchange='pi_utilization',
                       routing_key='woah',
                       body='Hello World!')
 
-channel.basic_publish(exchange='host_stats',
+channel.basic_publish(exchange='pi_utilization',
                       routing_key='first',
                       body='Hello World!')
 
-print(" [x] Sent 'Hello World!'")
+print(" [x] Sent 'Hello World!' twice with different routing keys")

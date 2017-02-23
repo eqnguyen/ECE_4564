@@ -17,7 +17,7 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(
     ip, 5672, 'rabbit_vhost', credentials))
 channel = connection.channel()
 
-channel.exchange_declare(exchange='host_stats',
+channel.exchange_declare(exchange='pi_utilization',
                          type='direct')
 
 result = channel.queue_declare(exclusive=True)
@@ -25,12 +25,13 @@ queue_name = result.method.queue
 
 routing_keys = ['first', 'second', 'third', 'woah']
 for key in routing_keys:
-    channel.queue_bind(exchange='host_stats',
+    channel.queue_bind(exchange='pi_utilization',
                        queue=queue_name,
                        routing_key=key)
 
 channel.basic_consume(callback,
                       queue=queue_name,
                       no_ack=True)
+
 print(' [*] Waiting for messages. To exit press CTRL+C')
 channel.start_consuming()
