@@ -7,13 +7,14 @@ import json
 from pprint import pprint
 from pymongo import MongoClient
 
-print("Opening Mongo client")
+print('Opening Mongo client')
 client = MongoClient()
 db = client.host_monitor_database
 posts = db.posts
 
-print("Deleting old entries")
+print('Deleting old entries')
 posts.delete_many({})
+
 
 def get_cpu_utils():
     with open('/proc/stat') as f:
@@ -56,12 +57,17 @@ while 1:
         rx_throughput = bytes_received - bytes_received_old
 
         msg['net'][nic] = {'tx': tx_throughput, 'rx': rx_throughput}
-    
-    posts.insert(msg)
-    
-    print("\nHost_1:")
-    max_cpu = posts.find_one(sort=[("cpu_usage",-1)])['cpu_usage']
-    print("cpu: " + str(msg['cpu_usage']) + " [Hi: " + str(max_cpu) + ", Lo: ]")
-    for item in msg['net']:
-        print(item + ": rx=" + str(msg['net'][item]['rx']) + " B/s [Hi: , Lo: ], tx=" + str(msg['net'][item]['tx']) + " B/s [Hi: , Lo: ]")
 
+    posts.insert(msg)
+
+    print('\nHost_1:')
+    max_cpu = posts.find_one(sort=[('cpu_usage', -1)])['cpu_usage']
+    min_cpu = posts.find_one(sort=[('cpu_usage', 1)])['cpu_usage']
+    print('cpu: ' + str(msg['cpu_usage']) + ''[Hi: '' + str(max_cpu) + '', Lo: '' + str(min_cpu) + '']
+    '')
+    for item in msg['net']:
+        print(item + '': rx = '' + str(msg['net'][item]['rx']) + ''
+        B / s[Hi:, Lo:], tx = '' + str(
+            msg['net'][item]['tx']) + ''
+        B / s[Hi:, Lo:]
+        '')
