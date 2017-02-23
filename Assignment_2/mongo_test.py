@@ -34,10 +34,10 @@ def get_cpu_utils():
 get_cpu_utils.last_idle, get_cpu_utils.last_total = 0, 0
 
 while 1:
-    msg = {'net': {}, 'cpu_usage': 0}
+    msg = {'net': {}, 'cpu': 0}
 
     # gets the cpu utilization, blocking, runs every second
-    msg['cpu_usage'] = psutil.cpu_percent(interval=1)
+    msg['cpu'] = psutil.cpu_percent(interval=1)
 
     # gets the network info for each NIC
     network_io = psutil.net_io_counters(pernic=True)
@@ -69,9 +69,9 @@ while 1:
     # print statistics
     print('\nHost_1:')
     # get max and min cpu usage from mongo
-    max_cpu = posts.find_one(sort=[('cpu_usage', pymongo.DESCENDING)])['cpu_usage']
-    min_cpu = posts.find_one(sort=[('cpu_usage', pymongo.ASCENDING)])['cpu_usage']
-    print('cpu: ' + str(msg['cpu_usage']) + '[Hi: ' + str(max_cpu) + ', Lo: ' + str(min_cpu) + ']')
+    max_cpu = posts.find_one(sort=[('cpu', pymongo.DESCENDING)])['cpu']
+    min_cpu = posts.find_one(sort=[('cpu', pymongo.ASCENDING)])['cpu']
+    print('cpu: ' + str(msg['cpu']) + '[Hi: ' + str(max_cpu) + ', Lo: ' + str(min_cpu) + ']')
     for item in msg['net']:
         # get max and min rx/tx from mongo
         max_rx = posts.find_one(sort=[('net.' + item + '.rx', pymongo.DESCENDING)])['net'][item]['rx']
