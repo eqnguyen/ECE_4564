@@ -32,8 +32,6 @@ def get_cpu_utils():
     return utilisation
 
 
-bytes_sent, bytes_received = 0, 0
-
 # simulates a static variable for get_cpu_utils
 get_cpu_utils.last_idle, get_cpu_utils.last_total = 0, 0
 
@@ -47,16 +45,20 @@ while 1:
     network_io = psutil.net_io_counters(pernic=True)
 
     for nic in network_io:
-        bytes_sent_old = bytes_sent
-        bytes_received_old = bytes_received
+        bytes_sent[nic] = 0
+        bytes_received[nic] = 0
 
-        bytes_sent = network_io[nic].bytes_sent
-        bytes_received = network_io[nic].bytes_recv
+    for nic in network_io:
+        bytes_sent_old[nic] = bytes_sent[nic]
+        bytes_received_old[nic] = bytes_received[nic]
 
-        tx_throughput = bytes_sent - bytes_sent_old
-        rx_throughput = bytes_received - bytes_received_old
+        bytes_sent[nic] = network_io[nic].bytes_sent
+        bytes_received[nic] = network_io[nic].bytes_recv
 
-        msg['net'][nic] = {'tx': tx_throughput, 'rx': rx_throughput}
+        tx_throughput[nic] = bytes_sent[nic] - bytes_sent_old[nic]
+        rx_throughput[nic] = bytes_received[nic] - bytes_received_old[nic]
+
+        msg['net'][nic] = {'tx': tx_throughput[nic], 'rx': rx_throughput[nic]}
 
     posts.insert(msg)
 
