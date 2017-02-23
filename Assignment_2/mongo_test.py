@@ -63,11 +63,8 @@ while 1:
     print('\nHost_1:')
     max_cpu = posts.find_one(sort=[('cpu_usage', -1)])['cpu_usage']
     min_cpu = posts.find_one(sort=[('cpu_usage', 1)])['cpu_usage']
-    print('cpu: ' + str(msg['cpu_usage']) + ''[Hi: '' + str(max_cpu) + '', Lo: '' + str(min_cpu) + '']
-    '')
+    print('cpu: ' + str(msg['cpu_usage']) + '[Hi: ' + str(max_cpu) + ', Lo: ' + str(min_cpu) + ']')
     for item in msg['net']:
-        print(item + '': rx = '' + str(msg['net'][item]['rx']) + ''
-        B / s[Hi:, Lo:], tx = '' + str(
-            msg['net'][item]['tx']) + ''
-        B / s[Hi:, Lo:]
-        '')
+        print(
+            item + ': rx=' + str(msg['net'][item]['rx']) + ' B/s [Hi:, Lo:], tx=' + str(
+                msg['net'][item]['tx']) + ' B/s [Hi:, Lo:]')
