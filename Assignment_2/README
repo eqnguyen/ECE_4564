@@ -10,4 +10,6 @@ RabbitMQ installation and setup
 	So far that was all that was necissary to get rabbitmq working, youll need to add user name once we are doing a remote host. This will be done with
 		sudo rabbitmqctl add_user "rabbit_user" "rabbit_pass"
 
-
+Required External Libraries:
+    pika
+    psutil (only required for pistatsd)
