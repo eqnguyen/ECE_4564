@@ -4,6 +4,7 @@ import argparse, pika
 import pymongo
 import json
 from pymongo import MongoClient
+import RPi.GPIO as GPIO
 
 print('Opening Mongo client')
 client = MongoClient()
@@ -13,6 +14,14 @@ posts = db.posts
 print('Deleting old entries')
 posts.drop()
 
+#set pin mode to the numbers you can read off the pi
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
+#set up channel list
+chan_list = [13,19,26] #13 red, 19 green, 26 blue
+GPIO.setup(chan_list, GPIO.OUT)
+
 def callback(ch, method, properties, body):
     print(" [x] %r:%r" % (method.routing_key, body))
     
@@ -20,6 +29,16 @@ def callback(ch, method, properties, body):
 
     # post usage data to mongodb
     posts.insert(data)
+
+    input = data['cpu']
+
+    # Display LED based on threshold and input
+    if input < .25:
+        GPIO.output(chan_list, (False, True, False))  # green
+    elif input < .5:
+        GPIO.output(chan_list, (True, True, False))  # yellow
+    else:
+        GPIO.output(chan_list, (True, False, False))  # red
     
     # get max and min cpu usage from mongo
     max_cpu = posts.find_one(sort=[('cpu', pymongo.DESCENDING)])['cpu']
