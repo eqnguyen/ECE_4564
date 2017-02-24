@@ -12,13 +12,12 @@ chan_list = [13,19,26] #13 red, 19 green, 26 blue
 GPIO.setup(chan_list, GPIO.OUT)
 
 #modify these to be from data
-threshold = 100
-input = 30
+input = 0.2
 
 #Display LED based on threshold and input
-if input < (threshold * .25):
+if input < .25:
         GPIO.output(chan_list, (False,True,False)) #green
-elif input < (threshold * .5):
+elif input < .5:
         GPIO.output(chan_list, (True,True,False)) #yellow
 else:
         GPIO.output(chan_list, (True,False,False)) #red
