@@ -13,17 +13,25 @@ def main():
 
     # Add arguments to the parser
     parser.add_argument('-b', required=True, help='IP/named address of the message broker')
-    parser.add_argument('-p', type=int, help='Virtual host (default is "/")')
-    parser.add_argument('-c', type=int, help='login:password')
+    parser.add_argument('-p', help='Virtual host (default is "/")')
+    parser.add_argument('-c', help='login:password')
     parser.add_argument('-k', required=True, help='routing key')
 
     # Store arguments into variable
     args = parser.parse_args()
+    args = parser.parse_args()
+    if args.p is None:
+        args.p = '/'
+    if args.c is None: 
+        args.c = 'guest:guest'
+    temp = args.c.split(':')
+    user = temp[0]
+    password = temp[1]
 
     # Create connection with rabbitMQ broker
-    credentials = pika.PlainCredentials('rabbit_user', 'rabbit_pass')
+    credentials = pika.PlainCredentials(user, password)
     connection = pika.BlockingConnection(pika.ConnectionParameters(
-        args.b, 5672, 'rabbit_vhost', credentials))
+        args.b, 5672, args.p, credentials))
     channel = connection.channel()
 
     channel.exchange_declare(exchange='pi_utilization', type='direct')

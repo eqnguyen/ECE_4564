@@ -1,6 +1,12 @@
 
 Assignment 2 Little Brother
 
+Run the project with commands like these:
+./pistatsd.py -b localhost -k first -p rabbit_vhost -c rabbit_user:rabbit_pass
+./pistatsview.py -b localhost -k first -p rabbit_vhost -c rabbit_user:rabbit_pass
+
+./pistatsd.py -b localhost -k first
+./pistatsview.py -b localhost -k first
 
 RabbitMQ installation and setup
 	sudo apt-get update
