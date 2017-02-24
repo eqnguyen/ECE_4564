@@ -52,11 +52,11 @@ bytes_sent, bytes_received = 0, 0
 # simulates a static variable for get_cpu_utils
 get_cpu_utils.last_idle, get_cpu_utils.last_total = 0, 0
 
-msg = {'net': {}, 'cpu_usage': 0}
+msg = {'net': {}, 'cpu': 0}
 
 while 1:
     # gets the cpu utilization, blocking, runs every second
-    msg['cpu_usage'] = psutil.cpu_percent(interval=1)
+    msg['cpu'] = psutil.cpu_percent(interval=1)
     # gets the network info for each NIC
     network_io = psutil.net_io_counters(pernic=True)
     for nic in network_io:
