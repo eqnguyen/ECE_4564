@@ -23,7 +23,7 @@ chan_list = [13,19,26] #13 red, 19 green, 26 blue
 GPIO.setup(chan_list, GPIO.OUT)
 
 def callback(ch, method, properties, body):
-    print(" [x] %r:%r" % (method.routing_key, body))
+    # print(" [x] %r:%r" % (method.routing_key, body))
     
     data = json.loads(body.decode())
 
@@ -39,7 +39,9 @@ def callback(ch, method, properties, body):
         GPIO.output(chan_list, (True, True, False))  # yellow
     else:
         GPIO.output(chan_list, (True, False, False))  # red
-    
+
+    print('\n%r' % method.routing_key)
+
     # get max and min cpu usage from mongo
     max_cpu = posts.find_one(sort=[('cpu', pymongo.DESCENDING)])['cpu']
     min_cpu = posts.find_one(sort=[('cpu', pymongo.ASCENDING)])['cpu']
