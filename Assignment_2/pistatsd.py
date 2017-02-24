@@ -3,7 +3,7 @@
 import argparse, psutil
 from time import sleep
 import pika
-
+import json
 
 def get_cpu_utils():
     with open('/proc/stat') as f:
@@ -26,18 +26,18 @@ parser = argparse.ArgumentParser(description='Publishes stats on network and CPU
 parser.add_argument('-b', required=True, help='IP/named address of the message broker')
 parser.add_argument('-p', type=int, help='Virtual host (default is "/")')
 parser.add_argument('-c', type=int, help='login:password')
-parser.add_argument('-k', type=int, required=True, help='routing key')
+parser.add_argument('-k', required=True, help='routing key')
 
 args = parser.parse_args()
 # ------------------------------------------------------------------------------------
 
 # ---------- set up connection and queue with rabbitMQ broker ------------------------
+credentials = pika.PlainCredentials('rabbit_user', 'rabbit_pass')
 connection = pika.BlockingConnection(pika.ConnectionParameters(
-    args.b))
+    args.b, 5672, 'rabbit_vhost', credentials))
 channel = connection.channel()
 
-channel.queue_declare(queue='hello')
-channel.exchange_declare(exchange='host_stats',
+channel.exchange_declare(exchange='pi_utilization',
                          type='direct')
 # ------------------------------------------------------------------------------------
 
@@ -67,5 +67,5 @@ while 1:
     # publish the stats to a rabbitMQ server
     channel.basic_publish(exchange='pi_utilization',
                           routing_key=args.k,
-                          body=msg)
+                          body=json.dumps(msg))
     print(msg)

@@ -21,7 +21,9 @@ def main():
     args = parser.parse_args()
 
     # Create connection with rabbitMQ broker
-    connection = pika.BlockingConnection(pika.ConnectionParameters(args.b))
+    credentials = pika.PlainCredentials('rabbit_user', 'rabbit_pass')
+    connection = pika.BlockingConnection(pika.ConnectionParameters(
+        args.b, 5672, 'rabbit_vhost', credentials))
     channel = connection.channel()
 
     channel.exchange_declare(exchange='pi_utilization', type='direct')
