@@ -78,8 +78,8 @@ def prime_net_util(devices):
         device = device_stats.split(':')[0].strip()
         devices[device] = {'bytes_tx_old': 0, 'bytes_rx_old': 0, 'bytes_tx': 0, 'bytes_rx': 0, }
 
-        devices[device]['bytes_tx'] = device_stats.split()[9]
-        devices[device]['bytes_rx'] = device_stats.split()[1]
+        devices[device]['bytes_tx'] = int(device_stats.split()[9])
+        devices[device]['bytes_rx'] = int(device_stats.split()[1])
 
 
 # simulates a static variable for get_cpu_utils
@@ -89,6 +89,7 @@ network_io = {}
 
 prime_cpu_util()
 prime_net_util(network_io)
+sleep(1)
 
 while 1:
     msg = {'net': {}, 'cpu': 0}
