@@ -1,8 +1,6 @@
 #! /usr/bin/env python3
 
 import pymongo
-import psutil
-from pprint import pprint
 from pymongo import MongoClient
 
 print('Opening Mongo client')
@@ -14,54 +12,69 @@ print('Deleting old entries')
 posts.drop()
 
 
-def get_cpu_utils():
+def get_cpu_util():
     with open('/proc/stat') as f:
         fields = [float(column) for column in f.readline().strip().split()[1:]]
     idle, total = fields[3], sum(fields)
 
-    idle_delta = idle - get_cpu_utils.last_idle
-    total_delta = total - get_cpu_utils.last_total
+    idle_delta = idle - get_cpu_util.last_idle
+    total_delta = total - get_cpu_util.last_total
 
-    get_cpu_utils.last_idle = idle
-    get_cpu_utils.last_total = total
+    get_cpu_util.last_idle = idle
+    get_cpu_util.last_total = total
 
     utilisation = 1.0 - idle_delta / total_delta
 
     return utilisation
 
 
+def get_net_util(devices):
+    with open('/proc/net/dev') as f:
+        dev = f.read()
+    dev = dev.split('\n')[2:]
+
+    for device_stats in dev:
+        if device_stats == '':
+            continue
+        device = device_stats.split(':')[0].strip()
+        if device in devices:
+            devices[device]['bytes_tx_old'] = devices[device]['bytes_tx']
+            devices[device]['bytes_rx_old'] = devices[device]['bytes_rx']
+            devices[device]['bytes_tx'] = device_stats.split()[9]
+            devices[device]['bytes_rx'] = device_stats.split()[1]
+        else:
+            devices[device] = {'bytes_tx_old': 0, 'bytes_rx_old': 0, 'bytes_tx': 0, 'bytes_rx': 0, }
+
+            devices[device]['bytes_tx_old'] = device_stats.split()[9]
+            devices[device]['bytes_rx_old'] = device_stats.split()[1]
+            devices[device]['bytes_tx'] = device_stats.split()[9]
+            devices[device]['bytes_rx'] = device_stats.split()[1]
+
+
 # simulates a static variable for get_cpu_utils
-get_cpu_utils.last_idle, get_cpu_utils.last_total = 0, 0
+get_cpu_util.last_idle, get_cpu_util.last_total = 0, 0
 
 while 1:
     msg = {'net': {}, 'cpu': 0}
 
     # gets the cpu utilization, blocking, runs every second
-    msg['cpu'] = psutil.cpu_percent(interval=1)
-
+    msg['cpu'] = get_cpu_util()
     # gets the network info for each NIC
-    network_io = psutil.net_io_counters(pernic=True)
-
-    # initialize dictionaries
-    bytes_sent = {'wlan0': network_io['wlan0'].bytes_sent, 'eth0': 0, 'lo': 0}
-    bytes_received = {'wlan0': 0, 'eth0': 0, 'lo': 0}
-    bytes_sent_old = {'wlan0': 0, 'eth0': 0, 'lo': 0}
-    bytes_received_old = {'wlan0': 0, 'eth0': 0, 'lo': 0}
-    tx_throughput = {'wlan0': 0, 'eth0': 0, 'lo': 0}
-    rx_throughput = {'wlan0': 0, 'eth0': 0, 'lo': 0}
+    network_io = {}
+    get_net_util(network_io)
 
     # calculate network throughput for each interface
     for nic in network_io:
-        bytes_sent_old[nic] = bytes_sent[nic]
-        bytes_received_old[nic] = bytes_received[nic]
+        bytes_sent_old = network_io[nic]['bytes_tx_old']
+        bytes_received_old = network_io[nic]['bytes_rx_old']
 
-        bytes_sent[nic] = network_io[nic].bytes_sent
-        bytes_received[nic] = network_io[nic].bytes_recv
+        bytes_sent = network_io[nic]['bytes_tx']
+        bytes_received = network_io[nic]['bytes_rx']
 
-        tx_throughput[nic] = bytes_sent[nic] - bytes_sent_old[nic]
-        rx_throughput[nic] = bytes_received[nic] - bytes_received_old[nic]
+        tx_throughput = bytes_sent - bytes_sent_old
+        rx_throughput = bytes_received - bytes_received_old
 
-        msg['net'][nic] = {'tx': tx_throughput[nic], 'rx': rx_throughput[nic]}
+        msg['net'][nic] = {'tx': tx_throughput, 'rx': rx_throughput}
 
     # post usage data to mongodb
     posts.insert(msg)
