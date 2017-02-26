@@ -25,13 +25,14 @@ while True:
     elif delete == 'n':
         break
 
-#set pin mode to the numbers you can read off the pi
+# set pin mode to the numbers you can read off the pi
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-#set up channel list
-chan_list = [13,19,26] #13 red, 19 green, 26 blue
+# set up channel list
+chan_list = [13, 19, 26]  # 13 red, 19 green, 26 blue
 GPIO.setup(chan_list, GPIO.OUT)
+
 
 def callback(ch, method, properties, body):
     data = json.loads(body.decode())
@@ -64,7 +65,7 @@ def callback(ch, method, properties, body):
         min_rx = posts.find_one(sort=[('net.' + item + '.rx', pymongo.ASCENDING)])['net'][item]['rx']
         max_tx = posts.find_one(sort=[('net.' + item + '.tx', pymongo.DESCENDING)])['net'][item]['tx']
         min_tx = posts.find_one(sort=[('net.' + item + '.tx', pymongo.ASCENDING)])['net'][item]['tx']
-   
+
         print(item + ':\trx=' + str(data['net'][item]['rx']) + ' B/s ',
               '[Hi: ' + str(max_rx) + ' B/s, Lo: ' + str(min_rx) + ' B/s], ',
               'tx=' + str(data['net'][item]['tx']) + ' B/s ',
@@ -86,7 +87,7 @@ def main():
     args = parser.parse_args()
     if args.p is None:
         args.p = '/'
-    if args.c is None: 
+    if args.c is None:
         args.c = 'guest:guest'
     temp = args.c.split(':')
     user = temp[0]
@@ -113,6 +114,7 @@ def main():
     except pika.exceptions.ConnectionClosed:
         print("Error: pika connection closed")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

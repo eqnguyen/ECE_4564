@@ -88,13 +88,13 @@ password = temp[1]
 # ------------------------------------------------------------------------------------
 
 # ---------- set up connection and queue with rabbitMQ broker ------------------------
-#credentials = pika.PlainCredentials(user, password)
-#connection = pika.BlockingConnection(pika.ConnectionParameters(
-#    args.b, 5672, args.p, credentials))
-#channel = connection.channel()
+credentials = pika.PlainCredentials(user, password)
+connection = pika.BlockingConnection(pika.ConnectionParameters(
+    args.b, 5672, args.p, credentials))
+channel = connection.channel()
 
-#channel.exchange_declare(exchange='pi_utilization',
-#                         type='direct')
+channel.exchange_declare(exchange='pi_utilization',
+                         type='direct')
 # ------------------------------------------------------------------------------------
 
 bytes_sent, bytes_received = 0, 0
@@ -126,8 +126,8 @@ while 1:
         msg['net'][nic] = {'tx': tx_throughput, 'rx': rx_throughput}
 
     # publish the stats to a rabbitMQ server
-#    channel.basic_publish(exchange='pi_utilization',
- #                         routing_key=args.k,
-  #                        body=json.dumps(msg))
+    channel.basic_publish(exchange='pi_utilization',
+                          routing_key=args.k,
+                          body=json.dumps(msg))
     print(msg)
     sleep(1)
