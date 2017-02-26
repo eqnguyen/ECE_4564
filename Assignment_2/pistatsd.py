@@ -43,15 +43,15 @@ def get_net_util(devices):
         if device in devices:
             devices[device]['bytes_tx_old'] = devices[device]['bytes_tx']
             devices[device]['bytes_rx_old'] = devices[device]['bytes_rx']
-            devices[device]['bytes_tx'] = device_stats.split()[9]
-            devices[device]['bytes_rx'] = device_stats.split()[1]
+            devices[device]['bytes_tx'] = int(device_stats.split()[9])
+            devices[device]['bytes_rx'] = int(device_stats.split()[1])
         else:
             devices[device] = {'bytes_tx_old': 0, 'bytes_rx_old': 0, 'bytes_tx': 0, 'bytes_rx': 0, }
 
-            devices[device]['bytes_tx_old'] = device_stats.split()[9]
-            devices[device]['bytes_rx_old'] = device_stats.split()[1]
-            devices[device]['bytes_tx'] = device_stats.split()[9]
-            devices[device]['bytes_rx'] = device_stats.split()[1]
+            devices[device]['bytes_tx_old'] = int(device_stats.split()[9])
+            devices[device]['bytes_rx_old'] = int(device_stats.split()[1])
+            devices[device]['bytes_tx'] = int(device_stats.split()[9])
+            devices[device]['bytes_rx'] = int(device_stats.split()[1])
 
 
 def prime_net_util(devices):
@@ -65,8 +65,8 @@ def prime_net_util(devices):
         device = device_stats.split(':')[0].strip()
         devices[device] = {'bytes_tx_old': 0, 'bytes_rx_old': 0, 'bytes_tx': 0, 'bytes_rx': 0, }
 
-        devices[device]['bytes_tx'] = device_stats.split()[9]
-        devices[device]['bytes_rx'] = device_stats.split()[1]
+        devices[device]['bytes_tx'] = int(device_stats.split()[9])
+        devices[device]['bytes_rx'] = int(device_stats.split()[1])
 
 
 # -------------------- Parsing command line ------------------------------------------
@@ -88,13 +88,13 @@ password = temp[1]
 # ------------------------------------------------------------------------------------
 
 # ---------- set up connection and queue with rabbitMQ broker ------------------------
-credentials = pika.PlainCredentials(user, password)
-connection = pika.BlockingConnection(pika.ConnectionParameters(
-    args.b, 5672, args.p, credentials))
-channel = connection.channel()
+#credentials = pika.PlainCredentials(user, password)
+#connection = pika.BlockingConnection(pika.ConnectionParameters(
+#    args.b, 5672, args.p, credentials))
+#channel = connection.channel()
 
-channel.exchange_declare(exchange='pi_utilization',
-                         type='direct')
+#channel.exchange_declare(exchange='pi_utilization',
+#                         type='direct')
 # ------------------------------------------------------------------------------------
 
 bytes_sent, bytes_received = 0, 0
@@ -104,6 +104,7 @@ network_io = {}
 
 prime_cpu_util()
 prime_net_util(network_io)
+sleep(1)
 
 msg = {'net': {}, 'cpu': 0}
 
@@ -125,8 +126,8 @@ while 1:
         msg['net'][nic] = {'tx': tx_throughput, 'rx': rx_throughput}
 
     # publish the stats to a rabbitMQ server
-    channel.basic_publish(exchange='pi_utilization',
-                          routing_key=args.k,
-                          body=json.dumps(msg))
+#    channel.basic_publish(exchange='pi_utilization',
+ #                         routing_key=args.k,
+  #                        body=json.dumps(msg))
     print(msg)
     sleep(1)
