@@ -2,14 +2,21 @@
 
 import pymongo
 from pymongo import MongoClient
+from time import sleep
 
 print('Opening Mongo client')
 client = MongoClient()
 db = client.host_monitor_database
 posts = db.posts
 
-print('Deleting old entries')
-posts.drop()
+while True:
+    delete = input("Clear old data in the database? (Y/N): ").lower()
+    if delete == 'y':
+        print('Deleting old entries')
+        posts.drop()
+        break
+    elif delete == 'n':
+        break
 
 
 def get_cpu_util():
@@ -40,19 +47,21 @@ def get_net_util(devices):
         if device in devices:
             devices[device]['bytes_tx_old'] = devices[device]['bytes_tx']
             devices[device]['bytes_rx_old'] = devices[device]['bytes_rx']
-            devices[device]['bytes_tx'] = device_stats.split()[9]
-            devices[device]['bytes_rx'] = device_stats.split()[1]
+            devices[device]['bytes_tx'] = int(device_stats.split()[9])
+            devices[device]['bytes_rx'] = int(device_stats.split()[1])
         else:
             devices[device] = {'bytes_tx_old': 0, 'bytes_rx_old': 0, 'bytes_tx': 0, 'bytes_rx': 0, }
 
-            devices[device]['bytes_tx_old'] = device_stats.split()[9]
-            devices[device]['bytes_rx_old'] = device_stats.split()[1]
-            devices[device]['bytes_tx'] = device_stats.split()[9]
-            devices[device]['bytes_rx'] = device_stats.split()[1]
+            devices[device]['bytes_tx_old'] = int(device_stats.split()[9])
+            devices[device]['bytes_rx_old'] = int(device_stats.split()[1])
+            devices[device]['bytes_tx'] = int(device_stats.split()[9])
+            devices[device]['bytes_rx'] = int(device_stats.split()[1])
 
 
 # simulates a static variable for get_cpu_utils
 get_cpu_util.last_idle, get_cpu_util.last_total = 0, 0
+
+network_io = {}
 
 while 1:
     msg = {'net': {}, 'cpu': 0}
@@ -60,7 +69,6 @@ while 1:
     # gets the cpu utilization, blocking, runs every second
     msg['cpu'] = get_cpu_util()
     # gets the network info for each NIC
-    network_io = {}
     get_net_util(network_io)
 
     # calculate network throughput for each interface
@@ -70,7 +78,7 @@ while 1:
 
         bytes_sent = network_io[nic]['bytes_tx']
         bytes_received = network_io[nic]['bytes_rx']
-
+        
         tx_throughput = bytes_sent - bytes_sent_old
         rx_throughput = bytes_received - bytes_received_old
 
@@ -96,3 +104,5 @@ while 1:
               '[Hi: ' + str(max_rx) + ' B/s, Lo: ' + str(min_rx) + ' B/s], ',
               'tx=' + str(msg['net'][item]['tx']) + ' B/s ',
               '[Hi: ' + str(max_tx) + ' B/s, Lo: ' + str(min_tx) + ' B/s]')
+
+    sleep(1)
