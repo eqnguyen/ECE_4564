@@ -1,18 +1,29 @@
 #! /usr/bin/env python3
 
-import argparse, pika
-import pymongo
+import sys, argparse
+import pika, pymongo
 import json
-from pymongo import MongoClient
 import RPi.GPIO as GPIO
+from pymongo import MongoClient
+from pika.exceptions import (ConnectionClosed)
 
-print('Opening Mongo client')
-client = MongoClient()
-db = client.host_monitor_database
-posts = db.posts
+try:
+    print('Opening Mongo client')
+    client = MongoClient()
+    db = client.host_monitor_database
+    posts = db.posts
+except Exception as e:
+    print("Error: " + str(e))
+    sys.exit(0)
 
-print('Deleting old entries')
-posts.drop()
+while True:
+    delete = input("Clear old data in the database? (Y/N): ").lower()
+    if delete == 'y':
+        print('Deleting old entries')
+        posts.drop()
+        break
+    elif delete == 'n':
+        break
 
 #set pin mode to the numbers you can read off the pi
 GPIO.setmode(GPIO.BCM)
@@ -23,12 +34,13 @@ chan_list = [13,19,26] #13 red, 19 green, 26 blue
 GPIO.setup(chan_list, GPIO.OUT)
 
 def callback(ch, method, properties, body):
-    # print(" [x] %r:%r" % (method.routing_key, body))
-    
     data = json.loads(body.decode())
 
-    # post usage data to mongodb
-    posts.insert(data)
+    try:
+        # post usage data to MongoDB
+        posts.insert(data)
+    except:
+        print("Error: Could not post to MongoDB")
 
     input = data['cpu']
 
@@ -42,12 +54,12 @@ def callback(ch, method, properties, body):
 
     print('\n%r' % method.routing_key)
 
-    # get max and min cpu usage from mongo
+    # get max and min cpu usage from Mongo
     max_cpu = posts.find_one(sort=[('cpu', pymongo.DESCENDING)])['cpu']
     min_cpu = posts.find_one(sort=[('cpu', pymongo.ASCENDING)])['cpu']
     print('cpu: \t' + str(data['cpu']) + ' [Hi: ' + str(max_cpu) + ', Lo: ' + str(min_cpu) + ']')
     for item in data['net']:
-        # get max and min rx/tx from mongo
+        # get max and min rx/tx from Mongo
         max_rx = posts.find_one(sort=[('net.' + item + '.rx', pymongo.DESCENDING)])['net'][item]['rx']
         min_rx = posts.find_one(sort=[('net.' + item + '.rx', pymongo.ASCENDING)])['net'][item]['rx']
         max_tx = posts.find_one(sort=[('net.' + item + '.tx', pymongo.DESCENDING)])['net'][item]['tx']
@@ -81,23 +93,26 @@ def main():
     password = temp[1]
 
     # Create connection with rabbitMQ broker
-    credentials = pika.PlainCredentials(user, password)
-    connection = pika.BlockingConnection(pika.ConnectionParameters(
-        args.b, 5672, args.p, credentials))
-    channel = connection.channel()
+    try:
+        credentials = pika.PlainCredentials(user, password)
+        connection = pika.BlockingConnection(pika.ConnectionParameters(
+            args.b, 5672, args.p, credentials))
+        channel = connection.channel()
 
-    channel.exchange_declare(exchange='pi_utilization', type='direct')
-    result = channel.queue_declare(exclusive=True)
+        channel.exchange_declare(exchange='pi_utilization', type='direct')
+        result = channel.queue_declare(exclusive=True)
 
-    queue_name = result.method.queue
+        queue_name = result.method.queue
 
-    channel.queue_bind(exchange='pi_utilization', queue=queue_name, routing_key=args.k)
-    channel.basic_consume(callback, queue=queue_name, no_ack=True)
+        channel.queue_bind(exchange='pi_utilization', queue=queue_name, routing_key=args.k)
+        channel.basic_consume(callback, queue=queue_name, no_ack=True)
 
-    print(' [*] Waiting for messages. To exit press CTRL+C')
-    # Start consuming messages
-    channel.start_consuming()
-
+        print(' [*] Waiting for messages. To exit press CTRL+C')
+        # Start consuming messages
+        channel.start_consuming()
+    except pika.exceptions.ConnectionClosed:
+        print("Error: pika connection closed")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
