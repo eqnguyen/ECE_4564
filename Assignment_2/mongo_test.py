@@ -35,6 +35,15 @@ def get_cpu_util():
     return utilisation
 
 
+def prime_cpu_util():
+    with open('/proc/stat') as f:
+        fields = [float(column) for column in f.readline().strip().split()[1:]]
+    idle, total = fields[3], sum(fields)
+
+    get_cpu_util.last_idle = idle
+    get_cpu_util.last_total = total
+
+
 def get_net_util(devices):
     with open('/proc/net/dev') as f:
         dev = f.read()
@@ -58,10 +67,28 @@ def get_net_util(devices):
             devices[device]['bytes_rx'] = int(device_stats.split()[1])
 
 
+def prime_net_util(devices):
+    with open('/proc/net/dev') as f:
+        dev = f.read()
+    dev = dev.split('\n')[2:]
+
+    for device_stats in dev:
+        if device_stats == '':
+            continue
+        device = device_stats.split(':')[0].strip()
+        devices[device] = {'bytes_tx_old': 0, 'bytes_rx_old': 0, 'bytes_tx': 0, 'bytes_rx': 0, }
+
+        devices[device]['bytes_tx'] = device_stats.split()[9]
+        devices[device]['bytes_rx'] = device_stats.split()[1]
+
+
 # simulates a static variable for get_cpu_utils
 get_cpu_util.last_idle, get_cpu_util.last_total = 0, 0
 
 network_io = {}
+
+prime_cpu_util()
+prime_net_util(network_io)
 
 while 1:
     msg = {'net': {}, 'cpu': 0}
@@ -78,7 +105,7 @@ while 1:
 
         bytes_sent = network_io[nic]['bytes_tx']
         bytes_received = network_io[nic]['bytes_rx']
-        
+
         tx_throughput = bytes_sent - bytes_sent_old
         rx_throughput = bytes_received - bytes_received_old
 
