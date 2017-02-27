@@ -130,4 +130,5 @@ if __name__ == "__main__":
         main()
     except:
         print('')
+        GPIO.cleanup(chan_list)
         sys.exit(1)
