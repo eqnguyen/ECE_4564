@@ -116,12 +116,15 @@ def main():
         channel.start_consuming()
     except pika.exceptions.ConnectionClosed:
         print("Error: pika connection closed")
+        print ("Try fixing your ip")
         sys.exit(1)
     except pika.exceptions.ProbableAuthenticationError:
         print("Error: pika probable authentication error")
+        print("Try fixing credentials")
         sys.exit(1)
     except pika.exceptions.ProbableAccessDeniedError:
         print("Error: pika probably access denied error")
+        print("Try fixing vhost name")
         sys.exit(1)
 
 

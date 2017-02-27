@@ -100,6 +100,13 @@ try:
 
     channel.exchange_declare(exchange='pi_utilization',
                              type='direct')
+
+    result = channel.queue_declare(exclusive=True)
+
+    queue_name = result.method.queue
+
+    channel.queue_bind(exchange='pi_utilization', queue=queue_name, routing_key=args.k)
+    
     # ------------------------------------------------------------------------------------
 
     bytes_sent, bytes_received = 0, 0
@@ -139,12 +146,15 @@ try:
 
 except pika.exceptions.ConnectionClosed:
     print("Error: pika connection closed")
+    print ("Try fixing your ip")
     sys.exit(1)
 except pika.exceptions.ProbableAuthenticationError:
     print("Error: pika probable authentication error")
+    print("Try fixing credentials")
     sys.exit(1)
 except pika.exceptions.ProbableAccessDeniedError:
     print("Error: pika probably access denied error")
+    print("Try fixing vhost name")
     sys.exit(1)
 except:
     print('')
