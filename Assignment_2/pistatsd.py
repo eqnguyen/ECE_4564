@@ -4,6 +4,7 @@ import argparse
 from time import sleep
 import pika
 import json
+import sys
 
 
 def get_cpu_util():
@@ -83,51 +84,68 @@ if args.p is None:
 if args.c is None:
     args.c = 'guest:guest'
 temp = args.c.split(':', 2)
+if(len(temp) < 2):
+    print("Error: credentials must include a :")
+    sys.exit(1)
 user = temp[0]
 password = temp[1]
 # ------------------------------------------------------------------------------------
 
 # ---------- set up connection and queue with rabbitMQ broker ------------------------
-credentials = pika.PlainCredentials(user, password)
-connection = pika.BlockingConnection(pika.ConnectionParameters(
-    args.b, 5672, args.p, credentials))
-channel = connection.channel()
+try: 
+    credentials = pika.PlainCredentials(user, password)
+    connection = pika.BlockingConnection(pika.ConnectionParameters(
+        args.b, 5672, args.p, credentials))
+    channel = connection.channel()
 
-channel.exchange_declare(exchange='pi_utilization',
-                         type='direct')
-# ------------------------------------------------------------------------------------
+    channel.exchange_declare(exchange='pi_utilization',
+                             type='direct')
+    # ------------------------------------------------------------------------------------
 
-bytes_sent, bytes_received = 0, 0
-# simulates a static variable for get_cpu_utils
-get_cpu_util.last_idle, get_cpu_util.last_total = 0, 0
-network_io = {}
+    bytes_sent, bytes_received = 0, 0
+    # simulates a static variable for get_cpu_utils
+    get_cpu_util.last_idle, get_cpu_util.last_total = 0, 0
+    network_io = {}
 
-prime_cpu_util()
-prime_net_util(network_io)
-sleep(1)
-
-msg = {'net': {}, 'cpu': 0}
-
-while 1:
-    # gets the cpu utilization, blocking, runs every second
-    msg['cpu'] = get_cpu_util()
-    # gets the network info for each NIC
-    get_net_util(network_io)
-    for nic in network_io:
-        bytes_sent_old = network_io[nic]['bytes_tx_old']
-        bytes_received_old = network_io[nic]['bytes_rx_old']
-
-        bytes_sent = network_io[nic]['bytes_tx']
-        bytes_received = network_io[nic]['bytes_rx']
-
-        tx_throughput = bytes_sent - bytes_sent_old
-        rx_throughput = bytes_received - bytes_received_old
-
-        msg['net'][nic] = {'tx': tx_throughput, 'rx': rx_throughput}
-
-    # publish the stats to a rabbitMQ server
-    channel.basic_publish(exchange='pi_utilization',
-                          routing_key=args.k,
-                          body=json.dumps(msg))
-    print(msg)
+    prime_cpu_util()
+    prime_net_util(network_io)
     sleep(1)
+
+    msg = {'net': {}, 'cpu': 0}
+
+    while 1:
+        # gets the cpu utilization, blocking, runs every second
+        msg['cpu'] = get_cpu_util()
+        # gets the network info for each NIC
+        get_net_util(network_io)
+        for nic in network_io:
+            bytes_sent_old = network_io[nic]['bytes_tx_old']
+            bytes_received_old = network_io[nic]['bytes_rx_old']
+
+            bytes_sent = network_io[nic]['bytes_tx']
+            bytes_received = network_io[nic]['bytes_rx']
+
+            tx_throughput = bytes_sent - bytes_sent_old
+            rx_throughput = bytes_received - bytes_received_old
+
+            msg['net'][nic] = {'tx': tx_throughput, 'rx': rx_throughput}
+
+        # publish the stats to a rabbitMQ server
+        channel.basic_publish(exchange='pi_utilization',
+                              routing_key=args.k,
+                              body=json.dumps(msg))
+        print(msg)
+        sleep(1)
+
+except pika.exceptions.ConnectionClosed:
+    print("Error: pika connection closed")
+    sys.exit(1)
+except pika.exceptions.ProbableAuthenticationError:
+    print("Error: pika probable authentication error")
+    sys.exit(1)
+except pika.exceptions.ProbableAccessDeniedError:
+    print("Error: pika probably access denied error")
+    sys.exit(1)
+except:
+    print('')
+    sys.exit(1)
