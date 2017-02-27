@@ -2,11 +2,16 @@
 Assignment 2 Little Brother
 
 Run the project with commands like these:
-./pistatsd.py -b localhost -k first -p rabbit_vhost -c rabbit_user:rabbit_pass
-./pistatsview.py -b localhost -k first -p rabbit_vhost -c rabbit_user:rabbit_pass
+	usage: pistatsd.py [-h] -b B [-p P] [-c C] -k K
 
-./pistatsd.py -b localhost -k first
-./pistatsview.py -b localhost -k first
+	Publishes stats on network and CPU utilization to a RabbitMQ broker
+
+	optional arguments:
+	  -h, --help  show this help message and exit
+	  -b B        IP/named address of the message broker
+	  -p P        Virtual host (default is "/")
+	  -c C 	      login:password
+	  -k K        routing key
 
 RabbitMQ installation and setup
 	sudo apt-get update
@@ -23,5 +28,4 @@ RabbitMQ installation and setup
 
 Required External Libraries:
     pika
-    psutil (only required for pistatsd)
     pymongo (only required for pistatsview)
