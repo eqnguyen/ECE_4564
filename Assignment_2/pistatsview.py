@@ -20,7 +20,7 @@ while True:
     delete = input("Clear old data in the database? (Y/N): ").lower()
     if delete == 'y':
         print('Deleting old entries')
-        posts.drop()
+        client.drop_database("host_monitor_database")
         break
     elif delete == 'n':
         break
