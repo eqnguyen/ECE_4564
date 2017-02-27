@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+import os, sys
 import pymongo
 from pymongo import MongoClient
 from time import sleep
@@ -112,25 +113,31 @@ while 1:
 
         msg['net'][nic] = {'tx': tx_throughput, 'rx': rx_throughput}
 
-    # post usage data to mongodb
-    posts.insert(msg)
+    try:
+        # post usage data to mongodb
+        posts.insert(msg)
 
-    # print statistics
-    print('\nHost_1:')
-    # get max and min cpu usage from mongo
-    max_cpu = posts.find_one(sort=[('cpu', pymongo.DESCENDING)])['cpu']
-    min_cpu = posts.find_one(sort=[('cpu', pymongo.ASCENDING)])['cpu']
-    print('cpu: \t' + str(msg['cpu']) + ' [Hi: ' + str(max_cpu) + ', Lo: ' + str(min_cpu) + ']')
-    for item in msg['net']:
-        # get max and min rx/tx from mongo
-        max_rx = posts.find_one(sort=[('net.' + item + '.rx', pymongo.DESCENDING)])['net'][item]['rx']
-        min_rx = posts.find_one(sort=[('net.' + item + '.rx', pymongo.ASCENDING)])['net'][item]['rx']
-        max_tx = posts.find_one(sort=[('net.' + item + '.tx', pymongo.DESCENDING)])['net'][item]['tx']
-        min_tx = posts.find_one(sort=[('net.' + item + '.tx', pymongo.ASCENDING)])['net'][item]['tx']
+        # print statistics
+        print('\nHost_1:')
+        # get max and min cpu usage from mongo
+        max_cpu = posts.find_one(sort=[('cpu', pymongo.DESCENDING)])['cpu']
+        min_cpu = posts.find_one(sort=[('cpu', pymongo.ASCENDING)])['cpu']
+        print('cpu: \t' + str(msg['cpu']) + ' [Hi: ' + str(max_cpu) + ', Lo: ' + str(min_cpu) + ']')
+        for item in msg['net']:
+            # get max and min rx/tx from mongo
+            max_rx = posts.find_one(sort=[('net.' + item + '.rx', pymongo.DESCENDING)])['net'][item]['rx']
+            min_rx = posts.find_one(sort=[('net.' + item + '.rx', pymongo.ASCENDING)])['net'][item]['rx']
+            max_tx = posts.find_one(sort=[('net.' + item + '.tx', pymongo.DESCENDING)])['net'][item]['tx']
+            min_tx = posts.find_one(sort=[('net.' + item + '.tx', pymongo.ASCENDING)])['net'][item]['tx']
 
-        print(item + ':\trx=' + str(msg['net'][item]['rx']) + ' B/s ',
-              '[Hi: ' + str(max_rx) + ' B/s, Lo: ' + str(min_rx) + ' B/s], ',
-              'tx=' + str(msg['net'][item]['tx']) + ' B/s ',
-              '[Hi: ' + str(max_tx) + ' B/s, Lo: ' + str(min_tx) + ' B/s]')
+            print(item + ':\trx=' + str(msg['net'][item]['rx']) + ' B/s ',
+                  '[Hi: ' + str(max_rx) + ' B/s, Lo: ' + str(min_rx) + ' B/s], ',
+                  'tx=' + str(msg['net'][item]['tx']) + ' B/s ',
+                  '[Hi: ' + str(max_tx) + ' B/s, Lo: ' + str(min_tx) + ' B/s]')
+    except Exception as e:
+        print("Error: " + str(e))
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno)
 
     sleep(1)
