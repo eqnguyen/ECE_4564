@@ -1,10 +1,12 @@
 
 Assignment 2 Little Brother
+Description:
+Hosts publish stats on network and CPU utilization to a RabbitMQ broker
+Server subcribes to network and CPU utilization stats from a RabbitMQ broker
 
 Run the project with commands like these:
 	usage: pistatsd.py [-h] -b B [-p P] [-c C] -k K
-
-	Publishes stats on network and CPU utilization to a RabbitMQ broker
+	usage: pistatsview.py [-h] -b B [-p P] [-c C] -k K
 
 	optional arguments:
 	  -h, --help  show this help message and exit
@@ -25,6 +27,9 @@ RabbitMQ installation and setup
 	run rabbit scripts with destination ip like:
 		python rabbit_pub 127.0.0.1
 		
+MongoDB installation and setup
+	sudo apt-get update
+	sudo apt-get install mongodb-server
 
 Required External Libraries:
     pika
