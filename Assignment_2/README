@@ -1,14 +1,14 @@
 
 Assignment 2 Little Brother
 Description:
-Hosts publish stats on network and CPU utilization to a RabbitMQ broker
-Server subcribes to network and CPU utilization stats from a RabbitMQ broker
+pistatsd.py - Hosts publish stats on network and CPU utilization to a RabbitMQ broker
+pistatsview.py - Server subcribes to network and CPU utilization stats from a RabbitMQ broker
 
 Run the project with commands like these:
 	usage: pistatsd.py [-h] -b B [-p P] [-c C] -k K
 	usage: pistatsview.py [-h] -b B [-p P] [-c C] -k K
 
-	optional arguments:
+	arguments:
 	  -h, --help  show this help message and exit
 	  -b B        IP/named address of the message broker
 	  -p P        Virtual host (default is "/")
@@ -31,6 +31,6 @@ MongoDB installation and setup
 	sudo apt-get update
 	sudo apt-get install mongodb-server
 
-Required External Libraries:
+Required Python Modules:
     pika
     pymongo (only required for pistatsview)
