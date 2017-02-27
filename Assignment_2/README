@@ -4,6 +4,7 @@ Description:
 pistatsd.py - publish stats on network and CPU utilization to a RabbitMQ broker
 pistatsview.py - subcribes to network and CPU utilization stats from a RabbitMQ broker
 
+
 Run the project with commands like these:
 	usage: pistatsd.py [-h] -b B [-p P] [-c C] -k K
 	usage: pistatsview.py [-h] -b B [-p P] [-c C] -k K
@@ -15,6 +16,20 @@ Run the project with commands like these:
 	  -c C 	      login:password
 	  -k K        routing key
 
+Initialization procedures:
+    pistatsd.py - On excecution of this script using the above switches it:
+        1. Parses command line unput
+        2. Connects to direct exchange message broker
+        3. Opens files for reading
+        4. Begins main loop of sending read data
+    pistatsview.py - On excecution of this script using the above switches it:
+        1. Sets up gpio
+        2. Parses command line input
+        3. Connects to direct exchange message brokers and binds queues
+        4. Binds callback functions to operate data on queue
+        5. Callbacks excecute to store, process, and display data
+
+
 RabbitMQ installation and setup
 	sudo apt-get update
 	sudo apt-get install rabbitmq-server
@@ -24,8 +39,6 @@ RabbitMQ installation and setup
 		sudo rabbitmqctl add_vhost "rabbit_vhost"
 		sudo rabbitmqctl set_permissions -p "rabbit_vhost" "rabbit_user"  ".*" ".*" ".*"
 
-	run rabbit scripts with destination ip like:
-		python rabbit_pub 127.0.0.1
 		
 MongoDB installation and setup
 	sudo apt-get update
