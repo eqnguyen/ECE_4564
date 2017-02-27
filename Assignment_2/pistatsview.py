@@ -90,6 +90,9 @@ def main():
     if args.c is None:
         args.c = 'guest:guest'
     temp = args.c.split(':')
+    if(len(temp)< 2):
+        print("Error: credentials must include a :")
+        sys.exit(1)
     user = temp[0]
     password = temp[1]
 
@@ -114,7 +117,17 @@ def main():
     except pika.exceptions.ConnectionClosed:
         print("Error: pika connection closed")
         sys.exit(1)
+    except pika.exceptions.ProbableAuthenticationError:
+        print("Error: pika probable authentication error")
+        sys.exit(1)
+    except pika.exceptions.ProbableAccessDeniedError:
+        print("Error: pika probably access denied error")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except:
+        print('\n')
+        sys.exit(1)
