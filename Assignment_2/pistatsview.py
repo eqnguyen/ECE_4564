@@ -37,15 +37,16 @@ GPIO.setup(chan_list, GPIO.OUT)
 def callback(ch, method, properties, body):
     data = json.loads(body.decode())
 
-    try:
-        # post usage data to MongoDB
-        posts.insert(data)
-    except:
-        print("Error: Could not post to MongoDB")
 
     try:
         input = data['cpu']
 
+        try:
+            # post usage data to MongoDB
+            posts.insert(data)
+        except:
+            print("Error: Could not post to MongoDB")
+    
         # Display LED based on threshold and input
         if input < .25:
             GPIO.output(chan_list, (False, True, False))  # green
