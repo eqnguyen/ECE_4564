@@ -12,23 +12,9 @@ Run the project with commands like these:
 	arguments:
 	  -h, --help  show this help message and exit
 	  -b B        IP/named address of the message broker
-	  -p P        Virtual host (default is "/")
-	  -c C 	      login:password
+	  -p P        Virtual host (default is "/"), we used "rabbit_host"
+	  -c C 	      login:password (default is "guest:guest"), we used "rabbit_user:rabbit_pass"
 	  -k K        routing key
-
-Initialization procedures:
-    pistatsd.py - On excecution of this script using the above switches it:
-        1. Parses command line unput
-        2. Connects to direct exchange message broker
-        3. Opens files for reading
-        4. Begins main loop of sending read data
-    pistatsview.py - On excecution of this script using the above switches it:
-        1. Sets up gpio
-        2. Parses command line input
-        3. Connects to direct exchange message brokers and binds queues
-        4. Binds callback functions to operate data on queue
-        5. Callbacks excecute to store, process, and display data
-
 
 RabbitMQ installation and setup
 	sudo apt-get update
@@ -43,6 +29,19 @@ RabbitMQ installation and setup
 MongoDB installation and setup
 	sudo apt-get update
 	sudo apt-get install mongodb-server
+
+Initialization procedures within scripts:
+    pistatsd.py - On excecution of this script using the above switches it:
+        1. Parses command line unput
+        2. Connects to direct exchange message broker
+        3. Opens files for reading
+        4. Begins main loop of sending read data
+    pistatsview.py - On excecution of this script using the above switches it:
+        1. Sets up gpio
+        2. Parses command line input
+        3. Connects to direct exchange message brokers and binds queues
+        4. Binds callback functions to operate data on queue
+        5. Callbacks excecute to store, process, and display data
 
 Required Python Modules:
     pika
