@@ -91,7 +91,7 @@ def main():
 
     # Store arguments into variable
     args = parser.parse_args()
-    args = parser.parse_args()
+
     if args.p is None:
         args.p = '/'
     if args.c is None:
