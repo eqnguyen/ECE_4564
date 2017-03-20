@@ -34,7 +34,6 @@ with open('login_keys.json') as json_data:
         accountSID = d['twilio']['accountSID']
         authToken = d['twilio']['authToken']
         appID = d['openweathermap']['appid']
-        print(appID)
     except:
         print("\nError in reading login_keys.json\nDisplaying trace:\n\n")
         print(traceback.format_exc())
