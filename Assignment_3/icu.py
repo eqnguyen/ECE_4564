@@ -4,6 +4,38 @@ import sys
 import argparse
 import datetime
 
+username = ''
+password = ''
+f = ''
+
+try:
+    f = open("space-track_login.txt", "r")
+except FileNotFoundError as inst:
+    print("The file 'space-track_login.txt' was not found")
+    exit()
+except Exception as e:
+    print("ERROR: " + str(e))
+    exit()
+
+line = f.readline()
+while "username : " not in line and line != "":
+    line = f.readline()
+
+try:
+    username = line.split(' : ')[1].rstrip('\n')
+except IndexError as inst:
+    print("Could not find Twitter OAuth keys in 'api_keys.txt'")
+    exit()
+
+while "password : " not in line and line != "":
+    line = f.readline()
+
+try:
+    password = line.split(' : ')[1].rstrip('\n')
+except IndexError as inst:
+    print("Could not find Twitter OAuth keys in 'api_keys.txt'")
+    exit()
+
 
 def main():
     # Create argument parser
@@ -24,10 +56,6 @@ def main():
 
     # Get TLE orbital elements
     baseURL = 'https://www.space-track.org'
-
-    # Change these
-    username = 'username'
-    password = 'password'
 
     d1 = date + datetime.timedelta(days=1)
 
