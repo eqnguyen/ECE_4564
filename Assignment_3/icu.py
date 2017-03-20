@@ -5,6 +5,8 @@ import argparse
 from time import sleep
 import datetime
 from twilio.rest import TwilioRestClient
+import json
+import traceback
 
 # import RPi.GPIO as GPIO
 
@@ -70,6 +72,17 @@ except IndexError as inst:
     print("Could not find Twilio authToken in 'login_keys.txt'")
     sys.exit(1)
 
+with open('login_keys.json') as json_data:
+    d = json.load(json_data)
+    try: 
+        username = d['spacetrack']['username']
+        password = d['spacetrack']['password']
+        accountSID = d['twilio']['accountSID']
+        authToken = d['twilio']['authToken']
+    except:
+        print("\nError in reading login_keys.json\nDisplaying trace:\n\n")
+        print(traceback.format_exc())
+        sys.exit(1)
 
 def main():
     # Create argument parser

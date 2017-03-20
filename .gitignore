@@ -6,3 +6,4 @@ api_keys.txt
 *.pdf
 *.zip
 login_keys.txt
+login_keys.json
