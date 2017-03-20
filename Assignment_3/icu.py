@@ -26,56 +26,9 @@ accountSID = ''
 authToken = ''
 appID = ''
 
-try:
-    f = open("login_keys.txt", "r")
-except FileNotFoundError as inst:
-    print("The file 'login_keys.txt' was not found")
-    sys.exit(1)
-except Exception as e:
-    print("ERROR: " + str(e))
-    sys.exit(1)
-
-line = f.readline()
-
-while "st_username : " not in line and line != "":
-    line = f.readline()
-
-try:
-    username = line.split(' : ')[1].rstrip('\n')
-except IndexError as inst:
-    print("Could not find Space-Track username in 'login_keys.txt'")
-    sys.exit(1)
-
-while "st_password : " not in line and line != "":
-    line = f.readline()
-
-try:
-    password = line.split(' : ')[1].rstrip('\n')
-except IndexError as inst:
-    print("Could not find Space-Track password in 'login_keys.txt'")
-    sys.exit(1)
-
-while "accountSID : " not in line and line != "":
-    line = f.readline()
-
-try:
-    accountSID = line.split(' : ')[1].rstrip('\n')
-except IndexError as inst:
-    print("Could not find Twilio accountSID in 'login_keys.txt'")
-    sys.exit(1)
-
-while "authToken : " not in line and line != "":
-    line = f.readline()
-
-try:
-    authToken = line.split(' : ')[1].rstrip('\n')
-except IndexError as inst:
-    print("Could not find Twilio authToken in 'login_keys.txt'")
-    sys.exit(1)
-
 with open('login_keys.json') as json_data:
     d = json.load(json_data)
-    try: 
+    try:
         username = d['spacetrack']['username']
         password = d['spacetrack']['password']
         accountSID = d['twilio']['accountSID']
@@ -86,6 +39,7 @@ with open('login_keys.json') as json_data:
         print("\nError in reading login_keys.json\nDisplaying trace:\n\n")
         print(traceback.format_exc())
         sys.exit(1)
+
 
 def main():
     # Create argument parser
