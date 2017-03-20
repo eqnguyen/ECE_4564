@@ -3,39 +3,64 @@
 import sys
 import argparse
 import datetime
+import twilio
 
+# -------------------------- Get keys and credentials ----------------------------
+f = ''
 username = ''
 password = ''
-f = ''
+accountSID = ''
+authToken = ''
 
 try:
-    f = open("space-track_login.txt", "r")
+    f = open("login_keys.txt", "r")
 except FileNotFoundError as inst:
-    print("The file 'space-track_login.txt' was not found")
+    print("The file 'login_keys.txt' was not found")
     exit()
 except Exception as e:
     print("ERROR: " + str(e))
     exit()
 
 line = f.readline()
-while "username : " not in line and line != "":
+
+while "st_username : " not in line and line != "":
     line = f.readline()
 
 try:
     username = line.split(' : ')[1].rstrip('\n')
 except IndexError as inst:
-    print("Could not find Twitter OAuth keys in 'api_keys.txt'")
+    print("Could not find Space-Track username in 'login_keys.txt'")
     exit()
 
-while "password : " not in line and line != "":
+while "st_password : " not in line and line != "":
     line = f.readline()
 
 try:
     password = line.split(' : ')[1].rstrip('\n')
 except IndexError as inst:
-    print("Could not find Twitter OAuth keys in 'api_keys.txt'")
+    print("Could not find Space-Track password in 'login_keys.txt'")
     exit()
 
+while "accountSID : " not in line and line != "":
+    line = f.readline()
+
+try:
+    accountSID = line.split(' : ')[1].rstrip('\n')
+except IndexError as inst:
+    print("Could not find Twilio accountSID in 'login_keys.txt'")
+    exit()
+
+while "authToken : " not in line and line != "":
+    line = f.readline()
+
+try:
+    authToken = line.split(' : ')[1].rstrip('\n')
+except IndexError as inst:
+    print("Could not find Twilio authToken in 'login_keys.txt'")
+    exit()
+
+
+# --------------------------------------------------------------------------------
 
 def main():
     # Create argument parser
