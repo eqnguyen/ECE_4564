@@ -2,8 +2,19 @@
 
 import sys
 import argparse
+from time import sleep
 import datetime
-import twilio
+from twilio.rest import TwilioRestClient
+
+# import RPi.GPIO as GPIO
+
+# Set pin mode to the numbers you can read off the pi
+# GPIO.setmode(GPIO.BCM)
+# GPIO.setwarnings(False)
+#
+# Set up channel list
+# chan_list = [13, 19, 26]  # 13 red, 19 green, 26 blue
+# GPIO.setup(chan_list, GPIO.OUT)
 
 # -------------------------- Get keys and credentials ----------------------------
 f = ''
@@ -16,10 +27,10 @@ try:
     f = open("login_keys.txt", "r")
 except FileNotFoundError as inst:
     print("The file 'login_keys.txt' was not found")
-    exit()
+    sys.exit(1)
 except Exception as e:
     print("ERROR: " + str(e))
-    exit()
+    sys.exit(1)
 
 line = f.readline()
 
@@ -30,7 +41,7 @@ try:
     username = line.split(' : ')[1].rstrip('\n')
 except IndexError as inst:
     print("Could not find Space-Track username in 'login_keys.txt'")
-    exit()
+    sys.exit(1)
 
 while "st_password : " not in line and line != "":
     line = f.readline()
@@ -39,7 +50,7 @@ try:
     password = line.split(' : ')[1].rstrip('\n')
 except IndexError as inst:
     print("Could not find Space-Track password in 'login_keys.txt'")
-    exit()
+    sys.exit(1)
 
 while "accountSID : " not in line and line != "":
     line = f.readline()
@@ -48,7 +59,7 @@ try:
     accountSID = line.split(' : ')[1].rstrip('\n')
 except IndexError as inst:
     print("Could not find Twilio accountSID in 'login_keys.txt'")
-    exit()
+    sys.exit(1)
 
 while "authToken : " not in line and line != "":
     line = f.readline()
@@ -57,10 +68,8 @@ try:
     authToken = line.split(' : ')[1].rstrip('\n')
 except IndexError as inst:
     print("Could not find Twilio authToken in 'login_keys.txt'")
-    exit()
+    sys.exit(1)
 
-
-# --------------------------------------------------------------------------------
 
 def main():
     # Create argument parser
@@ -77,6 +86,7 @@ def main():
     zipcode = args.z
     noradId = args.s
 
+    # Get current date and time
     date = datetime.datetime.now()
 
     # Get TLE orbital elements
@@ -85,6 +95,20 @@ def main():
     d1 = date + datetime.timedelta(days=1)
 
     print('Connecting...')
+
+    # Send sms text message
+    twilioClient = TwilioRestClient(accountSID, authToken)
+    twilioNumber = '+12403033631'
+    myNumber = 'myCellNumber'
+
+    body = 'Test'
+
+    # message = twilioClient.messages.create(body=body, from_=twilioNumber, to=myNumber)
+
+    # Flash LED
+    # GPIO.output(chan_list, (True, True, True))
+    # sleep(1)
+    # GPIO.output(chan_list, (False, False, False))
 
 
 if __name__ == "__main__":
