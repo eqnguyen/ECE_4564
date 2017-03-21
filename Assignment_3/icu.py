@@ -8,6 +8,7 @@ from twilio.rest import TwilioRestClient
 import json
 import traceback
 import requests
+import time
 
 # import RPi.GPIO as GPIO
 
@@ -56,15 +57,26 @@ def main():
     zipcode = args.z
     noradId = args.s
 
+    clearDays = []
     try:
         payload = {'cnt': 16, 'zip': [zipcode + ',us'], 'appid': '1fcb3cba98d0c013a29f4df915d8ecfa'}
         r = requests.get('http://api.openweathermap.org/data/2.5/forecast/daily', params=payload)
         parsed = json.loads(r.content)
-        print('Returned weather data for ' + str(len(parsed['list'])) + ' days')
+
+        latitude  = (parsed['city']['coord']['lat'])
+        longitude = (parsed['city']['coord']['lon'])
+
+        for item in parsed['list']:
+            if item['clouds'] <= 20:
+                temp = ((time.localtime(item['dt'])))
+                clearDays.append(datetime.date(temp.tm_year, temp.tm_mon, temp.tm_mday))
     except:
         print("\nError querying weather api\nDisplaying trace:\n\n")
         print(traceback.format_exc())
         sys.exit(1)
+
+    # The following line of code shows the list of clear days returned and the required lat and long
+    print('Found ' + str(len(clearDays)) + ' clear days at ' + str(longitude) + ' ' + str(latitude))
 
     # Get current date and time
     date = datetime.datetime.now()
