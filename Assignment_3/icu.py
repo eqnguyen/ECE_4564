@@ -7,6 +7,7 @@ import datetime
 from twilio.rest import TwilioRestClient
 import json
 import traceback
+import requests
 
 # import RPi.GPIO as GPIO
 
@@ -54,6 +55,16 @@ def main():
 
     zipcode = args.z
     noradId = args.s
+
+    try:
+        payload = {'cnt': 16, 'zip': [zipcode + ',us'], 'appid': '1fcb3cba98d0c013a29f4df915d8ecfa'}
+        r = requests.get('http://api.openweathermap.org/data/2.5/forecast/daily', params=payload)
+        parsed = json.loads(r.content)
+        print('Returned weather data for ' + str(len(parsed['list'])) + ' days')
+    except:
+        print("\nError querying weather api\nDisplaying trace:\n\n")
+        print(traceback.format_exc())
+        sys.exit(1)
 
     # Get current date and time
     date = datetime.datetime.now()
