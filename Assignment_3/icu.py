@@ -58,12 +58,13 @@ def main():
     noradId = args.s
 
     clearDays = []
+
     try:
-        payload = {'cnt': 16, 'zip': [zipcode + ',us'], 'appid': '1fcb3cba98d0c013a29f4df915d8ecfa'}
+        payload = {'cnt': 16, 'zip': [zipcode + ',us'], 'appid': appID}
         r = requests.get('http://api.openweathermap.org/data/2.5/forecast/daily', params=payload)
         parsed = json.loads(r.content)
 
-        latitude  = (parsed['city']['coord']['lat'])
+        latitude = (parsed['city']['coord']['lat'])
         longitude = (parsed['city']['coord']['lon'])
 
         for item in parsed['list']:
