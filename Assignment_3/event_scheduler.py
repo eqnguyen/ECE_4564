@@ -9,7 +9,7 @@ import RPi.GPIO as GPIO
 chan_list = []
 
 
-def sendText(accountSID, authToken, body):
+def sendText(accountSID, authToken, event):
     twilioClient = TwilioRestClient(accountSID, authToken)
     twilioNumber = '+12403033631'
     myNumber = 'myCellNumber'
@@ -46,7 +46,7 @@ def start_alerts():
     stop_event.set()
 
 
-def event_scheduler(events):
+def event_scheduler(accountSID, authToken, events):
     # Set pin mode to the numbers you can read off the pi
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
@@ -57,7 +57,10 @@ def event_scheduler(events):
 
     s = sched.scheduler(time.time, time.sleep)
     for event in events:
+        # schedule the led/audio alerts
         s.enterabs(time=event.start, action=start_alerts)
+        # schedule the sms alert
+        s.enterabs(time=event.start, action=sendText, argument=[accountSID, authToken, event])
     s.run(blocking=True)
 
     GPIO.cleanup(chan_list)
