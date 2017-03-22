@@ -16,6 +16,7 @@ username = ''
 password = ''
 accountSID = ''
 authToken = ''
+myNumber = ''
 appID = ''
 
 with open('login_keys.json') as json_data:
@@ -25,6 +26,7 @@ with open('login_keys.json') as json_data:
         password = d['spacetrack']['password']
         accountSID = d['twilio']['accountSID']
         authToken = d['twilio']['authToken']
+	myNumber = d['twilio']['myNumber']
         appID = d['openweathermap']['appid']
     except:
         print("\nError in reading login_keys.json\nDisplaying trace:\n\n")
@@ -82,7 +84,7 @@ def main():
     events = {}
 
     # Schedule event notifications
-    event_scheduler(accountSID, authToken, events)
+    event_scheduler(accountSID, authToken, myNumber, events)
 
 
 if __name__ == "__main__":
