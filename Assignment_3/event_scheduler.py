@@ -17,35 +17,33 @@ def sendText(accountSID, authToken, body):
     message = twilioClient.messages.create(body=body, from_=twilioNumber, to=myNumber)
 
 
-def beep():
-    t = threading.Timer(900, exit_beep)
-    t.start()
-    print("Not implemented")
+def beep(run_flag):
+    while run_flag:
+        print("Not implemented")
+
+    # exit/cleanup
 
 
-def flashLED():
-    t = threading.Timer(900, exit_led)
-    t.start()
-    while True:
+def flashLED(run_flag):
+    while run_flag:
         GPIO.output(chan_list, (True, True, True))
         time.sleep(1)
         GPIO.output(chan_list, (False, False, False))
         time.sleep(1)
+    # exit
+    GPIO.output(chan_list, (False, False, False))
 
 
 def start_alerts():
+    run_flag = True
+
     threading.Thread(target=sendText).start()
-    threading.Thread(target=beep).start()
-    threading.Thread(target=flashLED).start()
+    threading.Thread(target=beep, args=run_flag).start()
+    threading.Thread(target=flashLED, args=run_flag).start()
 
+    time.sleep(900)
 
-def exit_led():
-    GPIO.output(chan_list, (False, False, False))
-    threading._Thread_stop()
-
-
-def exit_beep():
-    threading._Thread_stop()
+    run_flag = False
 
 
 def event_scheduler(events):
