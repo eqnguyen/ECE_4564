@@ -4,6 +4,7 @@ import sched
 import time
 import threading
 from twilio.rest import TwilioRestClient
+import pygame
 import RPi.GPIO as GPIO
 
 chan_list = []
@@ -19,9 +20,11 @@ def sendText(accountSID, authToken, event):
 
 def beep(stop_event):
     while not stop_event.is_set():
-        print("Not implemented")
-
-    # exit/cleanup
+        pygame.mixer.init()
+        pygame.mixer.music.load('example.mp3')
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy() == True:
+            continue
 
 
 def flashLED(stop_event):
