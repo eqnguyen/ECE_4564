@@ -6,14 +6,8 @@ import threading
 from twilio.rest import TwilioRestClient
 import RPi.GPIO as GPIO
 
-# Set pin mode to the numbers you can read off the pi
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
 
-# Set up channel list
-chan_list = [13, 19, 26]  # 13 red, 19 green, 26 blue
-GPIO.setup(chan_list, GPIO.OUT)
-
+chan_list = []
 
 def sendText(body):
     twilioClient = TwilioRestClient(accountSID, authToken)
@@ -28,11 +22,13 @@ def beep():
 
 
 def flashLED():
+    t = threading.Timer(900, exit_led)
+    t.start()
     while True:
         GPIO.output(chan_list, (True, True, True))
-        sleep(1)
+        time.sleep(1)
         GPIO.output(chan_list, (False, False, False))
-        sleep(1)
+        time.sleep(1)
 
 
 def start_alerts():
@@ -46,15 +42,18 @@ def exit_led():
     threading._Thread_stop()
 
 
-def end_alerts():
-    t = threading.Timer(900, exit_led)
-    t.start()
-
-
 def event_scheduler(events):
+    # Set pin mode to the numbers you can read off the pi
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+
+    # Set up channel list
+    chan_list = [13, 19, 26]  # 13 red, 19 green, 26 blue
+    GPIO.setup(chan_list, GPIO.OUT)
+
     s = sched.scheduler(time.time, time.sleep)
     for event in events:
         s.enterabs(time=event.start, action=start_alerts)
-        end_time = event.start + datetime.timedelta(minutes=15)
-        s.enterabs(time=end_time, action=end_alerts)
+    s.run(blocking=True)
+
     GPIO.cleanup(chan_list)
