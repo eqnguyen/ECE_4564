@@ -18,6 +18,8 @@ def sendText(body):
 
 
 def beep():
+    t = threading.Timer(900, exit_beep)
+    t.start()
     print("Not implemented")
 
 
@@ -39,6 +41,10 @@ def start_alerts():
 
 def exit_led():
     GPIO.output(chan_list, (False, False, False))
+    threading._Thread_stop()
+
+
+def exit_beep():
     threading._Thread_stop()
 
 
