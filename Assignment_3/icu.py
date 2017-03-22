@@ -1,22 +1,22 @@
 #! /usr/bin/env python3
 
-import sys
 import argparse
-from time import sleep
 import datetime
 import json
-import traceback
-import requests
+import sys
 import time
+import traceback
+
+import requests
 from event_scheduler import event_scheduler
 
 # -------------------------- Get keys and credentials ----------------------------
 f = ''
 username = ''
 password = ''
-accountSID = ''
-authToken = ''
-myNumber = ''
+account_sid = ''
+auth_token = ''
+my_number = ''
 appID = ''
 
 with open('login_keys.json') as json_data:
@@ -24,9 +24,9 @@ with open('login_keys.json') as json_data:
     try:
         username = d['spacetrack']['username']
         password = d['spacetrack']['password']
-        accountSID = d['twilio']['accountSID']
-        authToken = d['twilio']['authToken']
-        myNumber = d['twilio']['myNumber']
+        account_sid = d['twilio']['accountSID']
+        auth_token = d['twilio']['authToken']
+        my_number = d['twilio']['myNumber']
         appID = d['openweathermap']['appid']
     except:
         print("\nError in reading login_keys.json\nDisplaying trace:\n\n")
@@ -47,9 +47,9 @@ def main():
     args = parser.parse_args()
 
     zipcode = args.z
-    noradId = args.s
+    norad_id = args.s
 
-    clearDays = []
+    clear_days = []
 
     try:
         payload = {'cnt': 16, 'zip': [zipcode + ',us'], 'appid': appID}
@@ -61,21 +61,21 @@ def main():
 
         for item in parsed['list']:
             if item['clouds'] <= 20:
-                temp = ((time.localtime(item['dt'])))
-                clearDays.append(datetime.date(temp.tm_year, temp.tm_mon, temp.tm_mday))
+                temp = time.localtime(item['dt'])
+                clear_days.append(datetime.date(temp.tm_year, temp.tm_mon, temp.tm_mday))
     except:
         print("\nError querying weather api\nDisplaying trace:\n\n")
         print(traceback.format_exc())
         sys.exit(1)
 
     # The following line of code shows the list of clear days returned and the required lat and long
-    print('Found ' + str(len(clearDays)) + ' clear days at ' + str(longitude) + ' ' + str(latitude))
+    print('Found ' + str(len(clear_days)) + ' clear days at ' + str(longitude) + ' ' + str(latitude))
 
     # Get current date and time
     date = datetime.datetime.now()
 
     # Get TLE orbital elements
-    baseURL = 'https://www.space-track.org'
+    base_url = 'https://www.space-track.org'
 
     d1 = date + datetime.timedelta(days=1)
 
@@ -84,7 +84,7 @@ def main():
     events = {}
 
     # Schedule event notifications
-    event_scheduler(accountSID, authToken, myNumber, events)
+    event_scheduler(account_sid, auth_token, my_number, events)
 
 
 if __name__ == "__main__":

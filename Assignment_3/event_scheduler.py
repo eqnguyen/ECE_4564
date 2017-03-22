@@ -1,20 +1,22 @@
 #! /usr/bin/env python3
 
+import datetime
 import sched
-import time, datetime
 import threading
-from twilio.rest import TwilioRestClient
-import pygame
+import time
+
 import RPi.GPIO as GPIO
+import pygame
+from twilio.rest import TwilioRestClient
 
 chan_list = []
 
 
-def send_text(accountSID, authToken, myNumber, event):
-    twilioClient = TwilioRestClient(accountSID, authToken)
-    twilioNumber = '+12403033631'
+def send_text(account_sid, auth_token, my_number, event):
+    twilio_client = TwilioRestClient(account_sid, auth_token)
+    twilio_number = '+12403033631'
     body = 'Test'
-    message = twilioClient.messages.create(body=body, from_=twilioNumber, to=myNumber)
+    message = twilio_client.messages.create(body=body, from_=twilio_number, to=my_number)
 
 
 def beep(stop_event):
@@ -22,7 +24,7 @@ def beep(stop_event):
     pygame.mixer.music.load('notification.mp3')
     while not stop_event.is_set():
         pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy() == True:
+        while pygame.mixer.music.get_busy():
             continue
 
 
@@ -44,7 +46,7 @@ def start_alerts(event_time):
     t_led = threading.Thread(target=flash_led, kwargs={"stop_event": stop_event})
     t_led.start()
 
-    # sleep until the event if the event hasnt happened, else end
+    # sleep until the event if the event hasn't happened, else end
     if event_time - time.time() > 0:
         time.sleep(event_time - time.time())
 
@@ -53,7 +55,7 @@ def start_alerts(event_time):
     t_led.join()
 
 
-def event_scheduler(accountSID, authToken, myNumber, events):
+def event_scheduler(account_sid, auth_token, my_number, events):
     # Set pin mode to the numbers you can read off the pi
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
@@ -69,7 +71,7 @@ def event_scheduler(accountSID, authToken, myNumber, events):
         alert_time = event['start'] - datetime.timedelta(seconds=900).total_seconds()
 
         # schedule the sms alert
-        s.enterabs(time=alert_time, action=send_text, argument=[accountSID, authToken, myNumber, event], priority=1)
+        s.enterabs(time=alert_time, action=send_text, argument=[account_sid, auth_token, my_number, event], priority=1)
         # schedule the led/audio alerts
         s.enterabs(time=alert_time, action=start_alerts, priority=1, kwargs={'event_time': event['start']})
     s.run(blocking=True)
