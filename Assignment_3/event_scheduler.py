@@ -36,22 +36,15 @@ def flashLED(stop_event):
     GPIO.output(chan_list, (False, False, False))
 
 
-def start_alerts(start_time):
+def start_alerts(event_time):
     stop_event = threading.Event()
 
     threading.Thread(target=beep, kwargs={"stop_event": stop_event}).start()
     threading.Thread(target=flashLED, kwargs={"stop_event": stop_event}).start()
 
-    # if the alerts were started after 15min before the event, adjust the time to sleep
-    if start_time < time.time():
-        # sleep for 900sec minus the time that has already elapsed
-        adjusted_sleep = 900 - (time.time() - start_time)
-        # make sure adjusted_sleep is positive
-        adjusted_sleep = adjusted_sleep if (adjusted_sleep > 0) else 0
-        time.sleep(adjusted_sleep)
-    else:
-        # sleep for 15min or 900sec
-        time.sleep(900)
+    # sleep until the event if the event hasnt happened, else end
+    if event_time - time.time() > 0:
+        time.sleep(event_time - time.time())
 
     stop_event.set()
 
@@ -69,14 +62,14 @@ def event_scheduler(accountSID, authToken, myNumber, events):
     s = sched.scheduler(time.time, time.sleep)
     for event in events:
         # the alerts are scheduled 15min before the event
-        start_time = event['start'] - datetime.datetime.timedelta(900)
+        alert_time = event['start'] - datetime.datetime.timedelta(900)
         # sched needs a value of type double
-        start_time = time.mktime(start_time.timetuple())
+        alert_time = time.mktime(alert_time.timetuple())
 
         # schedule the sms alert
-        s.enterabs(time=start_time, action=sendText, argument=[accountSID, authToken, myNumber, event], priority=1)
+        s.enterabs(time=alert_time, action=sendText, argument=[accountSID, authToken, myNumber, event], priority=1)
         # schedule the led/audio alerts
-        s.enterabs(time=event['start'], action=start_alerts, priority=1)
+        s.enterabs(time=alert_time, action=start_alerts, priority=1, kwargs={'event_time': event['start']})
     s.run(blocking=True)
 
     GPIO.cleanup(chan_list)
