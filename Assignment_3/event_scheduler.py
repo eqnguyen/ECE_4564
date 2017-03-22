@@ -39,14 +39,18 @@ def flashLED(stop_event):
 def start_alerts(event_time):
     stop_event = threading.Event()
 
-    threading.Thread(target=beep, kwargs={"stop_event": stop_event}).start()
-    threading.Thread(target=flashLED, kwargs={"stop_event": stop_event}).start()
+    t_beep = threading.Thread(target=beep, kwargs={"stop_event": stop_event})
+    t_beep.start()
+    t_led = threading.Thread(target=flashLED, kwargs={"stop_event": stop_event})
+    t_led.start()
 
     # sleep until the event if the event hasnt happened, else end
     if event_time - time.time() > 0:
         time.sleep(event_time - time.time())
 
     stop_event.set()
+    t_beep.join()
+    t_led.join() 
 
 
 def event_scheduler(accountSID, authToken, myNumber, events):
@@ -62,9 +66,7 @@ def event_scheduler(accountSID, authToken, myNumber, events):
     s = sched.scheduler(time.time, time.sleep)
     for event in events:
         # the alerts are scheduled 15min before the event
-        alert_time = event['start'] - datetime.datetime.timedelta(900)
-        # sched needs a value of type double
-        alert_time = time.mktime(alert_time.timetuple())
+        alert_time = event['start'] - datetime.timedelta(seconds=900).total_seconds()
 
         # schedule the sms alert
         s.enterabs(time=alert_time, action=sendText, argument=[accountSID, authToken, myNumber, event], priority=1)
