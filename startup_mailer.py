@@ -6,11 +6,11 @@ import time
 import datetime
 
 # Change to your own account information
-to = 'eqnguyen@gmail.com'
+to = ''
 
 # Random email I created as the source
-gmail_user = 'raspberrypi904@gmail.com'
-gmail_password = '~raspberry!'
+gmail_user = ''
+gmail_password = ''
 
 tries = 0
 
