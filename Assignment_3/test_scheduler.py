@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 import event_scheduler
-import datetime
+import time
 import sys
 import json
 import traceback
@@ -11,6 +11,7 @@ username = ''
 password = ''
 accountSID = ''
 authToken = ''
+myNumber = ''
 appID = ''
 
 with open('login_keys.json') as json_data:
@@ -20,14 +21,15 @@ with open('login_keys.json') as json_data:
         password = d['spacetrack']['password']
         accountSID = d['twilio']['accountSID']
         authToken = d['twilio']['authToken']
+	myNumber = d['twilio']['myNumber']
         appID = d['openweathermap']['appid']
     except:
         print("\nError in reading login_keys.json\nDisplaying trace:\n\n")
         print(traceback.format_exc())
         sys.exit(1)
 
-schedule_time = datetime.datetime.now() + datetime.timedelta(seconds=10)
+schedule_time = time.time() + 10
 
-events = [{"start": schedule_time}]
+events = [{"start":schedule_time}]
 
-event_scheduler(accountSID, authToken, events)
+event_scheduler.event_scheduler(accountSID, authToken, myNumber, events)
