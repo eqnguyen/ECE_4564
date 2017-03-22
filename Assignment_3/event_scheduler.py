@@ -53,6 +53,7 @@ def event_scheduler(accountSID, authToken, myNumber, events):
     GPIO.setwarnings(False)
 
     # Set up channel list
+    global chan_list
     chan_list = [13, 19, 26]  # 13 red, 19 green, 26 blue
     GPIO.setup(chan_list, GPIO.OUT)
 
