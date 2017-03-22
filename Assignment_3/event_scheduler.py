@@ -6,10 +6,10 @@ import threading
 from twilio.rest import TwilioRestClient
 import RPi.GPIO as GPIO
 
-
 chan_list = []
 
-def sendText(body):
+
+def sendText(accountSID, authToken, body):
     twilioClient = TwilioRestClient(accountSID, authToken)
     twilioNumber = '+12403033631'
     myNumber = 'myCellNumber'
