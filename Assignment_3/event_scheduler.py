@@ -40,7 +40,6 @@ def flashLED(stop_event):
 def start_alerts():
     stop_event = threading.Event()
 
-    threading.Thread(target=sendText).start()
     threading.Thread(target=beep, args=stop_event).start()
     threading.Thread(target=flashLED, args=stop_event).start()
 
