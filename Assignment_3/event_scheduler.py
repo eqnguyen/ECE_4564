@@ -39,8 +39,8 @@ def flashLED(stop_event):
 def start_alerts():
     stop_event = threading.Event()
 
-    threading.Thread(target=beep, kwargs={"stop_event":stop_event}).start()
-    threading.Thread(target=flashLED, kwargs={"stop_event":stop_event}).start()
+    threading.Thread(target=beep, kwargs={"stop_event": stop_event}).start()
+    threading.Thread(target=flashLED, kwargs={"stop_event": stop_event}).start()
 
     time.sleep(900)
 

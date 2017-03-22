@@ -26,7 +26,7 @@ with open('login_keys.json') as json_data:
         password = d['spacetrack']['password']
         accountSID = d['twilio']['accountSID']
         authToken = d['twilio']['authToken']
-	myNumber = d['twilio']['myNumber']
+        myNumber = d['twilio']['myNumber']
         appID = d['openweathermap']['appid']
     except:
         print("\nError in reading login_keys.json\nDisplaying trace:\n\n")

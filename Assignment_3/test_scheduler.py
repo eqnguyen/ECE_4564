@@ -21,7 +21,7 @@ with open('login_keys.json') as json_data:
         password = d['spacetrack']['password']
         accountSID = d['twilio']['accountSID']
         authToken = d['twilio']['authToken']
-	myNumber = d['twilio']['myNumber']
+        myNumber = d['twilio']['myNumber']
         appID = d['openweathermap']['appid']
     except:
         print("\nError in reading login_keys.json\nDisplaying trace:\n\n")
@@ -30,6 +30,6 @@ with open('login_keys.json') as json_data:
 
 schedule_time = time.time() + 10
 
-events = [{"start":schedule_time}]
+events = [{"start": schedule_time}]
 
 event_scheduler.event_scheduler(accountSID, authToken, myNumber, events)
