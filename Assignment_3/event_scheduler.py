@@ -10,7 +10,7 @@ import RPi.GPIO as GPIO
 chan_list = []
 
 
-def sendText(accountSID, authToken, myNumber, event):
+def send_text(accountSID, authToken, myNumber, event):
     twilioClient = TwilioRestClient(accountSID, authToken)
     twilioNumber = '+12403033631'
     body = 'Test'
@@ -26,7 +26,7 @@ def beep(stop_event):
             continue
 
 
-def flashLED(stop_event):
+def flash_led(stop_event):
     while not stop_event.is_set():
         GPIO.output(chan_list, (True, True, True))
         time.sleep(1)
@@ -41,7 +41,7 @@ def start_alerts(event_time):
 
     t_beep = threading.Thread(target=beep, kwargs={"stop_event": stop_event})
     t_beep.start()
-    t_led = threading.Thread(target=flashLED, kwargs={"stop_event": stop_event})
+    t_led = threading.Thread(target=flash_led, kwargs={"stop_event": stop_event})
     t_led.start()
 
     # sleep until the event if the event hasnt happened, else end
@@ -50,7 +50,7 @@ def start_alerts(event_time):
 
     stop_event.set()
     t_beep.join()
-    t_led.join() 
+    t_led.join()
 
 
 def event_scheduler(accountSID, authToken, myNumber, events):
@@ -69,7 +69,7 @@ def event_scheduler(accountSID, authToken, myNumber, events):
         alert_time = event['start'] - datetime.timedelta(seconds=900).total_seconds()
 
         # schedule the sms alert
-        s.enterabs(time=alert_time, action=sendText, argument=[accountSID, authToken, myNumber, event], priority=1)
+        s.enterabs(time=alert_time, action=send_text, argument=[accountSID, authToken, myNumber, event], priority=1)
         # schedule the led/audio alerts
         s.enterabs(time=alert_time, action=start_alerts, priority=1, kwargs={'event_time': event['start']})
     s.run(blocking=True)
