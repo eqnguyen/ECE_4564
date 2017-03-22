@@ -21,7 +21,7 @@ def sendText(accountSID, authToken, event):
 def beep(stop_event):
     while not stop_event.is_set():
         pygame.mixer.init()
-        pygame.mixer.music.load('example.mp3')
+        pygame.mixer.music.load('notification.mp3')
         pygame.mixer.music.play()
         while pygame.mixer.music.get_busy() == True:
             continue
