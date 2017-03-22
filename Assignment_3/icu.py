@@ -4,21 +4,11 @@ import sys
 import argparse
 from time import sleep
 import datetime
-from twilio.rest import TwilioRestClient
 import json
 import traceback
 import requests
 import time
-
-# import RPi.GPIO as GPIO
-
-# Set pin mode to the numbers you can read off the pi
-# GPIO.setmode(GPIO.BCM)
-# GPIO.setwarnings(False)
-#
-# Set up channel list
-# chan_list = [13, 19, 26]  # 13 red, 19 green, 26 blue
-# GPIO.setup(chan_list, GPIO.OUT)
+from event_scheduler import event_scheduler
 
 # -------------------------- Get keys and credentials ----------------------------
 f = ''
@@ -87,21 +77,12 @@ def main():
 
     d1 = date + datetime.timedelta(days=1)
 
-    print('Connecting...')
+    # Contains next five viewable date/times
+    # Include sat position, direction of travel, and duration of visibility
+    events = {}
 
-    # Send sms text message
-    twilioClient = TwilioRestClient(accountSID, authToken)
-    twilioNumber = '+12403033631'
-    myNumber = 'myCellNumber'
-
-    body = 'Test'
-
-    # message = twilioClient.messages.create(body=body, from_=twilioNumber, to=myNumber)
-
-    # Flash LED
-    # GPIO.output(chan_list, (True, True, True))
-    # sleep(1)
-    # GPIO.output(chan_list, (False, False, False))
+    # Schedule event notifications
+    event_scheduler(accountSID, authToken, events)
 
 
 if __name__ == "__main__":
