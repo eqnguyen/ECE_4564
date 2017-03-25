@@ -85,8 +85,8 @@ def main():
         s = requests.Session()
         payload = {'identity': username, 'password': password}
         r = s.post(base_url + '/ajaxauth/login', data=payload)
-        r = s.get('https://www.space-track.org/basicspacedata/query/class/tle_latest/NORAD_CAT_ID/25544/orderby/ORDINAL asc/limit/1/metadata/false')
-        #r = s.get(base_url + '/basicspacedata/query/class/tle_latest/NORAD_CAT_ID/" + norad_id + "/ORDINAL/1/        
+        #r = s.get('https://www.space-track.org/basicspacedata/query/class/tle_latest/NORAD_CAT_ID/25544/orderby/ORDINAL asc/limit/1/metadata/false')
+        r = s.get(base_url + '/basicspacedata/query/class/tle_latest/NORAD_CAT_ID/' + norad_id + '/ORDINAL/1/')       
         parsed = r.json()
         TLE.append((parsed[0]['TLE_LINE0']))
         TLE.append((parsed[0]['TLE_LINE1']))
