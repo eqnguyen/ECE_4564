@@ -54,7 +54,6 @@ def main():
     try:
         payload = {'cnt': 16, 'zip': [zipcode + ',us'], 'appid': appID}
         r = requests.get('http://api.openweathermap.org/data/2.5/forecast/daily', params=payload)
-        #parsed = json.loads(r.text)
         parsed = r.json()
 
         latitude = (parsed['city']['coord']['lat'])
