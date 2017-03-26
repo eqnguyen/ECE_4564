@@ -3,10 +3,10 @@
 import argparse
 import datetime
 import json
-from math import degrees
 import sys
 import time
 import traceback
+from math import degrees
 
 import ephem
 import requests

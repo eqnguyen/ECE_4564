@@ -5,7 +5,7 @@ import sched
 import threading
 import time
 
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 import pygame
 from twilio.rest import TwilioRestClient
 
@@ -69,6 +69,8 @@ def event_scheduler(account_sid, auth_token, my_number, events):
     for event in events:
         # the alerts are scheduled 15min before the event
         alert_time = event['start'] - datetime.timedelta(seconds=900).total_seconds()
+
+        print('Scheduled event for ' + str(datetime.datetime.fromtimestamp(alert_time)))
 
         # schedule the sms alert
         s.enterabs(time=alert_time, action=send_text, argument=[account_sid, auth_token, my_number, event], priority=1)
