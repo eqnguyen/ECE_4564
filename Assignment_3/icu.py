@@ -75,25 +75,30 @@ def main():
     clear_days = []
 
     try:
-        payload = {'units': 'Imperial', 'cnt': 15, 'zip': [zipcode + ',us'], 'appid': appID}
+        payload = {'cnt': 15, 'zip': [zipcode + ',us'], 'appid': appID}
         r = requests.get('http://api.openweathermap.org/data/2.5/forecast/daily', params=payload)
         parsed = r.json()
 
         latitude = (parsed['city']['coord']['lat'])
         longitude = (parsed['city']['coord']['lon'])
 
+        print(zipcode + ' Coordinates: \nLatitude: ' + str(latitude) + '\nLongitude: ' + str(longitude) + '\n')
+
+        print('{:13}{:23}{:5}'.format('Date', 'Forecast', 'Clouds'))
+        print('===========================================')
+
         for item in parsed['list']:
+            temp = time.localtime(item['dt'])
+            date = datetime.date(temp.tm_year, temp.tm_mon, temp.tm_mday)
+            print(str(date) + ' | {:20} | {:<10}'.format(item['weather'][0]['description'],
+                                                         str(item['clouds']) + ' %'))
+
             if item['clouds'] <= 20:
-                temp = time.localtime(item['dt'])
-                clear_days.append(datetime.date(temp.tm_year, temp.tm_mon, temp.tm_mday))
+                clear_days.append(date)
     except:
         print("\nError querying weather api\nDisplaying trace:\n\n")
         print(traceback.format_exc())
         sys.exit(1)
-
-    # The following line of code shows the list of clear days returned and the required lat and long
-    print(zipcode + ' Coordinates: \nLongitude: ' + str(longitude) + '\nLatitude: ' + str(latitude) + '\n')
-    print('Found ' + str(len(clear_days)) + ' clear days at ' + str(longitude) + ' ' + str(latitude) + '\n')
 
     # -------------------------- Get satellite ephemeris data ----------------------------
     iss = ephem.readtle(tle[0], tle[1], tle[2])
@@ -114,7 +119,7 @@ def main():
         old_tr = tr
 
         if clear_days.count(ob_date) > 0:
-            print('Date/Time (UTC)       Alt/Azim      Lat/Long     Elev')
+            print('\nDate/Time (UTC)       Alt/Azim      Lat/Long     Elev')
             print('======================================================')
             while tr < ts:
                 obs.date = tr
@@ -127,19 +132,16 @@ def main():
                 tr = ephem.Date(tr + 60.0 * ephem.second)
             print('')
             obs.date = tr + ephem.minute
-            print(obs.date)
             visible = visible + 1
-            tup = (tr, ts)
+            tup = (old_tr, ts)
             events.append(tup)
-
-    print('here')
 
     # Contains next five viewable date/times
     # Include sat position, direction of travel, and duration of visibility
     print(events)
 
     # -------------------------- Schedule event notifications ----------------------------
-    event_scheduler(account_sid, auth_token, my_number, events)
+    # event_scheduler(account_sid, auth_token, my_number, events)
 
 
 if __name__ == "__main__":
