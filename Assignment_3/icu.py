@@ -3,7 +3,7 @@
 import argparse
 import datetime
 import json
-import math
+from math import degrees
 import sys
 import time
 import traceback
@@ -31,7 +31,7 @@ with open('login_keys.json') as json_data:
         my_number = d['twilio']['myNumber']
         appID = d['openweathermap']['appid']
     except:
-        print("\nError in reading login_keys.json\nDisplaying trace:\n\n")
+        print('\nError in reading login_keys.json\nDisplaying trace:\n\n')
         print(traceback.format_exc())
         sys.exit(1)
 
@@ -72,8 +72,7 @@ def main():
     try:
         s = requests.Session()
         payload = {'identity': username, 'password': password}
-        r = s.post(base_url + '/ajaxauth/login', data=payload)
-        # r = s.get('https://www.space-track.org/basicspacedata/query/class/tle_latest/NORAD_CAT_ID/25544/orderby/ORDINAL asc/limit/1/metadata/false')
+        s.post(base_url + '/ajaxauth/login', data=payload)
         r = s.get(base_url + '/basicspacedata/query/class/tle_latest/NORAD_CAT_ID/' + norad_id + '/ORDINAL/1/')
         parsed = r.json()
         tle.append((parsed[0]['TLE_LINE0']))
@@ -81,7 +80,7 @@ def main():
         tle.append((parsed[0]['TLE_LINE2']))
         print('\nSatellite TLE: \n' + tle[0] + '\n' + tle[1] + '\n' + tle[2] + '\n')
     except:
-        print("\nError querying space api\nDisplaying trace:\n\n")
+        print('\nError querying space api\nDisplaying trace:\n\n')
         print(traceback.format_exc())
         sys.exit(1)
 
@@ -112,12 +111,12 @@ def main():
 
         print('\nThere are ' + str(len(clear_days)) + ' clear days in the next 15 days')
     except:
-        print("\nError querying weather api\nDisplaying trace:\n\n")
+        print('\nError querying weather api\nDisplaying trace:\n\n')
         print(traceback.format_exc())
         sys.exit(1)
 
     # -------------------------- Get satellite ephemeris data ----------------------------
-    iss = ephem.readtle(tle[0], tle[1], tle[2])
+    sat = ephem.readtle(tle[0], tle[1], tle[2])
 
     obs = ephem.Observer()
     obs.lat = latitude
@@ -126,13 +125,14 @@ def main():
     now = datetime.datetime.utcnow()
     obs.date = now
 
-    visible = 0
+    viewable_events = 0
     events = []
-    while visible < 5 and len(clear_days) > 0:
+
+    while viewable_events < 5 and len(clear_days) > 0:
         try:
-            tr, azr, tt, altt, ts, azs = obs.next_pass(iss)
+            tr, azr, tt, altt, ts, azs = obs.next_pass(sat)
         except ValueError:
-            print("That satellite seems to always stay below your horizon")
+            print('That satellite seems to always stay below your horizon')
             break
 
         ob_date = date_from_time(tr)
@@ -146,42 +146,49 @@ def main():
         obs.date = max_time
 
         sun = ephem.Sun()
+        sun.compute(obs)
+        sat.compute(obs)
 
-        if clear_days.count(ob_date) > 0:
+        sun_alt = degrees(sun.alt)
+
+        visible = False
+
+        if sat.eclipsed is False and -18 < sun_alt < -6:
+            visible = True
+
+        if visible and clear_days.count(ob_date) > 0:
             print('\nDate/Time (UTC)       Alt/Azim      Lat/Long     Elev')
             print('======================================================')
             while tr < ts:
                 obs.date = tr
-                iss.compute(obs)
-                print(str(tr) + ' | {:4.1f} {:5.1f} | {:4.1f} {:+6.1f} | {:5.1f}'.format(math.degrees(iss.alt),
-                                                                                         math.degrees(iss.az),
-                                                                                         math.degrees(iss.sublat),
-                                                                                         math.degrees(iss.sublong),
-                                                                                         iss.elevation / 1000.))
+                sat.compute(obs)
+                print(str(tr) + ' | {:4.1f} {:5.1f} | {:4.1f} {:+6.1f} | {:5.1f}'.format(degrees(sat.alt),
+                                                                                         degrees(sat.az),
+                                                                                         degrees(sat.sublat),
+                                                                                         degrees(sat.sublong),
+                                                                                         sat.elevation / 1000.))
                 tr = ephem.Date(tr + 60.0 * ephem.second)
-            print('')
+
+            print('\nDuration: ' + str(duration))
             obs.date = tr + ephem.minute
-            visible = visible + 1
-            tup = {'start': time.mktime(datetime_from_time(old_tr).timetuple()),
-                   'end': time.mktime(datetime_from_time(ts).timetuple())}
+            viewable_events += 1
+            tup = {'start': time.mktime(datetime_from_time(old_tr).timetuple())}
             events.append(tup)
         elif ob_date > clear_days[-1]:
             break
         else:
             obs.date = ts + ephem.minute
 
-    if visible < 5:
-        print("There are less than 5 viewable events in the next 15 days")
-
-    # Contains next five viewable date/times
-    # Include sat position, direction of travel, and duration of visibility
-    print(events)
+    if viewable_events < 5:
+        print('\nThere are ' + str(len(events)) + ' viewable events in the next 15 days')
 
     # -------------------------- Schedule event notifications ----------------------------
-    # event_scheduler(account_sid, auth_token, my_number, events)
+    if events:
+        print('\nScheduling events...')
+        event_scheduler(account_sid, auth_token, my_number, events)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     try:
         main()
     except:
