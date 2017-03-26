@@ -138,6 +138,15 @@ def main():
         ob_date = date_from_time(tr)
         old_tr = tr
 
+        duration = int((ts - tr) * 60 * 60 * 24)
+        rise_time = datetime_from_time(tr)
+        max_time = datetime_from_time(tt)
+        set_time = datetime_from_time(ts)
+
+        obs.date = max_time
+
+        sun = ephem.Sun()
+
         if clear_days.count(ob_date) > 0:
             print('\nDate/Time (UTC)       Alt/Azim      Lat/Long     Elev')
             print('======================================================')
