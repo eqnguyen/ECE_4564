@@ -109,7 +109,7 @@ def main():
 
     visible = 0
     events = []
-    while visible < 5:
+    while visible < 5 and len(clear_days) > 0:
         tr, azr, tt, altt, ts, azs = obs.next_pass(iss)
 
         ob_year = (tr.triple()[0])
@@ -135,6 +135,13 @@ def main():
             visible = visible + 1
             tup = (old_tr, ts)
             events.append(tup)
+        elif (ob_date > clear_days[-1]):
+            print("There are less than 5 viewable events in the next 15 days")
+            visible = 5
+        else: 
+            obs.date = ts + ephem.minute
+    if visible < 5:
+        print("There are less than 5 viewable events in the next 15 days")
 
     # Contains next five viewable date/times
     # Include sat position, direction of travel, and duration of visibility
