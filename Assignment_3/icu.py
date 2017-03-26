@@ -103,6 +103,7 @@ def main():
     obs.long = longitude
 
     visible = 0
+    events = [];
     while visible < 5:
         tr, azr, tt, altt, ts, azs = obs.next_pass(iss)
         
@@ -110,6 +111,7 @@ def main():
         ob_month = (tr.triple()[1])
         ob_day = (math.floor(tr.triple()[2]))
         ob_date = datetime.date(ob_year, ob_month, ob_day)
+        old_tr = tr;
 
         if clear_days.count(ob_date) > 0: 
             print('Date/Time (UTC)       Alt/Azim      Lat/Long     Elev')
@@ -127,13 +129,15 @@ def main():
             obs.date = tr + ephem.minute
             print(obs.date);
             visible = visible + 1;
+            tup = (tr,ts);
+            events.append(tup)
 
 
     print('here')
 
     # Contains next five viewable date/times
     # Include sat position, direction of travel, and duration of visibility
-    events = {}
+    print (events);
 
     # Schedule event notifications
     event_scheduler(account_sid, auth_token, my_number, events)
