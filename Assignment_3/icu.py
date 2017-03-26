@@ -37,7 +37,7 @@ with open('login_keys.json') as json_data:
 
 
 def main():
-    # Create argument parser
+    # -------------------------- Create argument parser ----------------------------
     parser = argparse.ArgumentParser(
         description='Artificial satellite monitor gateway that queries Space-Track and NOAA')
 
@@ -51,7 +51,7 @@ def main():
     zipcode = args.z
     norad_id = args.s
 
-    # Get TLE orbital elements
+    # -------------------------- Get TLE orbital elements ----------------------------
     base_url = 'https://www.space-track.org'
     tle = []
 
@@ -71,7 +71,7 @@ def main():
         print(traceback.format_exc())
         sys.exit(1)
 
-    # Get 15-day weather forecast
+    # -------------------------- Get 15-day weather forecast ----------------------------
     clear_days = []
 
     try:
@@ -95,7 +95,7 @@ def main():
     print(zipcode + ' Coordinates: \nLongitude: ' + str(longitude) + '\nLatitude: ' + str(latitude) + '\n')
     print('Found ' + str(len(clear_days)) + ' clear days at ' + str(longitude) + ' ' + str(latitude) + '\n')
 
-    # PyEphem
+    # -------------------------- Get satellite ephemeris data ----------------------------
     iss = ephem.readtle(tle[0], tle[1], tle[2])
 
     obs = ephem.Observer()
@@ -103,17 +103,17 @@ def main():
     obs.long = longitude
 
     visible = 0
-    events = [];
+    events = []
     while visible < 5:
         tr, azr, tt, altt, ts, azs = obs.next_pass(iss)
-        
+
         ob_year = (tr.triple()[0])
         ob_month = (tr.triple()[1])
         ob_day = (math.floor(tr.triple()[2]))
         ob_date = datetime.date(ob_year, ob_month, ob_day)
-        old_tr = tr;
+        old_tr = tr
 
-        if clear_days.count(ob_date) > 0: 
+        if clear_days.count(ob_date) > 0:
             print('Date/Time (UTC)       Alt/Azim      Lat/Long     Elev')
             print('======================================================')
             while tr < ts:
@@ -127,19 +127,18 @@ def main():
                 tr = ephem.Date(tr + 60.0 * ephem.second)
             print('')
             obs.date = tr + ephem.minute
-            print(obs.date);
-            visible = visible + 1;
-            tup = (tr,ts);
+            print(obs.date)
+            visible = visible + 1
+            tup = (tr, ts)
             events.append(tup)
-
 
     print('here')
 
     # Contains next five viewable date/times
     # Include sat position, direction of travel, and duration of visibility
-    print (events);
+    print(events)
 
-    # Schedule event notifications
+    # -------------------------- Schedule event notifications ----------------------------
     event_scheduler(account_sid, auth_token, my_number, events)
 
 
