@@ -74,7 +74,9 @@ def event_scheduler(account_sid, auth_token, my_number, events):
         print('Scheduled event for ' + str(datetime.datetime.fromtimestamp(alert_time)))
 
         # schedule the sms alert
-        s.enterabs(time=alert_time, action=send_text, priority=1, kwargs={account_sid, auth_token, my_number, event['start']})
+        s.enterabs(time=alert_time, action=send_text, priority=1,
+                   kwargs={'account_sid': account_sid, 'auth_token': auth_token, 'my_number': my_number,
+                           'event_start': event['start']})
         # schedule the led/audio alerts
         s.enterabs(time=alert_time, action=start_alerts, priority=1, kwargs={'event_time': event['start']})
     s.run(blocking=True)
