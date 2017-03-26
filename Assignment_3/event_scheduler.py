@@ -5,7 +5,7 @@ import sched
 import threading
 import time
 
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import pygame
 from twilio.rest import TwilioRestClient
 
