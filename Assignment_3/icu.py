@@ -10,7 +10,7 @@ import traceback
 
 import ephem
 import requests
-# from event_scheduler import event_scheduler
+from event_scheduler import event_scheduler
 
 # -------------------------- Get keys and credentials ----------------------------
 f = ''
