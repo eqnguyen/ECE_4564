@@ -93,8 +93,10 @@ def main():
             print(str(date) + ' | {:20} | {:<10}'.format(item['weather'][0]['description'],
                                                          str(item['clouds']) + ' %'))
 
-            if item['clouds'] <= 20:
+            if item['clouds'] < 20:
                 clear_days.append(date)
+
+        print('\nThere are ' + str(len(clear_days)) + ' clear days in the next 15 days')
     except:
         print("\nError querying weather api\nDisplaying trace:\n\n")
         print(traceback.format_exc())
@@ -109,12 +111,11 @@ def main():
 
     visible = 0
     events = []
-    while visible >= 0 and visible < 5 and len(clear_days) > 0:
+    while visible < 5 and len(clear_days) > 0:
         try:
             tr, azr, tt, altt, ts, azs = obs.next_pass(iss)
         except ValueError:
-            print("That satellite seems to stay always below your horizon")
-            visible = -1;
+            print("That satellite seems to always stay below your horizon")
             break;
 
         ob_year = (tr.triple()[0])
@@ -140,10 +141,11 @@ def main():
             visible = visible + 1
             tup = (old_tr, ts)
             events.append(tup)
-        elif (ob_date > clear_days[-1]):
-            visible = -1
-        else: 
+        elif ob_date > clear_days[-1]:
+            break;
+        else:
             obs.date = ts + ephem.minute
+
     if visible < 5:
         print("There are less than 5 viewable events in the next 15 days")
 
