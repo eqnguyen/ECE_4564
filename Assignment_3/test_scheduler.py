@@ -31,6 +31,6 @@ with open('login_keys.json') as json_data:
 
 schedule_time = time.time() + 10
 
-events = [{"start": schedule_time}]
+events = [{'start': schedule_time}]
 
 event_scheduler.event_scheduler(account_sid, auth_token, my_number, events)
