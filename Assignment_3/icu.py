@@ -75,7 +75,7 @@ def main():
     clear_days = []
 
     try:
-        payload = {'cnt': 16, 'zip': [zipcode + ',us'], 'appid': appID}
+        payload = {'cnt': 15, 'zip': [zipcode + ',us'], 'appid': appID}
         r = requests.get('http://api.openweathermap.org/data/2.5/forecast/daily', params=payload)
         parsed = r.json()
 
