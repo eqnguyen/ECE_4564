@@ -102,21 +102,32 @@ def main():
     obs.lat = latitude
     obs.long = longitude
 
-    for p in range(3):
+    visible = 0
+    while visible < 5:
         tr, azr, tt, altt, ts, azs = obs.next_pass(iss)
-        print('Date/Time (UTC)       Alt/Azim      Lat/Long     Elev')
-        print('======================================================')
-        while tr < ts:
-            obs.date = tr
-            iss.compute(obs)
-            print(str(tr) + ' | {:4.1f} {:5.1f} | {:4.1f} {:+6.1f} | {:5.1f}'.format(math.degrees(iss.alt),
-                                                                                     math.degrees(iss.az),
-                                                                                     math.degrees(iss.sublat),
-                                                                                     math.degrees(iss.sublong),
-                                                                                     iss.elevation / 1000.))
-            tr = ephem.Date(tr + 60.0 * ephem.second)
-        print('')
-        obs.date = tr + ephem.minute
+        
+        ob_year = (tr.triple()[0])
+        ob_month = (tr.triple()[1])
+        ob_day = (math.floor(tr.triple()[2]))
+        ob_date = datetime.date(ob_year, ob_month, ob_day)
+
+        if clear_days.count(ob_date) > 0: 
+            print('Date/Time (UTC)       Alt/Azim      Lat/Long     Elev')
+            print('======================================================')
+            while tr < ts:
+                obs.date = tr
+                iss.compute(obs)
+                print(str(tr) + ' | {:4.1f} {:5.1f} | {:4.1f} {:+6.1f} | {:5.1f}'.format(math.degrees(iss.alt),
+                                                                                         math.degrees(iss.az),
+                                                                                         math.degrees(iss.sublat),
+                                                                                         math.degrees(iss.sublong),
+                                                                                         iss.elevation / 1000.))
+                tr = ephem.Date(tr + 60.0 * ephem.second)
+            print('')
+            obs.date = tr + ephem.minute
+            print(obs.date);
+            visible = visible + 1;
+
 
     print('here')
 
