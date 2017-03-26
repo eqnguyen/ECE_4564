@@ -137,12 +137,10 @@ def main():
             break
 
         ob_date = date_from_time(tr)
-        old_tr = tr
 
         duration = int((ts - tr) * 60 * 60 * 24)
-        rise_time = datetime_from_time(tr)
+        start_time = calendar.timegm(datetime_from_time(tr).timetuple())
         max_time = datetime_from_time(tt)
-        set_time = datetime_from_time(ts)
 
         obs.date = max_time
 
@@ -173,7 +171,7 @@ def main():
             print('\nDuration: ' + str(duration))
             obs.date = tr + ephem.minute
             viewable_events += 1
-            tup = {'start': calendar.timegm(datetime_from_time(old_tr).timetuple())}
+            tup = {'start': start_time}
             events.append(tup)
         elif ob_date > clear_days[-1]:
             break

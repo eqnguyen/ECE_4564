@@ -35,7 +35,6 @@ def flash_led(stop_event):
         time.sleep(1)
         GPIO.output(chan_list, (False, False, False))
         time.sleep(1)
-    # exit
     GPIO.output(chan_list, (False, False, False))
 
 
@@ -72,7 +71,7 @@ def event_scheduler(account_sid, auth_token, my_number, events):
         alert_time = event['start'] - datetime.timedelta(seconds=900).total_seconds()
 
         print('Scheduled event for ', datetime.datetime.fromtimestamp(alert_time))
-        print('Event will occur in ', alert_time-time.time(), ' seconds\n')
+        print('Event will occur in ', alert_time - time.time(), ' seconds\n')
 
         # schedule the sms alert
         s.enterabs(time=alert_time, action=send_text, priority=1,
