@@ -10,7 +10,7 @@ import traceback
 
 import ephem
 import requests
-from event_scheduler import event_scheduler
+# from event_scheduler import event_scheduler
 
 # -------------------------- Get keys and credentials ----------------------------
 f = ''
@@ -109,8 +109,13 @@ def main():
 
     visible = 0
     events = []
-    while visible < 5 and len(clear_days) > 0:
-        tr, azr, tt, altt, ts, azs = obs.next_pass(iss)
+    while visible >= 0 and visible < 5 and len(clear_days) > 0:
+        try:
+            tr, azr, tt, altt, ts, azs = obs.next_pass(iss)
+        except ValueError:
+            print("That satellite seems to stay always below your horizon")
+            visible = -1;
+            break;
 
         ob_year = (tr.triple()[0])
         ob_month = (tr.triple()[1])
@@ -136,8 +141,7 @@ def main():
             tup = (old_tr, ts)
             events.append(tup)
         elif (ob_date > clear_days[-1]):
-            print("There are less than 5 viewable events in the next 15 days")
-            visible = 5
+            visible = -1
         else: 
             obs.date = ts + ephem.minute
     if visible < 5:
@@ -155,5 +159,5 @@ if __name__ == "__main__":
     try:
         main()
     except:
-        print('')
+        print(traceback.format_exc())
         sys.exit(1)
