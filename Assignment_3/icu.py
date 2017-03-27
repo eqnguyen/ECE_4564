@@ -22,6 +22,8 @@ auth_token = ''
 my_number = ''
 appID = ''
 
+verbosity = False;
+
 with open('login_keys.json') as json_data:
     d = json.load(json_data)
     try:
@@ -59,12 +61,15 @@ def main():
     # Add arguments to the parser
     parser.add_argument('-z', required=True, help='zipcode of viewing area')
     parser.add_argument('-s', required=True, help='NORAD ID of satellite to view')
+    parser.add_argument('-v', help='view errors with verbosity', action='store_true', dest='verbose')
+    parser.set_defaults(verbose=False)
 
     # Store arguments into variable
     args = parser.parse_args()
 
     zipcode = args.z
     norad_id = args.s
+    verbosity = args.verbose;
 
     # -------------------------- Get TLE orbital elements ----------------------------
     base_url = 'https://www.space-track.org'
@@ -86,6 +91,9 @@ def main():
         print('\nSatellite TLE: \n' + tle[0] + '\n' + tle[1] + '\n' + tle[2] + '\n')
     except:
         print('\nError querying space api\n')
+        if verbosity:
+            print("Displaying Stacktrace\n")
+            print(traceback.format_exc())
         sys.exit(1)
 
     # -------------------------- Get 15-day weather forecast ----------------------------
@@ -120,6 +128,9 @@ def main():
         print('\nThere are ' + str(len(clear_days)) + ' clear days in the next 15 days')
     except:
         print('\nError querying weather api\n')
+        if verbosity:
+            print("Displaying Stacktrace\n")
+            print(traceback.format_exc())
         sys.exit(1)
 
     # -------------------------- Get satellite ephemeris data ----------------------------
@@ -198,4 +209,7 @@ if __name__ == '__main__':
     try:
         main()
     except:
+        if verbosity:
+            print("Displaying Stacktrace\n")
+            print(traceback.format_exc())
         sys.exit(1)
