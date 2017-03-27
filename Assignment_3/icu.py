@@ -139,6 +139,7 @@ def main():
         ob_date = date_from_time(tr)
 
         duration = int((ts - tr) * 60 * 60 * 24)
+        duration = datetime.timedelta(seconds=duration)
         start_time = calendar.timegm(datetime_from_time(tr).timetuple())
         max_time = datetime_from_time(tt)
 
