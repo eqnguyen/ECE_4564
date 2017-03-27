@@ -11,7 +11,7 @@ from math import degrees
 
 import ephem
 import requests
-# from event_scheduler import event_scheduler
+from event_scheduler import event_scheduler
 
 # -------------------------- Get keys and credentials ----------------------------
 f = ''
@@ -188,7 +188,7 @@ def main():
     # -------------------------- Schedule event notifications ----------------------------
     if events:
         print('\nScheduling events...')
-        # event_scheduler(account_sid, auth_token, my_number, events)
+        event_scheduler(account_sid, auth_token, my_number, events)
 
 
 if __name__ == '__main__':
