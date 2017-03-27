@@ -70,8 +70,8 @@ def event_scheduler(account_sid, auth_token, my_number, events):
         # the alerts are scheduled 15min before the event
         alert_time = event['start'] - datetime.timedelta(seconds=900).total_seconds()
 
-        print('Scheduled event for ', datetime.datetime.fromtimestamp(alert_time))
-        print('Event will occur in ', alert_time - time.time(), ' seconds\n')
+        print('Scheduled event for', datetime.datetime.fromtimestamp(alert_time))
+        print('Event will occur in', datetime.timedelta(seconds=alert_time - time.time()), '\n')
 
         # schedule the sms alert
         s.enterabs(time=alert_time, action=send_text, priority=1,

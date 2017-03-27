@@ -169,7 +169,7 @@ def main():
                                                                                          sat.elevation / 1000.))
                 tr = ephem.Date(tr + 60.0 * ephem.second)
 
-            print('\nDuration: ' + str(duration))
+            print('\nDuration:', duration)
             obs.date = tr + ephem.minute
             viewable_events += 1
             tup = {'start': start_time}
@@ -180,7 +180,7 @@ def main():
             obs.date = ts + ephem.minute
 
     if viewable_events < 5:
-        print('\nThere are ' + str(len(events)) + ' viewable events in the next 15 days')
+        print('\nThere are', len(events), 'viewable events in the next 15 days')
 
     # -------------------------- Schedule event notifications ----------------------------
     if events:
