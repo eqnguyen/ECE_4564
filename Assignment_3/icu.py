@@ -11,7 +11,7 @@ from math import degrees
 
 import ephem
 import requests
-from event_scheduler import event_scheduler
+# from event_scheduler import event_scheduler
 
 # -------------------------- Get keys and credentials ----------------------------
 f = ''
@@ -93,6 +93,10 @@ def main():
         r = requests.get('http://api.openweathermap.org/data/2.5/forecast/daily', params=payload)
         parsed = r.json()
 
+        if(parsed['cod'] != "200"):
+            print(parsed['message'])
+            sys.exit(1)
+
         latitude = (parsed['city']['coord']['lat'])
         longitude = (parsed['city']['coord']['lon'])
 
@@ -112,8 +116,7 @@ def main():
 
         print('\nThere are ' + str(len(clear_days)) + ' clear days in the next 15 days')
     except:
-        print('\nError querying weather api\nDisplaying trace:\n\n')
-        print(traceback.format_exc())
+        print('\nError querying weather api\n')
         sys.exit(1)
 
     # -------------------------- Get satellite ephemeris data ----------------------------
@@ -185,12 +188,11 @@ def main():
     # -------------------------- Schedule event notifications ----------------------------
     if events:
         print('\nScheduling events...')
-        event_scheduler(account_sid, auth_token, my_number, events)
+        # event_scheduler(account_sid, auth_token, my_number, events)
 
 
 if __name__ == '__main__':
     try:
         main()
     except:
-        print(traceback.format_exc())
         sys.exit(1)
