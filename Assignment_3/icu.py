@@ -76,13 +76,16 @@ def main():
         s.post(base_url + '/ajaxauth/login', data=payload)
         r = s.get(base_url + '/basicspacedata/query/class/tle_latest/NORAD_CAT_ID/' + norad_id + '/ORDINAL/1/')
         parsed = r.json()
+
+        if (parsed == []):
+            sys.exit(1)
+
         tle.append((parsed[0]['TLE_LINE0']))
         tle.append((parsed[0]['TLE_LINE1']))
         tle.append((parsed[0]['TLE_LINE2']))
         print('\nSatellite TLE: \n' + tle[0] + '\n' + tle[1] + '\n' + tle[2] + '\n')
     except:
-        print('\nError querying space api\nDisplaying trace:\n\n')
-        print(traceback.format_exc())
+        print('\nError querying space api\n')
         sys.exit(1)
 
     # -------------------------- Get 15-day weather forecast ----------------------------
