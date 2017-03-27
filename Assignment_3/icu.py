@@ -22,7 +22,7 @@ auth_token = ''
 my_number = ''
 appID = ''
 
-verbosity = False;
+verbosity = False
 
 with open('login_keys.json') as json_data:
     d = json.load(json_data)
@@ -69,7 +69,7 @@ def main():
 
     zipcode = args.z
     norad_id = args.s
-    verbosity = args.verbose;
+    verbosity = args.verbose
 
     # -------------------------- Get TLE orbital elements ----------------------------
     base_url = 'https://www.space-track.org'
@@ -82,7 +82,8 @@ def main():
         r = s.get(base_url + '/basicspacedata/query/class/tle_latest/NORAD_CAT_ID/' + norad_id + '/ORDINAL/1/')
         parsed = r.json()
 
-        if (parsed == []):
+        # Check for empty response
+        if not parsed:
             sys.exit(1)
 
         tle.append((parsed[0]['TLE_LINE0']))
@@ -104,15 +105,19 @@ def main():
         r = requests.get('http://api.openweathermap.org/data/2.5/forecast/daily', params=payload)
         parsed = r.json()
 
-        if(parsed['cod'] != "200"):
+        # Check for error code
+        if parsed['cod'] != "200":
             print(parsed['message'])
             sys.exit(1)
 
+        # Get latitude and longitude
         latitude = (parsed['city']['coord']['lat'])
         longitude = (parsed['city']['coord']['lon'])
 
-        print(zipcode + ' Coordinates: \nLatitude: ' + str(latitude) + '\nLongitude: ' + str(longitude) + '\n')
+        # Print zipcode, latitude, and longitude
+        print(zipcode + ' Coordinates: \nLatitude:', latitude, '\nLongitude:', longitude, '\n')
 
+        # Print weather summary for 15 days
         print('{:13}{:23}{:5}'.format('Date', 'Forecast', 'Clouds'))
         print('===========================================')
 
@@ -125,7 +130,7 @@ def main():
             if item['clouds'] < 20:
                 clear_days.append(date)
 
-        print('\nThere are ' + str(len(clear_days)) + ' clear days in the next 15 days')
+        print('\nThere are', len(clear_days), 'clear days in the next 15 days')
     except:
         print('\nError querying weather api\n')
         if verbosity:
@@ -136,6 +141,7 @@ def main():
     # -------------------------- Get satellite ephemeris data ----------------------------
     sat = ephem.readtle(tle[0], tle[1], tle[2])
 
+    # Instantiate ephem observer object with latitude and longitude
     obs = ephem.Observer()
     obs.lat = latitude
     obs.long = longitude
@@ -146,6 +152,7 @@ def main():
     viewable_events = 0
     events = []
 
+    # Keep getting next satellite pass until 5 viewable events are found
     while viewable_events < 5 and len(clear_days) > 0:
         try:
             tr, azr, tt, altt, ts, azs = obs.next_pass(sat)
@@ -166,13 +173,15 @@ def main():
         sun.compute(obs)
         sat.compute(obs)
 
-        sun_alt = degrees(sun.alt)
+        sun_alt = int(degrees(sun.alt))
 
         visible = False
 
+        # Check satellite position and sun position to determine if event is viewable
         if sat.eclipsed is False and -18 < sun_alt < -6:
             visible = True
 
+        # Print ephem data for viewable events
         if visible and clear_days.count(ob_date) > 0:
             print('\nDate/Time (UTC)       Alt/Azim      Lat/Long     Elev')
             print('======================================================')
@@ -196,8 +205,9 @@ def main():
         else:
             obs.date = ts + ephem.minute
 
+    # Print message if weather conditions prohibit five viewable events
     if viewable_events < 5:
-        print('\nThere are', len(events), 'viewable events in the next 15 days')
+        print('\nThere are only', len(events), 'viewable events in the next 15 days due to weather conditions')
 
     # -------------------------- Schedule event notifications ----------------------------
     if events:
