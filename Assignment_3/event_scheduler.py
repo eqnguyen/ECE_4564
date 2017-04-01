@@ -66,12 +66,13 @@ def event_scheduler(account_sid, auth_token, my_number, events):
     chan_list = [13, 19, 26]  # 13 red, 19 green, 26 blue
     GPIO.setup(chan_list, GPIO.OUT)
 
-    s = sched.scheduler(datetime.datetime.utcnow, time.sleep)
+    s = sched.scheduler(time.time, time.sleep)
     for event in events:
         # the alerts are scheduled 15min before the event
         alert_time = event['start'] - datetime.timedelta(seconds=900).total_seconds()
 
-        print('Scheduled event for ' + str(datetime.datetime.fromtimestamp(alert_time)))
+        print('Scheduled event for ', datetime.datetime.fromtimestamp(alert_time))
+        print('Event will occur in ', alert_time-time.time(), ' seconds\n')
 
         # schedule the sms alert
         s.enterabs(time=alert_time, action=send_text, priority=1,

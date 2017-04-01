@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import argparse
+import calendar
 import datetime
 import json
 import sys
@@ -172,7 +173,7 @@ def main():
             print('\nDuration: ' + str(duration))
             obs.date = tr + ephem.minute
             viewable_events += 1
-            tup = {'start': time.mktime(datetime_from_time(old_tr).timetuple())}
+            tup = {'start': calendar.timegm(datetime_from_time(old_tr).timetuple())}
             events.append(tup)
         elif ob_date > clear_days[-1]:
             break
