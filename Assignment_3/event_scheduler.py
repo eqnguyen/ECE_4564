@@ -12,10 +12,11 @@ from twilio.rest import TwilioRestClient
 chan_list = []
 
 
-def send_text(account_sid, auth_token, my_number, event):
+def send_text(account_sid, auth_token, my_number, event_start):
     twilio_client = TwilioRestClient(account_sid, auth_token)
     twilio_number = '+12403033631'
-    body = 'Test'
+    date = str(datetime.datetime.fromtimestamp(event_start))
+    body = 'There will be a viewable satellite event on: ' + date
     message = twilio_client.messages.create(body=body, from_=twilio_number, to=my_number)
 
 
@@ -73,7 +74,7 @@ def event_scheduler(account_sid, auth_token, my_number, events):
         print('Scheduled event for ' + str(datetime.datetime.fromtimestamp(alert_time)))
 
         # schedule the sms alert
-        s.enterabs(time=alert_time, action=send_text, argument=[account_sid, auth_token, my_number, event], priority=1)
+        s.enterabs(time=alert_time, action=send_text, priority=1, kwargs={account_sid, auth_token, my_number, event['start']})
         # schedule the led/audio alerts
         s.enterabs(time=alert_time, action=start_alerts, priority=1, kwargs={'event_time': event['start']})
     s.run(blocking=True)
