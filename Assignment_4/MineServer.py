@@ -17,10 +17,12 @@ class PositionResource(resource.Resource):
         self.token = 1
         self.content = (self.x, self.y, self.z, self.token)
 
-    async def render_get(self, request):
+    @asyncio.coroutine
+    def render_get(self, request):
         return aiocoap.Message(payload=pickle.dumps(self.content))
 
-    async def render_put(self, request):
+    @asyncio.coroutine
+    def render_put(self, request):
         print('PUT payload: %s' % request.payload)
         self.content = pickle.loads(request.payload)
         payload = ("New payload: %r" % self.content).encode('utf8')
@@ -42,8 +44,9 @@ class TimeResource(resource.ObservableResource):
             print("Keeping the clock nearby to trigger observations")
         else:
             print("Stowing away the clock until someone asks again")
-
-    async def render_get(self, request):
+  
+    @asyncio.coroutine
+    def render_get(self, request):
         payload = datetime.datetime.now().strftime("%Y-%m-%d %H:%M").encode('ascii')
         return aiocoap.Message(payload=payload)
 
