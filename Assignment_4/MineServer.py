@@ -12,19 +12,14 @@ import aiocoap.resource as resource
 class PositionResource(resource.Resource):
     def __init__(self):
         super(PositionResource, self).__init__()
-        self.x = 0
-        self.y = 0
-        self.z = 0
-        self.token = 1
-        self.content = (self.x, self.y, self.z, self.token)
+        self.content = (0, 0, 0, 1)
 
     async def render_get(self, request):
         return aiocoap.Message(payload=pickle.dumps(self.content))
 
     async def render_put(self, request):
-        print('PUT payload: %s' % request.payload)
         self.content = pickle.loads(request.payload)
-        payload = ("New payload: %r" % self.content).encode('utf8')
+        payload = ('New payload: %r' % (self.content,)).encode('utf8')
         return aiocoap.Message(payload=payload)
 
 
