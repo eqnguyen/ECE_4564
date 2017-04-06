@@ -18,7 +18,13 @@ class PositionResource(resource.Resource):
         return aiocoap.Message(payload=pickle.dumps(self.content))
 
     async def render_put(self, request):
-        self.content = pickle.loads(request.payload)
+        # Payload format: (token, x, y, z, block_id)
+        payload = pickle.loads(request.payload)
+        if payload[0] < 3:
+            payload[0] += 1
+        else:
+            payload[0] = 1
+        self.content = (payload(1), payload(2), payload(3), payload(0))
         payload = ('New payload: %r' % (self.content,)).encode('utf8')
         return aiocoap.Message(payload=payload)
 
