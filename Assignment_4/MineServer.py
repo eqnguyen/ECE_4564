@@ -18,7 +18,7 @@ class PositionResource(resource.Resource):
 
     async def render_get(self, request):
         pos = mc.player.getPos()
-        self.content[:2] = pos
+        self.content = (pos.x, pos.y, pos.z, self.content[3])
         return aiocoap.Message(payload=pickle.dumps(self.content))
 
     async def render_put(self, request):
@@ -26,7 +26,7 @@ class PositionResource(resource.Resource):
         payload = pickle.loads(request.payload)
 
         # Update player position
-        mc.player.setTile(payload[:2])
+        mc.player.setPos(payload[0], payload[1], payload[2])
 
         # Set block at payload location with block_id
         mc.setBlock(payload[0], payload[1], payload[2], payload[4])
