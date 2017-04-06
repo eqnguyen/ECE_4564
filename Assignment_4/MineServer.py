@@ -2,7 +2,6 @@
 
 import asyncio
 import pickle
-import sys
 
 import aiocoap
 import aiocoap.resource as resource
@@ -20,7 +19,7 @@ class PositionResource(resource.Resource):
     async def render_get(self, request):
         pos = mc.player.getPos()
         self.content = (pos.x, pos.y, pos.z, self.content[3])
-        
+
         if pos.x == self.init_pos.x + 10 and pos.y == self.init_pos.y + 1 and pos.z == self.init_pos.z:
             payload = ('Complete',)
             print('Wall is complete')
