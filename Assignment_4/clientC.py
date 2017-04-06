@@ -1,19 +1,26 @@
 #! /usr/bin/env python3
 
+import argparse
 import asyncio
 import pickle
 
 from aiocoap import *
+from mcpi import block
 
 token = 2  # Player C
-block_id = 1  # Stone
+block_id = block.STONE.id  # Stone
 
 
 async def main():
+    parser = argparse.ArgumentParser(
+        description='Minecraft client that communicates with server to set blocks and build a wall')
+    parser.add_argument("ip_address")
+    args = parser.parse_args()
+
     protocol = await Context.create_client_context()
 
     # Get position from server
-    request = Message(code=GET, uri='coap://192.168.1.10/position')
+    request = Message(code=GET, uri='coap://%s/position' % args.ip_address)
 
     try:
         response = await protocol.request(request).response
