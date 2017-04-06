@@ -1,0 +1,35 @@
+
+Assignment 4 Cooperative Multiplayer Minecraft
+
+Description:
+MineServer.py - interfaces with minecraft game and services get/put requests to build a wall in the game
+clientA.py - gets current position of minecraft game pointer and updates position to build blocks
+clientB.py - gets current position of minecraft game pointer and updates position to build blocks
+clientC.py - gets current position of minecraft game pointer and updates position to build blocks
+
+
+Run the project with commands like these:
+	usage: MineServer.py
+	usage: clientX.py "server_ip_address"
+
+	arguments:
+	  ip_address    IP/named address of the minecraft server
+
+
+Initialization procedures within scripts:
+    MineScript.py - On execution of this script:
+        1.
+        2.
+        3.
+        4.
+    clientX.py - On execution of this script using the above switch:
+        1.
+        2.
+        3.
+        4.
+        5.
+
+
+Required Python Modules:
+    aiocoap
+    mcpi (py3minepi)
