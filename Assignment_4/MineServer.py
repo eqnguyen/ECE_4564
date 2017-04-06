@@ -2,6 +2,7 @@
 
 import asyncio
 import pickle
+import sys
 
 import aiocoap
 import aiocoap.resource as resource
@@ -14,24 +15,28 @@ class PositionResource(resource.Resource):
     def __init__(self):
         super(PositionResource, self).__init__()
         self.init_pos = mc.player.getPos()
+        print('Initial position:', self.init_pos.x, self.init_pos.y, self.init_pos.z)
         self.content = (self.init_pos.x, self.init_pos.y, self.init_pos.z, 0)
 
     async def render_get(self, request):
         pos = mc.player.getPos()
-        self.content = (pos.x, pos.y, pos.z, self.content[3])
 
+        # Check if wall is complete
         if pos.x == self.init_pos.x + 10 and pos.y == self.init_pos.y + 1 and pos.z == self.init_pos.z:
-            payload = ('Complete',)
+            token = 3
             print('Wall is complete')
-            return aiocoap.Message(payload=pickle.dumps(payload))
+            mc.postToChat('Wall is complete')
         else:
-            return aiocoap.Message(payload=pickle.dumps(self.content))
+            token = self.content[3]
+        
+        self.content = (pos.x, pos.y, pos.z, token)
+        return aiocoap.Message(payload=pickle.dumps(self.content))
 
     async def render_put(self, request):
         # Payload format: (x, y, z, token, block_id)
         payload = pickle.loads(request.payload)
 
-        # Update player position
+        # Update player position (x, y, z)
         mc.player.setPos(payload[0], payload[1], payload[2])
 
         # Set block at payload location with block_id
@@ -41,8 +46,9 @@ class PositionResource(resource.Resource):
         token = (payload[3] + 1) % 3
 
         # Send PUT response
-        self.content = (payload[0], payload[1], payload[3], token)
-        payload = ('Block set: %r' % (self.content,)).encode('utf8')
+        self.content = (payload[0], payload[1], payload[2], token)
+        payload = ('Block set at: %r' % (self.content,)).encode('utf8')
+        print(payload)
         return aiocoap.Message(payload=payload)
 
 
@@ -58,4 +64,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except:
+        print('Exiting program...')
+        sys.exit(0)
