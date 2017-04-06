@@ -32,10 +32,6 @@ async def main():
             print('\nGET Minecraft player position')
             print('Result: %s\n%r' % (response.code, tup))
 
-        if tup[0] == 'Complete':
-            print('Wall is complete')
-            break
-
         # Check for valid token
         if tup[3] == token:
             # Payload format: (x, y, z, token, block_id)
@@ -51,6 +47,9 @@ async def main():
 
             print('PUT Minecraft player position')
             print('Result: %s\n%r\n' % (response.code, response.payload))
+        elif tup[3] == 3:
+            print('Wall is complete')
+            break
 
 
 if __name__ == "__main__":
