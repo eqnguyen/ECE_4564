@@ -5,12 +5,16 @@ import pickle
 
 import aiocoap
 import aiocoap.resource as resource
+from mcpi.minecraft import Minecraft
+
+mc = Minecraft.create()
 
 
 class PositionResource(resource.Resource):
     def __init__(self):
         super(PositionResource, self).__init__()
-        self.content = (0, 0, 0, 0)
+        self.initial_pos = mc.player.getPos()
+        self.content = (self.initial_pos.x, self.initial_pos.y, self.initial_pos.z, 0)
 
     async def render_get(self, request):
         return aiocoap.Message(payload=pickle.dumps(self.content))
@@ -19,10 +23,15 @@ class PositionResource(resource.Resource):
         # Payload format: (x, y, z, token, block_id)
         payload = pickle.loads(request.payload)
 
+        # Set block at payload location with block_id
+        mc.setBlock(payload[0], payload[1], payload[2], payload[4])
+
+        # Set token for next player
         token = (payload[3] + 1) % 3
 
+        # Send PUT response
         self.content = (payload[0], payload[1], payload[3], token)
-        payload = ('New payload: %r' % (self.content,)).encode('utf8')
+        payload = ('Block set: %r' % (self.content,)).encode('utf8')
         return aiocoap.Message(payload=payload)
 
 
