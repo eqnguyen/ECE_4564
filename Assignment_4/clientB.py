@@ -55,6 +55,8 @@ async def main():
 
             response = await protocol.request(request).response
 
+            blocks += 1
+
             print('PUT Minecraft player position')
             print('Result: %s\n%r\n' % (response.code, response.payload))
 
