@@ -37,7 +37,11 @@ async def main():
         # Check for valid token
         if tup[3] == token:
             # Payload format: (x, y, z, token, block_id)
-            put_payload = (tup[0] + 1, tup[1], tup[2], token, block_id)
+            if blocks == 3:
+                put_payload = (tup[0] - 9, tup[1] + 1, tup[2], token, block_id)
+            else:
+                put_payload = (tup[0] + 1, tup[1], tup[2], token, block_id)
+
             print('\nPUT payload: %s' % (put_payload,))
             payload = pickle.dumps(put_payload)
 
@@ -46,6 +50,8 @@ async def main():
             request.opt.uri_path = ('position',)
 
             response = await protocol.request(request).response
+
+            blocks += 1
 
             print('PUT Minecraft player position')
             print('Result: %s\n%r\n' % (response.code, response.payload))
