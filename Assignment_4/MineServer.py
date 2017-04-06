@@ -13,13 +13,18 @@ mc = Minecraft.create()
 class PositionResource(resource.Resource):
     def __init__(self):
         super(PositionResource, self).__init__()
-        pos = mc.player.getPos()
-        self.content = (pos.x, pos.y, pos.z, 0)
+        self.init_pos = mc.player.getPos()
+        self.content = (self.init_pos.x, self.init_pos.y, self.init_pos.z, 0)
 
     async def render_get(self, request):
         pos = mc.player.getPos()
         self.content = (pos.x, pos.y, pos.z, self.content[3])
-        return aiocoap.Message(payload=pickle.dumps(self.content))
+
+        if pos == (self.init_pos.x + 10, self.init_pos.y + 1, self.init_pos.z):
+            payload = ('Complete',)
+            return aiocoap.Message(payload=pickle.dumps(payload))
+        else:
+            return aiocoap.Message(payload=pickle.dumps(self.content))
 
     async def render_put(self, request):
         # Payload format: (x, y, z, token, block_id)
