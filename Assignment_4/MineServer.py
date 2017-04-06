@@ -13,15 +13,20 @@ mc = Minecraft.create()
 class PositionResource(resource.Resource):
     def __init__(self):
         super(PositionResource, self).__init__()
-        self.initial_pos = mc.player.getPos()
-        self.content = (self.initial_pos.x, self.initial_pos.y, self.initial_pos.z, 0)
+        pos = mc.player.getPos()
+        self.content = (pos.x, pos.y, pos.z, 0)
 
     async def render_get(self, request):
+        pos = mc.player.getPos()
+        self.content[:2] = pos
         return aiocoap.Message(payload=pickle.dumps(self.content))
 
     async def render_put(self, request):
         # Payload format: (x, y, z, token, block_id)
         payload = pickle.loads(request.payload)
+
+        # Update player position
+        mc.player.setTile(payload[:2])
 
         # Set block at payload location with block_id
         mc.setBlock(payload[0], payload[1], payload[2], payload[4])
