@@ -1,15 +1,13 @@
 #! /usr/bin/env python3
 
 import asyncio
-import logging
 import pickle
 
 from aiocoap import *
 
-logging.basicConfig(level=logging.INFO)
+token = 1  # Player B
+block_id = 57  # Diamond Block
 
-token = 2        # Player B
-block_id = 57    # Diamond Block
 
 async def main():
     protocol = await Context.create_client_context()
@@ -29,8 +27,8 @@ async def main():
 
     # Check for valid token
     if tup[3] == token:
-        # Payload format: (token, x, y, z, block_id)
-        put_payload = (token, tup[0]+1, tup[1], tup[2], block_id)
+        # Payload format: (x, y, z, token, block_id)
+        put_payload = (tup[0] + 1, tup[1], tup[2], token, block_id)
         print('\nPUT payload: %s' % (put_payload,))
         payload = pickle.dumps(put_payload)
 
@@ -46,4 +44,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
-
