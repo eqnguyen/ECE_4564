@@ -1,11 +1,12 @@
-
-Assignment 4 Cooperative Multiplayer Minecraft
+////////////////////////////////////////////////////////////
+      Assignment 4 Cooperative Multiplayer Minecraft
+////////////////////////////////////////////////////////////
 
 Description:
-MineServer.py - interfaces with minecraft game and services get/put requests to build a wall in the game
-clientA.py - gets current position of minecraft game pointer and updates position to build blocks
-clientB.py - gets current position of minecraft game pointer and updates position to build blocks
-clientC.py - gets current position of minecraft game pointer and updates position to build blocks
+MineServer.py - interfaces with minecraft game and services GET/POST requests to build a wall in the game
+clientA.py - gets current position of Minecraft game pointer and updates position to build blocks
+clientB.py - gets current position of Minecraft game pointer and updates position to build blocks
+clientC.py - gets current position of Minecraft game pointer and updates position to build blocks
 
 
 Run the project with commands like these:
@@ -18,18 +19,21 @@ Run the project with commands like these:
 
 Initialization procedures within scripts:
     MineScript.py - On execution of this script:
-        1.
-        2.
-        3.
-        4.
+        1. Initializes RPi GPIO and sets channel list
+        2. Instantiates resource tree for server
+        3. Get initial position of Minecraft player
+        4. Loop forever and service client GET/POST requests
+
     clientX.py - On execution of this script using the above switch:
-        1.
-        2.
-        3.
-        4.
-        5.
+        1. Set client token and block ID
+        2. Parse command-line arguments for server IP address
+        3. Loop getting Minecraft player position and posting updated position util wall is complete
 
 
 Required Python Modules:
+    argparse
+    asyncio
+    pickle
     aiocoap
     mcpi (py3minepi)
+    RPi.GPIO
