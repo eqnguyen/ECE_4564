@@ -26,12 +26,12 @@ class PositionResource(resource.Resource):
         # Check if wall is complete
         if pos.x == self.init_pos.x + 10 and pos.y == self.init_pos.y + 1 and pos.z == self.init_pos.z:
             token = 3
-            GPIO.output(chan_list, (0, 0, 0))
+            GPIO.output(chan_list, (False, False, False))
             print('Wall is complete')
             mc.postToChat('Wall is complete')
         else:
             token = self.content[3]
-        
+
         self.content = (pos.x, pos.y, pos.z, token)
         return aiocoap.Message(payload=pickle.dumps(self.content))
 
@@ -47,9 +47,9 @@ class PositionResource(resource.Resource):
 
         # Set token for next player
         token = (payload[3] + 1) % 3
-	
+
         # Change LED color to indicate which client's turn it is
-        GPIO.output(chan_list, (token==0, token==1, token==2))
+        GPIO.output(chan_list, (token == 0, token == 1, token == 2))
 
         # Send PUT response
         self.content = (payload[0], payload[1], payload[2], token)
