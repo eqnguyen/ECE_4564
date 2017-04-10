@@ -41,7 +41,7 @@ async def main():
             payload = pickle.dumps(put_payload)
 
             request = Message(code=PUT, payload=payload)
-            request.opt.uri_host = '192.168.1.10'
+            request.opt.uri_host = args.ip_address
             request.opt.uri_path = ('position',)
 
             response = await protocol.request(request).response
