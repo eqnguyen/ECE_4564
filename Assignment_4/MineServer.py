@@ -84,4 +84,4 @@ if __name__ == "__main__":
     except:
         print('Exiting program...')
         GPIO.cleanup(chan_list)
-        sys.exit(0)
+        sys.exit(1)

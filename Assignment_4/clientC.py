@@ -3,6 +3,7 @@
 import argparse
 import asyncio
 import pickle
+import sys
 
 from aiocoap import *
 from mcpi import block
@@ -53,4 +54,8 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(main())
+    try:
+        asyncio.get_event_loop().run_until_complete(main())
+    except:
+        print('Exiting program...')
+        sys.exit(1)
