@@ -16,9 +16,15 @@ mc = Minecraft.create()
 class PositionResource(resource.Resource):
     def __init__(self):
         super(PositionResource, self).__init__()
+
+        # Set initial position
         self.init_pos = mc.player.getTilePos()
-        print('Initial position:', self.init_pos.x, self.init_pos.y, self.init_pos.z)
         self.content = (self.init_pos.x, self.init_pos.y, self.init_pos.z, 0)
+
+        print('Initial position:', self.init_pos.x, self.init_pos.y, self.init_pos.z)
+
+        # Initialize LED
+        GPIO.output(chan_list, (True, False, False))
 
     async def render_get(self, request):
         pos = mc.player.getTilePos()
@@ -32,6 +38,7 @@ class PositionResource(resource.Resource):
         else:
             token = self.content[3]
 
+        # Return player position
         self.content = (pos.x, pos.y, pos.z, token)
         return aiocoap.Message(payload=pickle.dumps(self.content))
 
@@ -51,10 +58,12 @@ class PositionResource(resource.Resource):
         # Change LED color to indicate which client's turn it is
         GPIO.output(chan_list, (token == 0, token == 1, token == 2))
 
-        # Send PUT response
         self.content = (payload[0], payload[1], payload[2], token)
         payload = ('Block set at: %r' % (self.content,)).encode('utf8')
+
         print(payload)
+
+        # Send PUT response
         return aiocoap.Message(payload=payload)
 
 
