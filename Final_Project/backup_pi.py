@@ -3,7 +3,7 @@
 import psutil
 import pickle
 
-import server_classes.py as RASD
+import rasdrive_classes as RASD
 
 import asyncio
 import aiocoap
@@ -16,17 +16,16 @@ class StatusResource(resource.Resource):
         cpu_percent = psutil.cpu_percent(interval=0)
         network_io = psutil.net_io_counters(pernic=False)
 
-        net_stats = RASD.RASD_Net_Load(bytes_sent=network_io.bytes_sent,
-                                       bytes_recv=network_io.bytes_recv,
-                                       errin=network_io.errin,
-                                       errout=network_io.errout,
-                                       dropin=network_io.dropin,
-                                       dropout=network_io.dropout)
+        net_stats = RASD.RASD_Net_Load(bytes_sent   =   network_io.bytes_sent,
+                                       bytes_recv   =   network_io.bytes_recv,
+                                       errin        =   network_io.errin,
+                                       errout       =   network_io.errout,
+                                       dropin       =   network_io.dropin,
+                                       dropout      =   network_io.dropout)
 
         self.status = RASD.RASD_Status(cpu_percent=cpu_percent, net_stats=net_stats)
 
     async def render_get(self, request):
-
         cpu_percent = psutil.cpu_percent(interval=0)
         network_io = psutil.net_io_counters(pernic=False)
 
@@ -42,19 +41,10 @@ class StatusResource(resource.Resource):
 
 
 def main():
-    # Set pin mode to the numbers you can read off the pi
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
-
-    # Set up channel list
-    global chan_list
-    chan_list = [13, 19, 26]  # 13 red, 19 green, 26 blue
-    GPIO.setup(chan_list, GPIO.OUT)
-
     # Resource tree creation
     root = resource.Site()
 
-    root.add_resource(('position',), PositionResource())
+    root.add_resource(('status',), StatusResource())
 
     asyncio.Task(aiocoap.Context.create_server_context(root))
 
@@ -66,5 +56,4 @@ if __name__ == "__main__":
         main()
     except:
         print('Exiting program...')
-        GPIO.cleanup(chan_list)
         sys.exit(1)
