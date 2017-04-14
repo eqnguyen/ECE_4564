@@ -2,6 +2,7 @@
 
 import psutil
 import pickle
+import sys
 
 import rasdrive_classes as RASD
 
@@ -16,12 +17,12 @@ class StatusResource(resource.Resource):
         cpu_percent = psutil.cpu_percent(interval=0)
         network_io = psutil.net_io_counters(pernic=False)
 
-        net_stats = RASD.RASD_Net_Load(bytes_sent   =   network_io.bytes_sent,
-                                       bytes_recv   =   network_io.bytes_recv,
-                                       errin        =   network_io.errin,
-                                       errout       =   network_io.errout,
-                                       dropin       =   network_io.dropin,
-                                       dropout      =   network_io.dropout)
+        net_stats = RASD.RASD_Net_Load(bytes_sent=network_io.bytes_sent,
+                                       bytes_recv=network_io.bytes_recv,
+                                       errin=network_io.errin,
+                                       errout=network_io.errout,
+                                       dropin=network_io.dropin,
+                                       dropout=network_io.dropout)
 
         self.status = RASD.RASD_Status(cpu_percent=cpu_percent, net_stats=net_stats)
 
@@ -29,12 +30,12 @@ class StatusResource(resource.Resource):
         cpu_percent = psutil.cpu_percent(interval=0)
         network_io = psutil.net_io_counters(pernic=False)
 
-        net_stats = RASD.RASD_Net_Load(bytes_sent   =   network_io.bytes_sent,
-                                       bytes_recv   =   network_io.bytes_recv,
-                                       errin        =   network_io.errin,
-                                       errout       =   network_io.errout,
-                                       dropin       =   network_io.dropin,
-                                       dropout      =   network_io.dropout)
+        net_stats = RASD.RASD_Net_Load(bytes_sent=network_io.bytes_sent,
+                                       bytes_recv=network_io.bytes_recv,
+                                       errin=network_io.errin,
+                                       errout=network_io.errout,
+                                       dropin=network_io.dropin,
+                                       dropout=network_io.dropout)
 
         self.status = RASD.RASD_Status(cpu_percent=cpu_percent, net_stats=net_stats)
         return aiocoap.Message(payload=pickle.dumps(self.status))
