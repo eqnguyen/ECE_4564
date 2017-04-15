@@ -1,6 +1,5 @@
 #! /usr/bin/env python3
 
-import argparse
 import asyncio
 import pickle
 import sys
@@ -25,3 +24,10 @@ async def main():
             print('\nGET CPU/Network/Disk status')
             print('Result: %s\n%r' % (response.code, tup))
 
+
+if __name__ == "__main__":
+    try:
+        asyncio.get_event_loop().run_until_complete(main())
+    except:
+        print('Exiting program...')
+        sys.exit(1)
