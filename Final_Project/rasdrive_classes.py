@@ -3,20 +3,20 @@
 class RASD_Client(object):
     def __init__(self, name, connection, schedule):
         self.name = name
-        self.connection = connection
+        self.ip = ip
         self.schedule = schedule
 
 
 class RASD_Server(object):
     def __init__(self, connection, priority, status):
-        self.connection = connection
+        self.ip = ip
         self.priority = priority
         self.status = status
 
 
 class RASD_Backup(object):
     def __init__(self, connection, status):
-        self.connection = connection
+        self.ip = ip
         self.status = status
 
 
