@@ -23,7 +23,7 @@ function serverResponded( data ) {
 $(document).ready( function() {
     /* handle the click event on the clickme */
     $('#clickme').click( function() {
-        params = { op: "checkup" };
+        params = { op: "status" };
         $.getJSON( 'http://localhost:8888/com' , params, serverResponded );
     });
 });
