@@ -49,6 +49,7 @@ def main():
 if __name__ == "__main__":
     try:
         main()
-    except:
+    except Exception as err:
+        print(err)
         print('Exiting program...')
         sys.exit(1)
