@@ -11,12 +11,14 @@ import asyncio
 import pickle
 from aiocoap import *
 
+
 def getIP():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     ip = s.getsockname()[0]
     s.close()
     return ip
+
 
 cwd = os.getcwd()  # used by static file server
 
@@ -72,9 +74,11 @@ def make_app():
         (r"/(com.*)", CommandHandler),
         (r"/", IndexHandler),
         (r"/(index\.html)", tornado.web.StaticFileHandler, {"path": cwd}),
-])
+    ])
+
 
 servers_list = []
+
 
 async def checkStatus():
     protocol = await Context.create_client_context()
@@ -92,6 +96,7 @@ async def checkStatus():
         else:
             tup = pickle.loads(response.payload)
             print('Result: {code}\n{data}'.format(code=response.code, data=tup))
+
 
 if __name__ == "__main__":
     application = make_app()

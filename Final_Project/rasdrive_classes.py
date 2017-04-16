@@ -30,6 +30,7 @@ class RASD_Status(object):
         return "CPU Utilization: {}\nNetwork Statistics: {}\nDisk Usage: {}".format(
             self.cpu_percent, self.net_stats, self.disk_usage)
 
+
 class RASD_Net_Load(object):
     def __init__(self, bytes_sent, bytes_recv, errin, errout, dropin, dropout):
         self.bytes_sent = bytes_sent
@@ -41,4 +42,4 @@ class RASD_Net_Load(object):
 
     def __str__(self):
         return "Bytes Sent: {} Bytes Recieved: {}\nError In: {} Error Out: {}\nDrop In: {} Drop Out: {}".format(
-               self.bytes_sent, self.bytes_recv, self.errin, self.errout, self.dropin, self.dropout)
+            self.bytes_sent, self.bytes_recv, self.errin, self.errout, self.dropin, self.dropout)
