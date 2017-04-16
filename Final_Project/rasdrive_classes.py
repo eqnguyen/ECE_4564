@@ -8,14 +8,14 @@ class RASD_Client(object):
 
 
 class RASD_Server(object):
-    def __init__(self, connection, priority, status):
+    def __init__(self, ip, priority, status):
         self.ip = ip
         self.priority = priority
         self.status = status
 
 
 class RASD_Backup(object):
-    def __init__(self, connection, status):
+    def __init__(self, ip, status):
         self.ip = ip
         self.status = status
 
