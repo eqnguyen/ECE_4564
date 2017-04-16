@@ -27,9 +27,8 @@ class RASD_Status(object):
         self.disk_usage = disk_usage
 
     def __str__(self):
-        return "CPU Utilization: " + self.cpu_percent + \
-               "\nNetwork Statistics: " + self.net_stats + \
-               "\nDisk Usage: " + self.disk_usage
+        return "CPU Utilization: {}\nNetwork Statistics: {}\nDisk Usage: {}".format(
+            self.cpu_percent, self.net_stats, self.disk_usage)
 
 class RASD_Net_Load(object):
     def __init__(self, bytes_sent, bytes_recv, errin, errout, dropin, dropout):
