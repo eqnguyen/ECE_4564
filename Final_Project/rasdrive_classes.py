@@ -21,9 +21,10 @@ class RASD_Backup(object):
 
 
 class RASD_Status(object):
-    def __init__(self, cpu_percent, net_load):
+    def __init__(self, cpu_percent, net_load, disk_usage):
         self.cpu_percent = cpu_percent
         self.net_load = net_load
+        self.disk_usage = disk_usage
 
 class RASD_Net_Load(object):
     def __init__(self, bytes_sent, bytes_recv, errin, errout, dropin, dropout):
