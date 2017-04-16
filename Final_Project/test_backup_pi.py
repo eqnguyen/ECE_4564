@@ -22,12 +22,13 @@ async def main():
         else:
             tup = pickle.loads(response.payload)
             print('\nGET CPU/Network/Disk status')
-            print('Result: %s\n%r' % (response.code, tup))
+            print('Result: %s\n%s' % (response.code, tup))
 
 
 if __name__ == "__main__":
     try:
         asyncio.get_event_loop().run_until_complete(main())
-    except:
+    except Exception as err:
+        print(err)
         print('Exiting program...')
         sys.exit(1)

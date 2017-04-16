@@ -41,6 +41,5 @@ class RASD_Net_Load(object):
         self.dropout = dropout
 
     def __str__(self):
-        return "Bytes Sent: " + self.bytes_sent + " Bytes Recieved: " + self.bytes_recv + \
-               "\nError In: " + self.errin + " Error Out: " + self.errout + \
-               "\nDrop In: " + self.dropin + " Drop Out: " + self.dropout
+        return "Bytes Sent: {} Bytes Recieved: {}\nError In: {} Error Out: {}\nDrop In: {} Drop Out: {}".format(
+               self.bytes_sent, self.bytes_recv, self.errin, self.errout, self.dropin, self.dropout)
