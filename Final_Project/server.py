@@ -7,6 +7,10 @@ import json
 from tornado import template
 import socket
 
+import asyncio
+import pickle
+from aiocoap import *
+
 def getIP():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
@@ -36,13 +40,11 @@ class IndexHandler(tornado.web.RequestHandler):
 class CommandHandler(tornado.web.RequestHandler):
     # both GET and POST requests have the same responses
     def get(self, url='/'):
-        print
-        "get"
+        print("get")
         self.handleRequest()
 
     def post(self, url='/'):
-        print
-        'post'
+        print('post')
         self.handleRequest()
 
     # handle both GET and POST requests with the same function
@@ -72,9 +74,24 @@ def make_app():
         (r"/(index\.html)", tornado.web.StaticFileHandler, {"path": cwd}),
 ])
 
+servers_list = []
 
-def checkStatus():
-    pass
+async def checkStatus():
+    protocol = await Context.create_client_context()
+
+    for server in servers_list:
+        # Get statuses from servers
+        request = Message(code=GET, uri='coap://{ip}/status'.format(ip=server.ip))
+
+        try:
+            response = await protocol.request(request).response
+        except Exception as e:
+            # presumably server went offline...deal with it here
+            print('Failed to fetch resource:')
+            print(e)
+        else:
+            tup = pickle.loads(response.payload)
+            print('Result: {code}\n{data}'.format(code=response.code, data=tup))
 
 if __name__ == "__main__":
     application = make_app()
