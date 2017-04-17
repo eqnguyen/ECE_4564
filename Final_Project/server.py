@@ -80,7 +80,7 @@ def make_app():
 
 
 server_list = [RASD.RASD_Server('rasdserver1'), RASD.RASD_Server('rasdserver2')]
-backup_list = [RASD.RASD_Client('rasdbackup1'), RASD.RASD_Client('rasdbackup2')]
+backup_list = [RASD.RASD_Backup('rasdbackup1'), RASD.RASD_Backup('rasdbackup2')]
 
 
 async def checkStatus():
