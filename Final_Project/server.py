@@ -7,6 +7,8 @@ import json
 from tornado import template
 import socket
 
+import rasdrive_classes as RASD
+
 import asyncio
 import pickle
 from aiocoap import *
@@ -57,7 +59,7 @@ class CommandHandler(tornado.web.RequestHandler):
         # received a "checkup" operation command from the browser:
         if op == "status":
             # make a dictionary
-            status = {"server": True, "mostRecentSerial": "test"}
+            status = {"server": True, "Servers Status": server_list, "Backups Status": backup_list}
             # turn it to JSON and send it to the browser
             self.write(json.dumps(status))
 
@@ -77,15 +79,16 @@ def make_app():
     ])
 
 
-servers_list = []
+server_list = [RASD.RASD_Server('rasdserver1'), RASD.RASD_Server('rasdserver2')]
+backup_list = [RASD.RASD_Client('rasdbackup1'), RASD.RASD_Client('rasdbackup2')]
 
 
 async def checkStatus():
     protocol = await Context.create_client_context()
 
-    for server in servers_list:
+    for server in server_list:
         # Get statuses from servers
-        request = Message(code=GET, uri='coap://{ip}/status'.format(ip=server.ip))
+        request = Message(code=GET, uri='coap://{hostname}.local/status'.format(hostname=server.hostname))
 
         try:
             response = await protocol.request(request).response
@@ -93,9 +96,25 @@ async def checkStatus():
             # presumably server went offline...deal with it here
             print('Failed to fetch resource:')
             print(e)
+            server.status = None
         else:
             tup = pickle.loads(response.payload)
-            print('Result: {code}\n{data}'.format(code=response.code, data=tup))
+            server.status = tup
+
+    for backup in backup_list:
+        # Get statuses from servers
+        request = Message(code=GET, uri='coap://{hostname}.local/status'.format(hostname=backup.hostname))
+
+        try:
+            response = await protocol.request(request).response
+        except Exception as e:
+            # presumably server went offline...deal with it here
+            print('Failed to fetch resource:')
+            print(e)
+            backup.status = None
+        else:
+            tup = pickle.loads(response.payload)
+            backup.status = tup
 
 
 if __name__ == "__main__":
