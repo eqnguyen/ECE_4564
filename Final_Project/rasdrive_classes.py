@@ -1,22 +1,20 @@
 #! /usr/bin/env python3
 
 class RASD_Client(object):
-    def __init__(self, name, connection, schedule):
-        self.name = name
-        self.ip = ip
+    def __init__(self, hostname, schedule=None):
+        self.hostname = hostname
         self.schedule = schedule
 
 
 class RASD_Server(object):
-    def __init__(self, ip, priority, status):
-        self.ip = ip
-        self.priority = priority
+    def __init__(self, hostname, status=None):
+        self.hostname = hostname
         self.status = status
 
 
 class RASD_Backup(object):
-    def __init__(self, ip, status):
-        self.ip = ip
+    def __init__(self, hostname, status=None):
+        self.hostname = hostname
         self.status = status
 
 
