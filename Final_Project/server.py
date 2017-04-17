@@ -59,7 +59,7 @@ class CommandHandler(tornado.web.RequestHandler):
         # received a "checkup" operation command from the browser:
         if op == "status":
             # make a dictionary
-            status = {"server": True, "Servers Status": server_list, "Backups Status": backup_list}
+            status = {"server": True, "Servers Status": None, "Backups Status": backup_list[0].status.cpu_percent}
             # turn it to JSON and send it to the browser
             self.write(json.dumps(status))
 
