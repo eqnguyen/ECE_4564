@@ -1,28 +1,12 @@
 #! /usr/bin/env python3
 
+import json
+import os
+import pickle
+
 import tornado.ioloop
 import tornado.web
-import os
-import json
 from tornado import template
-import socket
-from time import sleep
-import threading
-
-import rasdrive_classes as RASD
-
-import asyncio
-import pickle
-from aiocoap import *
-
-
-def getIP():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    ip = s.getsockname()[0]
-    s.close()
-    return ip
-
 
 cwd = os.getcwd()  # used by static file server
 
@@ -41,10 +25,12 @@ class IndexHandler(tornado.web.RequestHandler):
     def post(self, url='/'):
         self.render('index.html')
 
-#server_list = [RASD.RASD_Server('rasdserver1'), RASD.RASD_Server('rasdserver2')]
+
+# server_list = [RASD.RASD_Server('rasdserver1'), RASD.RASD_Server('rasdserver2')]
 server_list = []
-#backup_list = [RASD.RASD_Backup('rasdbackup1'), RASD.RASD_Backup('rasdbackup2')]
+# backup_list = [RASD.RASD_Backup('rasdbackup1'), RASD.RASD_Backup('rasdbackup2')]
 backup_list = []
+
 
 # handle commands sent from the web browser
 class CommandHandler(tornado.web.RequestHandler):
@@ -64,7 +50,7 @@ class CommandHandler(tornado.web.RequestHandler):
     def handleRequest(self):
         global server_list
         global backup_list
-        
+
         # is op to decide what kind of command is being sent
         op = self.get_argument('op', None)
 
@@ -101,4 +87,3 @@ if __name__ == "__main__":
     print("Starting server on port number {port}...".format(port=port))
     print("Open at http://{hostname}:{port}/index.html".format(hostname=os.uname()[1], port=port))
     tornado.ioloop.IOLoop.instance().start()
-

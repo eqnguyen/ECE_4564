@@ -1,14 +1,13 @@
 #! /usr/bin/env python3
 
-import psutil
+import asyncio
 import pickle
 import sys
 
-import rasdrive_classes as RASD
-
-import asyncio
 import aiocoap
 import aiocoap.resource as resource
+import psutil
+import rasdrive_classes as RASD
 
 
 class StatusResource(resource.Resource):
