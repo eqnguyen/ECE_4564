@@ -56,7 +56,7 @@ class CommandHandler(tornado.web.RequestHandler):
         # received a "checkup" operation command from the browser:
         if op == "status":
             # make a dictionary
-            status = {}
+            status = {'servers': {}, 'backups': {}}
 
             for server in server_list:
                 if server.status is None:
@@ -73,7 +73,7 @@ class CommandHandler(tornado.web.RequestHandler):
                             'dropin': server.status.net_stats.dropin,
                             'dropout': server.status.net_stats.dropout
                         },
-                        'desk_usage': server.status.disk_usage
+                        'disk_usage': server.status.disk_usage
                     }
 
             for backup in backup_list:
@@ -91,7 +91,7 @@ class CommandHandler(tornado.web.RequestHandler):
                             'dropin': backup.status.net_stats.dropin,
                             'dropout': backup.status.net_stats.dropout
                         },
-                        'desk_usage': backup.status.disk_usage
+                        'disk_usage': backup.status.disk_usage
                     }
 
             # turn it to JSON and send it to the browser
