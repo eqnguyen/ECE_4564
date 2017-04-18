@@ -26,15 +26,12 @@ class IndexHandler(tornado.web.RequestHandler):
         self.render('index.html')
 
 
-# server_list = [RASD.RASD_Server('rasdserver1'), RASD.RASD_Server('rasdserver2')]
 server_list = []
-# backup_list = [RASD.RASD_Backup('rasdbackup1'), RASD.RASD_Backup('rasdbackup2')]
 backup_list = []
 
 
 # handle commands sent from the web browser
 class CommandHandler(tornado.web.RequestHandler):
-    # both GET and POST requests have the same responses
     def get(self, url='/'):
         print("get")
         self.handleRequest()
@@ -42,11 +39,13 @@ class CommandHandler(tornado.web.RequestHandler):
     def post(self, url='/'):
         global server_list
         global backup_list
+
         print('post')
+
         server_list = pickle.loads(self.request.body)['server_list']
         backup_list = pickle.loads(self.request.body)['backup_list']
 
-    # handle both GET and POST requests with the same function
+    # handle GET request
     def handleRequest(self):
         global server_list
         global backup_list
@@ -56,9 +55,45 @@ class CommandHandler(tornado.web.RequestHandler):
 
         # received a "checkup" operation command from the browser:
         if op == "status":
-            print(backup_list)
             # make a dictionary
-            status = {"server": True, "Servers Status": None, "Backups Status": backup_list[0].status.cpu_percent}
+            status = {}
+
+            for server in server_list:
+                if server.status is None:
+                    status['servers'][server.hostname] = {'online': False}
+                else:
+                    status['servers'][server.hostname] = {
+                        'online': True,
+                        'cpu': server.status.cpu_percent,
+                        'net_stats': {
+                            'bytes_sent': server.status.net_stats.bytes_sent,
+                            'bytes_recv': server.status.net_stats.bytes_recv,
+                            'errin': server.status.net_stats.errin,
+                            'errout': server.status.net_stats.errout,
+                            'dropin': server.status.net_stats.dropin,
+                            'dropout': server.status.net_stats.dropout
+                        },
+                        'desk_usage': server.status.disk_usage
+                    }
+
+            for backup in backup_list:
+                if backup.status is None:
+                    status['backups'][backup.hostname] = {'online': False}
+                else:
+                    status['backups'][backup.hostname] = {
+                        'online': True,
+                        'cpu': backup.status.cpu_percent,
+                        'net_stats': {
+                            'bytes_sent': backup.status.net_stats.bytes_sent,
+                            'bytes_recv': backup.status.net_stats.bytes_recv,
+                            'errin': backup.status.net_stats.errin,
+                            'errout': backup.status.net_stats.errout,
+                            'dropin': backup.status.net_stats.dropin,
+                            'dropout': backup.status.net_stats.dropout
+                        },
+                        'desk_usage': backup.status.disk_usage
+                    }
+
             # turn it to JSON and send it to the browser
             self.write(json.dumps(status))
 
@@ -85,5 +120,5 @@ if __name__ == "__main__":
     # start tornado
     application.listen(port)
     print("Starting server on port number {port}...".format(port=port))
-    print("Open at http://{hostname}:{port}/index.html".format(hostname=os.uname()[1], port=port))
+    print("Open at http://{hostname}.local:{port}/index.html".format(hostname=os.uname()[1], port=port))
     tornado.ioloop.IOLoop.instance().start()
