@@ -13,31 +13,31 @@ function serverResponded( data ) {
     
     // check the server status, and report it on the screen
     if ( data.servers.rasdserver1.online === true ) {
-        $('#status .value1').html("OK");
+        $('#status .value1').html("<font color='green'>ONLINE<font>");
     }
     else {
-        $('#status .value1').html("NOT OK");
+        $('#status .value1').html("<font color='red'>OFFLINE<font>");
     }
 
     if ( data.servers.rasdserver2.online === true ) {
-        $('#status .value2').html("OK");
+        $('#status .value2').html("<font color='green'>ONLINE<font>");
     }
     else {
-        $('#status .value2').html("NOT OK");
+        $('#status .value2').html("<font color='red'>OFFLINE<font>");
     }
 
     if ( data.backups.rasdbackup1.online === true ) {
-        $('#status .value3').html("OK");
+        $('#status .value3').html("<font color='green'>ONLINE<font>");
     }
     else {
-        $('#status .value3').html("NOT OK");
+        $('#status .value3').html("<font color='red'>OFFLINE<font>");
     }
 
     if ( data.backups.rasdbackup2.online === true ) {
-        $('#status .value4').html("OK");
+        $('#status .value4').html("<font color='green'>ONLINE<font>");
     }
     else {
-        $('#status .value4').html("NOT OK");
+        $('#status .value4').html("<font color='red'>OFFLINE<font>");
     }
 }
 
@@ -48,16 +48,21 @@ $(document).ready( function() {
         $.getJSON( 'http://rasdbackup1.local:8888/com' , params, serverResponded );
     });
 });
+
+window.setInterval( function() {
+    params = { op: "status" };
+    $.getJSON( 'http://rasdbackup1.local:8888/com' , params, serverResponded );
+}, 5000);
 </script>
 </head>
 <body>
     <div id="clickme" style="cursor: pointer;">CLICK ME</div>
     <br>
     <div id="status">
-        Server 1 Status: <span class="value1">?</span>
-        Server 2 Status: <span class="value2">?</span>
+        Server 1 Status: <span class="value1">?</span><br>
+        Server 2 Status: <span class="value2">?</span><br>
         <br>
-        Backup 1 Status: <span class="value3">?</span>
+        Backup 1 Status: <span class="value3">?</span><br>
         Backup 2 Status: <span class="value4">?</span>
     </div>
 </body>
