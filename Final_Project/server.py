@@ -41,6 +41,10 @@ class IndexHandler(tornado.web.RequestHandler):
     def post(self, url='/'):
         self.render('index.html')
 
+#server_list = [RASD.RASD_Server('rasdserver1'), RASD.RASD_Server('rasdserver2')]
+server_list = []
+#backup_list = [RASD.RASD_Backup('rasdbackup1'), RASD.RASD_Backup('rasdbackup2')]
+backup_list = []
 
 # handle commands sent from the web browser
 class CommandHandler(tornado.web.RequestHandler):
@@ -50,16 +54,23 @@ class CommandHandler(tornado.web.RequestHandler):
         self.handleRequest()
 
     def post(self, url='/'):
+        global server_list
+        global backup_list
         print('post')
-        print(self.request.body)
+        server_list = pickle.loads(self.request.body)['server_list']
+        backup_list = pickle.loads(self.request.body)['backup_list']
 
     # handle both GET and POST requests with the same function
     def handleRequest(self):
+        global server_list
+        global backup_list
+        
         # is op to decide what kind of command is being sent
         op = self.get_argument('op', None)
 
         # received a "checkup" operation command from the browser:
         if op == "status":
+            print(backup_list)
             # make a dictionary
             status = {"server": True, "Servers Status": None, "Backups Status": backup_list[0].status.cpu_percent}
             # turn it to JSON and send it to the browser

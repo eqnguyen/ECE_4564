@@ -52,7 +52,7 @@ async def checkStatus():
                 backup.status = tup
                 print(tup)
                 
-        payload = {"server_list": server_list, "backup_list": backup_list}
+        payload = pickle.dumps({"server_list": server_list, "backup_list": backup_list})
         s.post("http://localhost:8888/com", data=payload)
         sleep(10)
         
