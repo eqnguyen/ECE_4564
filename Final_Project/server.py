@@ -6,6 +6,8 @@ import os
 import json
 from tornado import template
 import socket
+from time import sleep
+import threading
 
 import rasdrive_classes as RASD
 
@@ -49,7 +51,7 @@ class CommandHandler(tornado.web.RequestHandler):
 
     def post(self, url='/'):
         print('post')
-        self.handleRequest()
+        print(self.request.body)
 
     # handle both GET and POST requests with the same function
     def handleRequest(self):
@@ -79,55 +81,13 @@ def make_app():
     ])
 
 
-server_list = [RASD.RASD_Server('rasdserver1'), RASD.RASD_Server('rasdserver2')]
-backup_list = [RASD.RASD_Backup('rasdbackup1'), RASD.RASD_Backup('rasdbackup2')]
-
-
-async def checkStatus():
-    protocol = await Context.create_client_context()
-
-    for server in server_list:
-        print(server)
-        # Get statuses from servers
-        request = Message(code=GET, uri='coap://{hostname}.local/status'.format(hostname=server.hostname))
-
-        try:
-            response = await protocol.request(request).response
-        except Exception as e:
-            # presumably server went offline...deal with it here
-            print('Failed to fetch resource:')
-            print(e)
-            server.status = None
-        else:
-            tup = pickle.loads(response.payload)
-            server.status = tup
-
-    for backup in backup_list:
-        print(backup)
-        # Get statuses from servers
-        request = Message(code=GET, uri='coap://{hostname}.local/status'.format(hostname=backup.hostname))
-
-        try:
-            response = await protocol.request(request).response
-        except Exception as e:
-            # presumably server went offline...deal with it here
-            print('Failed to fetch resource:')
-            print(e)
-            backup.status = None
-        else:
-            tup = pickle.loads(response.payload)
-            backup.status = tup
-
-
 if __name__ == "__main__":
     application = make_app()
     port = 8888
-    # tell tornado to run checkSerial every 5000ms
-    status_loop = tornado.ioloop.PeriodicCallback(checkStatus, 5000)
-    status_loop.start()
 
     # start tornado
     application.listen(port)
     print("Starting server on port number {port}...".format(port=port))
-    print("Open at http://{ip}:{port}/index.html".format(ip=getIP(), port=port))
+    print("Open at http://{hostname}:{port}/index.html".format(hostname=os.uname()[1], port=port))
     tornado.ioloop.IOLoop.instance().start()
+
