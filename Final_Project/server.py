@@ -83,7 +83,9 @@ server_list = [RASD.RASD_Server('rasdserver1'), RASD.RASD_Server('rasdserver2')]
 backup_list = [RASD.RASD_Backup('rasdbackup1'), RASD.RASD_Backup('rasdbackup2')]
 
 
-async def checkStatus(protocol):
+async def checkStatus():
+    protocol = await Context.create_client_context()
+
     for server in server_list:
         print(server)
         # Get statuses from servers
@@ -117,19 +119,15 @@ async def checkStatus(protocol):
             backup.status = tup
 
 
-async def main():
-    protocol = await Context.create_client_context()
-
+if __name__ == "__main__":
     application = make_app()
     port = 8888
     # tell tornado to run checkSerial every 5000ms
-    asyncio.get_event_loop().run_until_complete(checkStatus(protocol))
+    status_loop = tornado.ioloop.PeriodicCallback(checkStatus, 5000)
+    status_loop.start()
 
     # start tornado
     application.listen(port)
     print("Starting server on port number {port}...".format(port=port))
     print("Open at http://{ip}:{port}/index.html".format(ip=getIP(), port=port))
     tornado.ioloop.IOLoop.instance().start()
-
-if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(main())
