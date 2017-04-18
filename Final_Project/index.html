@@ -12,11 +12,32 @@ function serverResponded( data ) {
     console.log( data );
     
     // check the server status, and report it on the screen
-    if ( data.server === true ) {
-        $('#status .value').html("OK");
+    if ( data.servers.rasdserver1.online === true ) {
+        $('#status .value1').html("OK");
     }
     else {
-        $('#status .value').html("NOT OK");
+        $('#status .value1').html("NOT OK");
+    }
+
+    if ( data.servers.rasdserver2.online === true ) {
+        $('#status .value2').html("OK");
+    }
+    else {
+        $('#status .value2').html("NOT OK");
+    }
+
+    if ( data.backups.rasdbackup1.online === true ) {
+        $('#status .value3').html("OK");
+    }
+    else {
+        $('#status .value3').html("NOT OK");
+    }
+
+    if ( data.backups.rasdbackup2.online === true ) {
+        $('#status .value4').html("OK");
+    }
+    else {
+        $('#status .value4').html("NOT OK");
     }
 }
 
@@ -31,8 +52,12 @@ $(document).ready( function() {
 </head>
 <body>
     <div id="clickme" style="cursor: pointer;">CLICK ME</div>
-    
+    <br>
     <div id="status">
-        Server Status: <span class="value">?</span>
+        Server 1 Status: <span class="value1">?</span>
+        Server 2 Status: <span class="value2">?</span>
+        <br>
+        Backup 1 Status: <span class="value3">?</span>
+        Backup 2 Status: <span class="value4">?</span>
     </div>
 </body>
