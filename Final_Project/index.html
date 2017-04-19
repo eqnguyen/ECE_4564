@@ -67,17 +67,17 @@
 
     $(document).ready( function() {
         /* handle the click event on the clickme */
+        ip = location.host;
         $('button').click( function() {
             params = { op: "status" };
-            $.getJSON( 'http://rasdbackup1.local:8888/com' , params, serverResponded );
+            $.getJSON( 'http://'+ ip + '/com' , params, serverResponded );
         });
     });
 
     window.setInterval( function() {
         params = { op: "status" };
-        $.getJSON( 'http://rasdbackup1.local:8888/com' , params, serverResponded );
-    }, 5000);
-
+        $.getJSON( 'http://' + ip + '/com' , params, serverResponded );
+    }, 5000);     
     </script>
 </head>
 <body>
