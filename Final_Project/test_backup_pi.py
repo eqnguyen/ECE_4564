@@ -5,6 +5,7 @@ import pickle
 import sys
 
 from aiocoap import *
+from time import sleep
 
 
 async def main():
@@ -24,11 +25,12 @@ async def main():
             print('\nGET CPU/Network/Disk status')
             print('Result: %s\n%s' % (response.code, tup))
 
+        sleep(1)
+
 
 if __name__ == "__main__":
     try:
         asyncio.get_event_loop().run_until_complete(main())
-    except Exception as err:
-        print(err)
+    except:
         print('Exiting program...')
         sys.exit(1)

@@ -32,6 +32,9 @@ backup_list = []
 
 # handle commands sent from the web browser
 class CommandHandler(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "http://rasdbackup1.local:8888")
+    
     def get(self, url='/'):
         print("get")
         self.handleRequest()
