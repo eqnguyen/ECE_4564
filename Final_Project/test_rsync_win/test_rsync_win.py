@@ -12,7 +12,7 @@
 # 4e. Copy the text from test_rsync_win/home/{user}/.ssh/id_rsa.pub to ~/.ssh/authorized_keys on your pi
 # 5. You may have to start the rsync daemon on the pi with:
 # 		sudo systemctl enable rsync
-#		sudo systemctl start rsync
+#       sudo systemctl start rsync
 # 6. Run this script (from win cmd prompt you can enter "python test_rsync_win.py")
 # 
 # Tip: You may need to run the rsync command once (or type yes the 
@@ -35,6 +35,6 @@ with open('password.json') as json_data:
         sys.exit(1)
 
 command = './bin/rsync.exe -av --delete -e ./bin/ssh ./testFile.txt ' + username + '@' + ip + ':~/rsyncTests/'
-print (command)
+print(command)
 
 call(command.split(" "));

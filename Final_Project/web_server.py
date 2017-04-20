@@ -1,8 +1,11 @@
 #! /usr/bin/env python3
 
+# This script contains code for the RasDrive tornado web server
+
 import json
 import os
 import pickle
+import socket
 
 import tornado.ioloop
 import tornado.web
@@ -11,13 +14,16 @@ from tornado import template
 cwd = os.getcwd()  # used by static file server
 
 
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        t = template.Template("<html>{{ myvalue }}</html>")
-        self.write(t.generate(myvalue="XXX"))
+# Return the IP address of host
+def get_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    ip = s.getsockname()[0]
+    s.close()
+    return ip
 
 
-# send the index file
+# Send the index file
 class IndexHandler(tornado.web.RequestHandler):
     def get(self, url='/'):
         self.render('index.html')
@@ -26,6 +32,7 @@ class IndexHandler(tornado.web.RequestHandler):
         self.render('index.html')
 
 
+# Initialize RasDrive node lists
 server_list = []
 backup_list = []
 
@@ -33,8 +40,9 @@ backup_list = []
 # handle commands sent from the web browser
 class CommandHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
+        # Set header to handle cross-origin requests
         self.set_header("Access-Control-Allow-Origin", "http://rasdbackup1.local:8888")
-    
+
     def get(self, url='/'):
         print("get")
         self.handleRequest()
@@ -53,7 +61,7 @@ class CommandHandler(tornado.web.RequestHandler):
         global server_list
         global backup_list
 
-        # is op to decide what kind of command is being sent
+        # op to decide what kind of command is being sent
         op = self.get_argument('op', None)
 
         # received a "checkup" operation command from the browser:
@@ -61,6 +69,7 @@ class CommandHandler(tornado.web.RequestHandler):
             # make a dictionary
             status = {'servers': {}, 'backups': {}}
 
+            # Update server status in dictionary
             for server in server_list:
                 if server.status is None:
                     status['servers'][server.hostname] = {'online': False}
@@ -79,6 +88,7 @@ class CommandHandler(tornado.web.RequestHandler):
                         'disk_usage': server.status.disk_usage
                     }
 
+            # Update backup status in dictionary
             for backup in backup_list:
                 if backup.status is None:
                     status['backups'][backup.hostname] = {'online': False}
@@ -123,5 +133,5 @@ if __name__ == "__main__":
     # start tornado
     application.listen(port)
     print("Starting server on port number {port}...".format(port=port))
-    print("Open at http://{hostname}.local:{port}/index.html".format(hostname=os.uname()[1], port=port))
+    print("Open at http://{ip}:{port}/index.html".format(ip=get_ip(), port=port))
     tornado.ioloop.IOLoop.instance().start()

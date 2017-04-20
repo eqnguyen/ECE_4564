@@ -1,5 +1,7 @@
 #! /usr/bin/env python3
 
+# This script contains code to host a CoAP server for system status
+
 import asyncio
 import pickle
 import sys
@@ -47,15 +49,15 @@ def main():
     # Set ping mode to the numbers you can read off the Pi
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    
+
     # Set up the channel list
     global chan_list
     chan_list = [12, 16, 21]  # 12 red, 16 green, 21 blue
     GPIO.setup(chan_list, GPIO.OUT)
-    
+
     # Initialize LED to green
     GPIO.output(chan_list, (False, True, False))
-    
+
     # Resource tree creation
     root = resource.Site()
 

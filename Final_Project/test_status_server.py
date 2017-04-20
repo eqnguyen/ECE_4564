@@ -1,5 +1,11 @@
 #! /usr/bin/env python3
 
+# This script tests status_server.py by making CoAP requests to the server
+
+# Instructions:
+# First run status_server.py then run this script to get status updates
+# from the Pi
+
 import asyncio
 import pickle
 import sys
@@ -13,7 +19,7 @@ async def main():
 
     while True:
         # Get position from server
-        request = Message(code=GET, uri='coap://%s/status' % 'localhost')
+        request = Message(code=GET, uri='coap://{hostname}/status'.format(hostname='localhost'))
 
         try:
             response = await protocol.request(request).response
