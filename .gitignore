@@ -7,3 +7,5 @@ api_keys.txt
 *.zip
 login_keys.json
 password.json
+home/
+testFile.txt
