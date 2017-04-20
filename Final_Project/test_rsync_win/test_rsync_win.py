@@ -1,26 +1,6 @@
 #! /usr/bin/env python3
 
 # Instructions:
-# First download rsync from here:
-# https://www.itefix.net/content/cwrsync-free-edition
-# and extract is somewhere
-# 
-# Open up a windows command prompt and navigate to the bin
-# directory you just created
-# Then kinda follow this guide pretending to be on linux
-# https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md
-# By that i mean generate an ssh key, from your win command prompt
-# You may need to run cwrsync.cmd before you can run ssh-keygen.exe
-# and use WinScp or something to send to to your pi in authorized hosts
-# 
-# Then copy this python script to your bin directory and run it
-# Keep in mind youll need a testFile.txt and passwords.json
-# 
-# Tip: You may need to run the rsync command once so the remote becomes
-# a known host
-
-
-# Instructions:
 # 1. You should already have the bin folder in your Final_Project directory
 # 2. Add a testFile.txt you want to send
 # 3. Add a password.json file with rsync.ip and rsync.username (pi)
