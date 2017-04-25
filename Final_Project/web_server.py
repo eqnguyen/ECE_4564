@@ -7,6 +7,7 @@ import os
 import pickle
 import socket
 
+import rasdrive_classes as RASD
 import tornado.ioloop
 import tornado.web
 from tornado import template
@@ -69,42 +70,28 @@ class CommandHandler(tornado.web.RequestHandler):
             # make a dictionary
             status = {'servers': {}, 'backups': {}}
 
-            # Update server status in dictionary
-            for server in server_list:
-                if server.status is None:
-                    status['servers'][server.hostname] = {'online': False}
+            # Update node status in dictionary
+            for node in server_list + backup_list:
+                if node_type(node) is RASD.RASD_SERVER:
+                    node_type = 'servers'
                 else:
-                    status['servers'][server.hostname] = {
-                        'online': True,
-                        'cpu': server.status.cpu_percent,
-                        'net_stats': {
-                            'bytes_sent': server.status.net_stats.bytes_sent,
-                            'bytes_recv': server.status.net_stats.bytes_recv,
-                            'errin': server.status.net_stats.errin,
-                            'errout': server.status.net_stats.errout,
-                            'dropin': server.status.net_stats.dropin,
-                            'dropout': server.status.net_stats.dropout
-                        },
-                        'disk_usage': server.status.disk_usage
-                    }
+                    node_type = 'backups'
 
-            # Update backup status in dictionary
-            for backup in backup_list:
-                if backup.status is None:
-                    status['backups'][backup.hostname] = {'online': False}
+                if node.status is None:
+                    status[node_type][node.hostname] = {'online': False}
                 else:
-                    status['backups'][backup.hostname] = {
+                    status['servers'][node.hostname] = {
                         'online': True,
-                        'cpu': backup.status.cpu_percent,
+                        'cpu': node.status.cpu_percent,
                         'net_stats': {
-                            'bytes_sent': backup.status.net_stats.bytes_sent,
-                            'bytes_recv': backup.status.net_stats.bytes_recv,
-                            'errin': backup.status.net_stats.errin,
-                            'errout': backup.status.net_stats.errout,
-                            'dropin': backup.status.net_stats.dropin,
-                            'dropout': backup.status.net_stats.dropout
+                            'bytes_sent': node.status.net_stats.bytes_sent,
+                            'bytes_recv': node.status.net_stats.bytes_recv,
+                            'errin': node.status.net_stats.errin,
+                            'errout': node.status.net_stats.errout,
+                            'dropin': node.status.net_stats.dropin,
+                            'dropout': node.status.net_stats.dropout
                         },
-                        'disk_usage': backup.status.disk_usage
+                        'disk_usage': node.status.disk_usage
                     }
 
             # turn it to JSON and send it to the browser
