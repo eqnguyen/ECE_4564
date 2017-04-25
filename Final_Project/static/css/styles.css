@@ -111,7 +111,7 @@ div#bodyWrapper {
 	margin-top: 2%;
 	width: 78%;
 	height: auto;
-	background-color: rgba(239, 248, 243, .4);
+	background-color: rgba(239, 248, 243, .9);
 	border-color: rgba(1, 5, 17, .6);
 	border-width: 2px;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
@@ -146,6 +146,12 @@ div#bodyContent p{
 	font-weight: bold;
 }
 
+div#bodyContent button {
+  width: 150px;
+  margin: 10px auto 0px;
+  display: block;
+}
+
 /****************************************************************************************************** */
 /* HOME PAGE STUFF */
 /****************************************************************************************************** */
@@ -157,10 +163,11 @@ div#homeStuff img{
 	height: 23vw;
 }
 
-
-
-
-
+div#status {
+  margin: 0;
+  text-align: center;
+  font-family: "Times New Roman"
+}
 
 /****************************************************************************************************** */
 /****************************************************************************************************** */
@@ -245,7 +252,7 @@ div#bodyWrapper {
 	width: 90%;
 	height: auto;
 	border-width: 1px;
-	background-color: rgba(239, 248, 243, .6);
+	background-color: rgba(239, 248, 243, .9);
 }
 
 /****************************************************************************************************** */

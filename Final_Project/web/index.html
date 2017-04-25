@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RasDrive</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ static_url("js/script.js") }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ static_url("css/styles.css") }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ static_url('img/icon.png') }}">
+</head>
+<body>
+    <div id="menuBar">
+        <img id="hamMenuPic" src="{{ static_url("img/hamb.png") }}">
+        <img id="RasLogo" src="{{ static_url("img/RasLogo.png") }}">
+    </div>
+
+    <div id="dropdown">
+        <ul class="navigation" id="navMenu">
+            <a href="index.html"><li>Home</li></a>
+            <a href="status.html"><li>Status</li></a>
+            <a href=""><li>Sync</li></a>
+        </ul>
+    </div>
+
+    <div id="bodyWrapper">
+        <div id="bodyContent">
+            <div id="homeStuff">
+                <a href="">
+                    <img id="desktop" src="{{ static_url("img/backupDesktop.png") }}">
+			    </a>
+			    <a href="">
+                    <img id="cloud" src="{{ static_url("img/syncCloud.png") }}">
+			    </a>	
+			</div>
+        </div>
+    </div>
+</body>
+</html>

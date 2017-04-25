@@ -11,8 +11,6 @@ import rasdrive_classes as RASD
 import tornado.ioloop
 import tornado.web
 
-cwd = os.getcwd()  # used by static file server
-
 
 # Return the IP address of host
 def get_ip():
@@ -25,8 +23,14 @@ def get_ip():
 
 # Send the index file
 class IndexHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.render('index.html')
+    def get(self, arg=None):
+        self.render('web/index.html')
+
+
+# Send the status file
+class StatusHandler(tornado.web.RequestHandler):
+    def get(self, arg=None):
+        self.render('web/status.html')
 
 
 # Initialize RasDrive node lists
@@ -104,8 +108,9 @@ def make_app():
         # all commands are sent to http://*:port/com
         # each command is differentiated by the "op" (operation) JSON parameter
         (r"/(com.*)", CommandHandler),
-        (r"/", IndexHandler),
-        (r"/(index\.html)", tornado.web.StaticFileHandler, {"path": cwd})],
+        (r"/", tornado.web.RedirectHandler, dict(url=r"/index.html")),
+        (r"/(index\.html)", IndexHandler),
+        (r"/(status\.html)", StatusHandler)],
         static_path=os.path.join(os.path.dirname(__file__), "static"))
 
 
