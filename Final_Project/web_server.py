@@ -25,10 +25,7 @@ def get_ip():
 
 # Send the index file
 class IndexHandler(tornado.web.RequestHandler):
-    def get(self, url='/'):
-        self.render('index.html')
-
-    def post(self, url='/'):
+    def get(self):
         self.render('index.html')
 
 
@@ -108,8 +105,8 @@ def make_app():
         # each command is differentiated by the "op" (operation) JSON parameter
         (r"/(com.*)", CommandHandler),
         (r"/", IndexHandler),
-        (r"/(index\.html)", tornado.web.StaticFileHandler, {"path": cwd}),
-    ])
+        (r"/(index\.html)", tornado.web.StaticFileHandler, {"path": cwd})],
+        static_path=os.path.join(os.path.dirname(__file__), "static"))
 
 
 if __name__ == "__main__":
