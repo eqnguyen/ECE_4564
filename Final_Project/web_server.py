@@ -72,7 +72,7 @@ class CommandHandler(tornado.web.RequestHandler):
 
             # Update node status in dictionary
             for node in server_list + backup_list:
-                if node_type(node) is RASD.RASD_SERVER:
+                if type(node) is RASD.RASD_Server:
                     node_type = 'servers'
                 else:
                     node_type = 'backups'
@@ -80,7 +80,7 @@ class CommandHandler(tornado.web.RequestHandler):
                 if node.status is None:
                     status[node_type][node.hostname] = {'online': False}
                 else:
-                    status['servers'][node.hostname] = {
+                    status[node_type][node.hostname] = {
                         'online': True,
                         'cpu': node.status.cpu_percent,
                         'net_stats': {
