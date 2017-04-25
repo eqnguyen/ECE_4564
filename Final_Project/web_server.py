@@ -10,7 +10,6 @@ import socket
 import rasdrive_classes as RASD
 import tornado.ioloop
 import tornado.web
-from tornado import template
 
 cwd = os.getcwd()  # used by static file server
 
