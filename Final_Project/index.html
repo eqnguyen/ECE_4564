@@ -4,37 +4,60 @@
     <title>RasDrive</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="{{ static_url('js/script.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ static_url('css/styles.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ static_url('img/icon.png') }}">
 </head>
 <body>
-<!-- Button to request server status -->
-<button>Request Status</button>
-<br><br>
+    <div id="menuBar">
+        <img id="hamMenuPic" src="{{ static_url('img/hamb.png') }}">
+        <img id="RasLogo" src="{{ static_url('img/RasLogo.png') }}">
+    </div>
 
-<!-- Text that displays server status -->
-<div id="status">
-    <b><u>Server 1 Status:</u></b> <span class="server_status_1">?</span><br><br>
-    CPU: <span class="server_cpu_1">?</span><br>
-    Disk Usage: <span class="server_disk_1">?</span><br>
-    Network Stats: <span class="server_net_1">?</span><br>
-    <br>
+    <div id="dropdown">
+        <ul class="navigation" id="navMenu">
+            <a href=""><li>Home</li></a>
+            <a href=""><li>Backup</li></a>
+            <a href=""><li>Sync</li></a>
+            <a href=""><li>Status</li></a>
+            <a href=""><li>About</li></a>
+        </ul>
+    </div>
 
-    <b><u>Server 2 Status:</u></b> <span class="server_status_2">?</span><br><br>
-    CPU: <span class="server_cpu_2">?</span><br>
-    Disk Usage: <span class="server_disk_2">?</span><br>
-    Network Stats: <span class="server_net_2">?</span><br>
-    <br>
+    <div id="bodyWrapper">
+        <div id="bodyContent">
+            <!-- Button to request server status -->
+            <button>Request Status</button>
+            <br><br>
 
-    <b><u>Backup 1 Status:</u></b> <span class="backup_status_1">?</span><br><br>
-    CPU: <span class="backup_cpu_1">?</span><br>
-    Disk Usage: <span class="backup_disk_1">?</span><br>
-    Network Stats: <span class="backup_net_1">?</span><br>
-    <br>
+            <!-- Text that displays server status -->
+            <div id="status">
+                <b><u>Server 1 Status:</u></b> <span class="server_status_1">?</span><br><br>
+                CPU: <span class="server_cpu_1">?</span><br>
+                Disk Usage: <span class="server_disk_1">?</span><br>
+                Network Stats: <span class="server_net_1">?</span><br>
+                <br>
 
-    <b><u>Backup 2 Status:</u></b> <span class="backup_status_2">?</span><br><br>
-    CPU: <span class="backup_cpu_2">?</span><br>
-    Disk Usage: <span class="backup_disk_2">?</span><br>
-    Network Stats: <span class="backup_net_2">?</span><br>
-    <br>
-</div>
+                <b><u>Server 2 Status:</u></b> <span class="server_status_2">?</span><br><br>
+                CPU: <span class="server_cpu_2">?</span><br>
+                Disk Usage: <span class="server_disk_2">?</span><br>
+                Network Stats: <span class="server_net_2">?</span><br>
+                <br>
+
+                <b><u>Backup 1 Status:</u></b> <span class="backup_status_1">?</span><br><br>
+                CPU: <span class="backup_cpu_1">?</span><br>
+                Disk Usage: <span class="backup_disk_1">?</span><br>
+                Network Stats: <span class="backup_net_1">?</span><br>
+                <br>
+
+                <b><u>Backup 2 Status:</u></b> <span class="backup_status_2">?</span><br><br>
+                CPU: <span class="backup_cpu_2">?</span><br>
+                Disk Usage: <span class="backup_disk_2">?</span><br>
+                Network Stats: <span class="backup_net_2">?</span><br>
+                <br>
+            </div>
+        </div>
+    </div>
+    
 </body>
 </html>
