@@ -25,7 +25,6 @@ def main():
     # Add server socket to the list of readable connections
     connection_list.append(server_socket)
 
-
     print("Server started on {ip}:{port}".format(ip=server_address, port=port))
 
     s = requests.Session()
@@ -76,10 +75,8 @@ def main():
 
 
 if __name__ == "__main__":
-    # try:
-    #     main()
-    # except Exception as e:
-    #     print('Exiting program...')
-    #     print(e)
-    #     sys.exit(0)
-    main()
+    try:
+        main()
+    except:
+        print('Exiting program...')
+        sys.exit(0)
