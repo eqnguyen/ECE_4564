@@ -12,6 +12,7 @@ import sys
 
 def main():
     connection_list = []  # list of socket clients
+    client_list = []
     size = 1024
     port = 50000
     server_address = socket.gethostbyname(socket.gethostname())
@@ -23,6 +24,7 @@ def main():
 
     # Add server socket to the list of readable connections
     connection_list.append(server_socket)
+
 
     print("Server started on {ip}:{port}".format(ip=server_address, port=port))
 
@@ -38,9 +40,9 @@ def main():
                 # Handle the case in which there is a new connection received through server_socket
                 sockfd, addr = server_socket.accept()
                 connection_list.append(sockfd)
+                client_list.append(addr)
                 print("Client connected: ", addr)
-                print(connection_list)
-                payload = pickle.dumps({'client_list': connection_list})
+                payload = pickle.dumps({'client_list': client_list})
                 try:
                     s.post("http://localhost:8888/com/clients", data=payload)
                 except:
@@ -62,8 +64,9 @@ def main():
                     print("Client disconnected: ", addr)
                     sock.close()
                     connection_list.remove(sock)
+                    client_list.remove(addr)
 
-                    payload = pickle.dumps({'client_list': connection_list})
+                    payload = pickle.dumps({'client_list': client_list})
                     try:
                         s.post("http://localhost:8888/com/clients", data=payload)
                     except:
