@@ -101,4 +101,4 @@ $(document).ready( function() {
 window.setInterval( function() {
     params = { op: "status" };
     $.getJSON( 'http://' + ip + '/com' , params, serverResponded );
-}, 10000);
+}, 5000);

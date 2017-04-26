@@ -3,7 +3,8 @@
 <head>
     <title>RasDrive</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ static_url("js/script.js") }}"></script>
+    <script type="text/javascript" src="{{ static_url(" js
+    /sync_script.js") }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ static_url("css/styles.css") }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{{ static_url('img/icon.png') }}">
@@ -24,10 +25,18 @@
 
     <div id="bodyWrapper">
         <div id="bodyContent">
+            <!-- Button to request server status -->
+            <button>Request Clients</button>
+            <br>
+
             <div id="clients">
-                <b><u>Connected Clients:</u></b><br>
-                {{ client_list }}
-			      </div>
+                <b><u>Connected Clients:</u></b><br><br>
+                <div class="client_list">
+                    {% for client in client_list %}
+                        {{ client }}<br>
+                    {% end %}
+                </div>
+            </div>
         </div>
     </div>
 </body>

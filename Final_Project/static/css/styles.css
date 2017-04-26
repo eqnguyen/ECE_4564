@@ -169,7 +169,7 @@ div#status {
 }
 
 div#clients {
-  margin: 10px;
+  margin-bottom: 10px;
   text-align: center;
   font-family: "Times New Roman"
 }
@@ -289,8 +289,6 @@ div#bodyContent p{
 	font-weight: bold;
 }
 
-
-
 /****************************************************************************************************** */
 /* HOME PAGE STUFF MOBILE */
 /****************************************************************************************************** */
@@ -303,11 +301,4 @@ div#homeStuff img{
 	height: 50vw;
 
 }
-
-
-
-
-
-
-
 } /* end @media  */

@@ -44,12 +44,12 @@ async def checkStatus():
         # Post list of RasDrive nodes with updated statuses to web server every 10 seconds
         payload = pickle.dumps({"server_list": server_list, "backup_list": backup_list})
 
-        try:        
-            s.post("http://localhost:8888/com", data=payload)
+        try:
+            s.post("http://localhost:8888/com/status", data=payload)
         except:
             print('Could not post status to server')
 
-        sleep(10)
+        sleep(5)
 
 
 if __name__ == "__main__":

@@ -33,10 +33,15 @@ class StatusHandler(tornado.web.RequestHandler):
         self.render('web/status.html')
 
 
+# Initialize client list
+client_list = []
+
+
 # Send the sync file
 class SyncHandler(tornado.web.RequestHandler):
     def get(self, url='/'):
-        self.render('web/sync.html', client_list="Client 1")
+        global client_list
+        self.render('web/sync.html', client_list=client_list)
 
 
 # Initialize RasDrive node lists
@@ -57,11 +62,15 @@ class CommandHandler(tornado.web.RequestHandler):
     def post(self, url='/'):
         global server_list
         global backup_list
+        global client_list
 
         print('post')
 
-        server_list = pickle.loads(self.request.body)['server_list']
-        backup_list = pickle.loads(self.request.body)['backup_list']
+        if url == 'com/status':
+            server_list = pickle.loads(self.request.body)['server_list']
+            backup_list = pickle.loads(self.request.body)['backup_list']
+        elif url == 'com/clients':
+            client_list = pickle.loads(self.request.body)['client_list']
 
     # handle GET request
     def handleRequest(self):
@@ -72,7 +81,7 @@ class CommandHandler(tornado.web.RequestHandler):
         op = self.get_argument('op', None)
 
         # received a "checkup" operation command from the browser:
-        if op == "status":
+        if op == 'status':
             # make a dictionary
             status = {'servers': {}, 'backups': {}}
 
@@ -102,6 +111,12 @@ class CommandHandler(tornado.web.RequestHandler):
 
             # turn it to JSON and send it to the browser
             self.write(json.dumps(status))
+
+        elif op == 'clients':
+            clients = {'client_list': client_list}
+
+            # turn it to JSON and send it to the browser
+            self.write(json.dumps(clients))
 
         # operation was not one of the ones that we know how to handle
         else:

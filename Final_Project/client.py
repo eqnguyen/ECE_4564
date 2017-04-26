@@ -7,7 +7,7 @@ import sys
 
 
 def main():
-    host = '172.29.76.116'
+    host = '192.168.1.6'
     port = 50000
     size = 1024
     s = None
