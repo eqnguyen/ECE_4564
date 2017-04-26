@@ -24,14 +24,10 @@
 
     <div id="bodyWrapper">
         <div id="bodyContent">
-            <div id="homeStuff">
-                <a href="">
-                    <img id="desktop" src="{{ static_url("img/backupDesktop.png") }}">
-                </a>
-                <a href="">
-                    <img id="cloud" src="{{ static_url("img/syncCloud.png") }}">
-                </a>	
-            </div>
+            <div id="clients">
+                <b><u>Connected Clients:</u></b><br>
+                {{ client_list }}
+			      </div>
         </div>
     </div>
 </body>

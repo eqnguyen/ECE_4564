@@ -23,14 +23,20 @@ def get_ip():
 
 # Send the index file
 class IndexHandler(tornado.web.RequestHandler):
-    def get(self, arg=None):
+    def get(self, url='/'):
         self.render('web/index.html')
 
 
 # Send the status file
 class StatusHandler(tornado.web.RequestHandler):
-    def get(self, arg=None):
+    def get(self, url='/'):
         self.render('web/status.html')
+
+
+# Send the sync file
+class SyncHandler(tornado.web.RequestHandler):
+    def get(self, url='/'):
+        self.render('web/sync.html', client_list="Client 1")
 
 
 # Initialize RasDrive node lists
@@ -110,7 +116,8 @@ def make_app():
         (r"/(com.*)", CommandHandler),
         (r"/", tornado.web.RedirectHandler, dict(url=r"/index.html")),
         (r"/(index\.html)", IndexHandler),
-        (r"/(status\.html)", StatusHandler)],
+        (r"/(status\.html)", StatusHandler),
+        (r"/(sync\.html)", SyncHandler)],
         static_path=os.path.join(os.path.dirname(__file__), "static"))
 
 
