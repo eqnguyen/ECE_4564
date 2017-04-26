@@ -7,11 +7,9 @@ import os
 import pickle
 import socket
 
+import rasdrive_classes as RASD
 import tornado.ioloop
 import tornado.web
-from tornado import template
-
-cwd = os.getcwd()  # used by static file server
 
 
 # Return the IP address of host
@@ -26,10 +24,19 @@ def get_ip():
 # Send the index file
 class IndexHandler(tornado.web.RequestHandler):
     def get(self, url='/'):
-        self.render('index.html')
+        self.render('web/index.html')
 
-    def post(self, url='/'):
-        self.render('index.html')
+
+# Send the status file
+class StatusHandler(tornado.web.RequestHandler):
+    def get(self, url='/'):
+        self.render('web/status.html')
+
+
+# Send the sync file
+class SyncHandler(tornado.web.RequestHandler):
+    def get(self, url='/'):
+        self.render('web/sync.html', client_list="Client 1")
 
 
 # Initialize RasDrive node lists
@@ -69,42 +76,28 @@ class CommandHandler(tornado.web.RequestHandler):
             # make a dictionary
             status = {'servers': {}, 'backups': {}}
 
-            # Update server status in dictionary
-            for server in server_list:
-                if server.status is None:
-                    status['servers'][server.hostname] = {'online': False}
+            # Update node status in dictionary
+            for node in server_list + backup_list:
+                if type(node) is RASD.RASD_Server:
+                    node_type = 'servers'
                 else:
-                    status['servers'][server.hostname] = {
-                        'online': True,
-                        'cpu': server.status.cpu_percent,
-                        'net_stats': {
-                            'bytes_sent': server.status.net_stats.bytes_sent,
-                            'bytes_recv': server.status.net_stats.bytes_recv,
-                            'errin': server.status.net_stats.errin,
-                            'errout': server.status.net_stats.errout,
-                            'dropin': server.status.net_stats.dropin,
-                            'dropout': server.status.net_stats.dropout
-                        },
-                        'disk_usage': server.status.disk_usage
-                    }
+                    node_type = 'backups'
 
-            # Update backup status in dictionary
-            for backup in backup_list:
-                if backup.status is None:
-                    status['backups'][backup.hostname] = {'online': False}
+                if node.status is None:
+                    status[node_type][node.hostname] = {'online': False}
                 else:
-                    status['backups'][backup.hostname] = {
+                    status[node_type][node.hostname] = {
                         'online': True,
-                        'cpu': backup.status.cpu_percent,
+                        'cpu': node.status.cpu_percent,
                         'net_stats': {
-                            'bytes_sent': backup.status.net_stats.bytes_sent,
-                            'bytes_recv': backup.status.net_stats.bytes_recv,
-                            'errin': backup.status.net_stats.errin,
-                            'errout': backup.status.net_stats.errout,
-                            'dropin': backup.status.net_stats.dropin,
-                            'dropout': backup.status.net_stats.dropout
+                            'bytes_sent': node.status.net_stats.bytes_sent,
+                            'bytes_recv': node.status.net_stats.bytes_recv,
+                            'errin': node.status.net_stats.errin,
+                            'errout': node.status.net_stats.errout,
+                            'dropin': node.status.net_stats.dropin,
+                            'dropout': node.status.net_stats.dropout
                         },
-                        'disk_usage': backup.status.disk_usage
+                        'disk_usage': node.status.disk_usage
                     }
 
             # turn it to JSON and send it to the browser
@@ -121,9 +114,11 @@ def make_app():
         # all commands are sent to http://*:port/com
         # each command is differentiated by the "op" (operation) JSON parameter
         (r"/(com.*)", CommandHandler),
-        (r"/", IndexHandler),
-        (r"/(index\.html)", tornado.web.StaticFileHandler, {"path": cwd}),
-    ])
+        (r"/", tornado.web.RedirectHandler, dict(url=r"/index.html")),
+        (r"/(index\.html)", IndexHandler),
+        (r"/(status\.html)", StatusHandler),
+        (r"/(sync\.html)", SyncHandler)],
+        static_path=os.path.join(os.path.dirname(__file__), "static"))
 
 
 if __name__ == "__main__":

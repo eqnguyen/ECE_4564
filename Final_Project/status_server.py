@@ -4,6 +4,7 @@
 
 import asyncio
 import pickle
+import signal
 import sys
 
 import RPi.GPIO as GPIO
@@ -11,6 +12,21 @@ import aiocoap
 import aiocoap.resource as resource
 import psutil
 import rasdrive_classes as RASD
+
+
+# Set ping mode to the numbers you can read off the Pi
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+chan_list = [12, 16, 21]
+GPIO.setup(chan_list, GPIO.OUT)
+
+
+def sig_handler(signal, frame):
+    GPIO.cleanup(chan_list)
+    sys.exit(0)
+
+
+signal.signal(signal.SIGTERM, sig_handler)
 
 
 class StatusResource(resource.Resource):
@@ -23,6 +39,8 @@ class StatusResource(resource.Resource):
 
 
 def get_RASD_Status():
+    global chan_list
+
     cpu_percent = psutil.cpu_percent(interval=0)
     network_io = psutil.net_io_counters(pernic=False)
     disk_usage = psutil.disk_usage('/').percent
@@ -46,18 +64,6 @@ def get_RASD_Status():
 
 
 def main():
-    # Set ping mode to the numbers you can read off the Pi
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
-
-    # Set up the channel list
-    global chan_list
-    chan_list = [12, 16, 21]  # 12 red, 16 green, 21 blue
-    GPIO.setup(chan_list, GPIO.OUT)
-
-    # Initialize LED to green
-    GPIO.output(chan_list, (False, True, False))
-
     # Resource tree creation
     root = resource.Site()
 
@@ -74,4 +80,4 @@ if __name__ == "__main__":
     except:
         print('Exiting program...')
         GPIO.cleanup(chan_list)
-        sys.exit(1)
+        sys.exit(0)
