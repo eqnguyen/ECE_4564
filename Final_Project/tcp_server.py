@@ -3,6 +3,8 @@
 # Socket server which accepts connections from clients and sends
 # the list of clients to the tornado web server
 
+import pickle
+import requests
 import socket
 import select
 import sys
@@ -24,6 +26,8 @@ def main():
 
     print("Server started on {ip}:{port}".format(ip=server_address, port=port))
 
+    s = requests.Session()
+
     while True:
         # Get the list sockets which are ready to be read through select
         read_sockets, write_sockets, error_sockets = select.select(connection_list, [], [])
@@ -34,7 +38,13 @@ def main():
                 # Handle the case in which there is a new connection received through server_socket
                 sockfd, addr = server_socket.accept()
                 connection_list.append(sockfd)
-                print("Client connected: ", sockfd, addr)
+                print("Client connected: ", addr)
+                print(connection_list)
+                payload = pickle.dumps({'client_list': connection_list})
+                try:
+                    s.post("http://localhost:8888/com/clients", data=payload)
+                except:
+                    print('Could not post status to server')
 
             # Some incoming message from a client
             else:
@@ -49,15 +59,24 @@ def main():
 
                 # Client disconnected, so remove from socket list
                 except:
-                    print("Client is offline %s  %s ", sockfd, addr)
+                    print("Client disconnected: ", addr)
                     sock.close()
                     connection_list.remove(sock)
+
+                    payload = pickle.dumps({'client_list': connection_list})
+                    try:
+                        s.post("http://localhost:8888/com/clients", data=payload)
+                    except:
+                        print('Could not post status to server')
+
                     continue
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except:
-        print('Exiting program...')
-        sys.exit(0)
+    # try:
+    #     main()
+    # except Exception as e:
+    #     print('Exiting program...')
+    #     print(e)
+    #     sys.exit(0)
+    main()
