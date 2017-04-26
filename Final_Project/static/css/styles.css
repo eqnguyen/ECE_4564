@@ -299,6 +299,18 @@ div#homeStuff img{
 	margin-top: 7.5%;
 	margin-bottom: 7.5%;
 	height: 50vw;
-
 }
+
+div#status {
+  margin: 0;
+  text-align: center;
+  font-family: "Times New Roman"
+}
+
+div#clients {
+  margin-bottom: 10px;
+  text-align: center;
+  font-family: "Times New Roman"
+}
+
 } /* end @media  */
