@@ -25,9 +25,12 @@ with open('password.json') as json_data:
         print(traceback.format_exc())
         sys.exit(1)
 
-command = 'rsync -av --delete -e ssh ./testFile.txt ' + username + '@' + ip + ':~/rsyncTests/'
+command = 'rsync -av -e ssh ' + username + '@' + ip + ':~/rsyncTests/ ./BackupDir/'
 print(command)
+call(command.split(" "));
 
+command = 'rsync -av -e ssh ./BackupDir/ ' + username + '@' + ip + ':~/rsyncTests/'
+print(command)
 call(command.split(" "));
 
 
