@@ -19,16 +19,28 @@ def get_ip():
     return ip
 
 
+def post_clients(client_list):
+    s = requests.Session()
+    payload = pickle.dumps({'client_list': client_list})
+    try:
+        s.post("http://localhost:8888/com/clients", data=payload)
+    except:
+        print('Could not post status to server')
+
+
 def main():
-    connection_list = []  # list of socket clients
-    client_list = []
-    size = 1024
+    connection_list = []  # List of socket clients
+    client_list = []  # List of client ip addresses
     port = 50000
     server_address = get_ip()
+
+    # Reset client list on server
+    post_clients(client_list)
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind((server_address, port))
+    server_socket.settimeout(5)
     server_socket.listen(5)
 
     # Add server socket to the list of readable connections
@@ -36,50 +48,32 @@ def main():
 
     print("Server started on {ip}:{port}".format(ip=server_address, port=port))
 
-    s = requests.Session()
-
     while True:
         # Get the list sockets which are ready to be read through select
-        read_sockets, write_sockets, error_sockets = select.select(connection_list, [], [])
 
-        for sock in read_sockets:
+        for sock in connection_list:
+            print(sock)
             # New connection
             if sock == server_socket:
                 # Handle the case in which there is a new connection received through server_socket
-                sockfd, addr = server_socket.accept()
-                connection_list.append(sockfd)
-                client_list.append(addr[0])
-                print("Client connected: ", addr[0])
-                payload = pickle.dumps({'client_list': client_list})
                 try:
-                    s.post("http://localhost:8888/com/clients", data=payload)
+                    client, address = server_socket.accept()
+                    connection_list.append(client)
+                    client_list.append(address[0])
+                    print("Client connected: ", address[0])
+                    post_clients(client_list)
                 except:
-                    print('Could not post status to server')
-
-            # Some incoming message from a client
+                    pass
             else:
-                # Data received from client, process it
                 try:
-                    # In Windows, sometimes when a TCP program closes abruptly,
-                    # a "Connection reset by peer" exception will be thrown
-                    data = sock.recv(size)
-                    # echo back the client message
-                    if data:
-                        print(data)
-
+                    sock.send(b'ping')
                 # Client disconnected, so remove from socket list
                 except:
-                    print("Client disconnected: ", addr[0])
+                    print("Client disconnected: ", address[0])
                     sock.close()
                     connection_list.remove(sock)
-                    client_list.remove(addr[0])
-
-                    payload = pickle.dumps({'client_list': client_list})
-                    try:
-                        s.post("http://localhost:8888/com/clients", data=payload)
-                    except:
-                        print('Could not post status to server')
-
+                    client_list.remove(address[0])
+                    post_clients(client_list)
                     continue
 
 
