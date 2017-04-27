@@ -5,3 +5,4 @@
 ./status_server.py &
 ./web_server.py &
 ./check_status.py &
+./tcp_server.py &
