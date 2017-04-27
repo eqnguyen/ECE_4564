@@ -31,6 +31,7 @@ def main():
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((host, conn_port))
+        s.settimeout(5)
     except socket.error as message:
         if s:
             s.close()
@@ -41,6 +42,7 @@ def main():
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server_socket.bind((server_address, server_port))
+        server_socket.settimeout(5)
         server_socket.listen(5)
     except socket.error as message:
         if server_socket:
@@ -49,11 +51,16 @@ def main():
         sys.exit(1)
 
     while True:
-        client, address = server_socket.accept()
-        data = client.recv(size)
-        if data:
-            print(data)
-        client.close()
+        s.recv(size)
+        try:
+            client, address = server_socket.accept()
+            client.settimeout(5)
+            data = client.recv(size)
+            if data:
+                print(data)
+            client.close()
+        except:
+            pass
 
 
 if __name__ == '__main__':
