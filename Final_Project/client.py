@@ -1,7 +1,8 @@
 #! /usr/bin/env python3
 
-# Client script for connecting to servers
+# Client script for connecting to RasDrive servers
 
+import argparse
 import socket
 import sys
 
@@ -18,10 +19,15 @@ def get_ip():
 s = None
 server_socket = None
 
+
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("ip_address")
+    args = parser.parse_args()
+
     global s
     global server_socket
-    host = '192.168.1.6'
+    host = args.ip_address
     conn_port = 50000
     server_port = 25000
     size = 1024
