@@ -23,20 +23,24 @@ function serverResponded( data ) {
 }
 
 function scheduleSync( event, client ) {
-    var time = $("input[name='" + client + "']:checked").val()
+    var isValid = 0;
+    var time = $("input[name='" + client + "']:checked").val();
 
     if ( time == "Now" ) {
+        isValid = 1;
         console.log("Sync " + client + " " + time);
     } else if ($("#datetime[name='" + client + "'").val()) {
-        time = $("#datetime[name='" + client + "'").val()
+        isValid = 1;
+        time = $("#datetime[name='" + client + "'").val();
         console.log("Sync " + client + " at " + $("#datetime[name='" + client + "'").val());
     } else {
         console.log("Date time is empty");
-        return;
     }
 
-    payload = { client: client, time: time};
-    $.post('http://' + ip + '/com/sync' , payload);
+    if (isValid) {
+        payload = { client: client, time: time};
+        $.post('http://' + ip + '/com/sync' , payload);
+    }
 
     event.preventDefault();
 }
