@@ -8,12 +8,18 @@
 
 import asyncio
 import pickle
+import socket
 import sys
 from time import sleep
 
 import rasdrive_classes as RASD
 import requests
 from aiocoap import *
+
+
+def get_ip(hostname):
+    return socket.gethostbyname(hostname)
+
 
 server_list = [RASD.RASD_Server('rasdserver1'), RASD.RASD_Server('rasdserver2')]
 backup_list = [RASD.RASD_Backup('rasdbackup1'), RASD.RASD_Backup('rasdbackup2')]
@@ -25,6 +31,8 @@ async def checkStatus(list, index):
 
     protocol = await Context.create_client_context()
     node = list[index]
+
+    print(get_ip('{hostname}.local'.format(hostname=node.hostname)))
 
     # Get statuses from all nodes on RasDrive network
     request = Message(code=GET, uri='coap://{hostname}.local/status'.format(hostname=node.hostname))
