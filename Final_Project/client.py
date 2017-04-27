@@ -25,10 +25,10 @@ def sync(ip_list):
 
     for ip in ip_list:
         if platform == 'win32':
-            sync_command = './test_rsync_win/bin/rsync.exe -av -e ./test_rsync_win/bin/ssh pi@{ip}'.format(
-                ip=ip) + ':~/rsyncTests/ ./test_rsync_win/BackupDir/'
-            backup_command = './test_rsync_win/bin/rsync.exe -av -e ./test_rsync_win/bin/ssh ' \
-                             './test_rsync_win/BackupDir/ pi@{ip}'.format(ip=ip) + ':~/rsyncTests/'
+            sync_command = './rsync/bin/rsync.exe -av -e ./rsync/bin/ssh pi@{ip}'.format(
+                ip=ip) + ':~/rsyncTests/ ./BackupDir/'
+            backup_command = './rsync/bin/rsync.exe -av -e ./rsync/bin/ssh ' \
+                             './BackupDir/ pi@{ip}'.format(ip=ip) + ':~/rsyncTests/'
         elif platform == 'linux':
             sync_command = 'rsync -av -e ssh pi@{ip]'.format(ip=ip) + ':~/rsyncTests/ ./BackupDir/'
             backup_command = 'rsync -av -e ssh ./BackupDir/ pi@{ip}'.format(ip=ip) + ':~/rsyncTests/'
