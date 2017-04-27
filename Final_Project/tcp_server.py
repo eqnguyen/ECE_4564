@@ -53,7 +53,7 @@ def main():
     # Add server socket to the list of readable connections
     connection_list.append([server_socket, server_address])
 
-    print("Server started on {ip}:{port}".format(ip=server_address, port=port))
+    print("Starting tcp server on {ip}:{port}".format(ip=server_address, port=port))
 
     while True:
         # Get the list sockets which are ready to be read through select

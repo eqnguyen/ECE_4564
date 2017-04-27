@@ -162,6 +162,6 @@ if __name__ == "__main__":
 
     # start tornado
     application.listen(port)
-    print("Starting server on port number {port}...".format(port=port))
+    print("Starting web server on port number {port}...".format(port=port))
     print("Open at http://{ip}:{port}/index.html".format(ip=get_ip(), port=port))
     tornado.ioloop.IOLoop.instance().start()

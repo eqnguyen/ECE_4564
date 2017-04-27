@@ -73,8 +73,12 @@ def main():
             client, address = server_socket.accept()
             client.settimeout(5)
             tup = pickle.loads(client.recv(size))
+
             if tup[0] == 'Now':
+                print('Syncing now to:', tup[1])
                 sync(tup[1])
+            else:
+                print('Sync scheduled for:', tup[0])
 
             client.close()
         except ConnectionResetError:
