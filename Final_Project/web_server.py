@@ -74,6 +74,12 @@ class CommandHandler(tornado.web.RequestHandler):
         elif url == 'com/sync':
             client = self.get_argument('client', None)
             time = self.get_argument('time', None)
+            
+            tup = (time, [])
+            
+            for node in backup_list:
+                if node.ip:
+                    tup[1].append(node.ip)
 
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -83,7 +89,7 @@ class CommandHandler(tornado.web.RequestHandler):
                     s.close()
                 print("Unable to open socket: " + str(message))
 
-            s.send(time.encode())
+            s.send(pickle.dumps(tup))
             s.close()
 
     # handle GET request
@@ -111,6 +117,7 @@ class CommandHandler(tornado.web.RequestHandler):
                 else:
                     status[node_type][node.hostname] = {
                         'online': True,
+                        'ip': node.ip,
                         'cpu': node.status.cpu_percent,
                         'net_stats': {
                             'bytes_sent': node.status.net_stats.bytes_sent,

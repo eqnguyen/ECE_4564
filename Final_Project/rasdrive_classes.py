@@ -7,14 +7,16 @@ class RASD_Client(object):
 
 
 class RASD_Server(object):
-    def __init__(self, hostname, status=None):
+    def __init__(self, hostname, ip=None, status=None):
         self.hostname = hostname
+        self.ip = ip
         self.status = status
 
 
 class RASD_Backup(object):
-    def __init__(self, hostname, status=None):
+    def __init__(self, hostname, ip=None, status=None):
         self.hostname = hostname
+        self.ip = ip
         self.status = status
 
 

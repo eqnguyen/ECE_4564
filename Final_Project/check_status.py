@@ -32,16 +32,17 @@ async def checkStatus(list, index):
     protocol = await Context.create_client_context()
     node = list[index]
 
-    print(get_ip('{hostname}.local'.format(hostname=node.hostname)))
-
     # Get statuses from all nodes on RasDrive network
     request = Message(code=GET, uri='coap://{hostname}.local/status'.format(hostname=node.hostname))
 
     try:
         response = await protocol.request(request).response
+        ip = get_ip('{hostname}.local'.format(hostname=node.hostname))
+        node.ip = ip
     except:
         # presumably server went offline...deal with it here
         print('Failed to fetch resource from:', node.hostname)
+        node.ip = None
         node.status = None
     else:
         tup = pickle.loads(response.payload)
