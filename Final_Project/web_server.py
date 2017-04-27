@@ -74,13 +74,12 @@ class CommandHandler(tornado.web.RequestHandler):
         elif url == 'com/sync':
             client = self.get_argument('client', None)
             time = self.get_argument('time', None)
-            
             tup = (time, [])
-            
+            s = None
+
             for node in backup_list:
                 if node.ip:
                     tup[1].append(node.ip)
-
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.connect((client, 25000))

@@ -13,7 +13,6 @@ import aiocoap.resource as resource
 import psutil
 import rasdrive_classes as RASD
 
-
 # Set ping mode to the numbers you can read off the Pi
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)

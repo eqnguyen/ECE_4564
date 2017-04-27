@@ -3,6 +3,7 @@
 # Client script for connecting to RasDrive servers
 
 import argparse
+import pickle
 import socket
 import sys
 from subprocess import call
@@ -71,17 +72,16 @@ def main():
             s.recv(size)
             client, address = server_socket.accept()
             client.settimeout(5)
-            data = client.recv(size).decode()
-            if data == 'Now':
-                sync(['192.168.1.8'])
+            tup = pickle.loads(client.recv(size))
+            if tup[0] == 'Now':
+                sync(tup[1])
 
             client.close()
-        except socket.timeout:
-            pass
         except ConnectionResetError:
             print('Server is offline')
             raise
-            sys.exit(0)
+        except socket.timeout:
+            pass
 
 
 if __name__ == '__main__':
