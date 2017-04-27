@@ -65,6 +65,9 @@ $(document).ready( function() {
     /* get server ip address */
     ip = location.host;
 
+    params = { op: "status" };
+    $.getJSON( 'http://'+ ip + '/com' , params, serverResponded );
+
     /* handle the click event on the clickme */
     $("#request").click( function() {
         params = { op: "status" };
