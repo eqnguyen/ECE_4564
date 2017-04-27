@@ -19,12 +19,22 @@ def get_ip():
 
 
 def sync(ip_list):
-    for ip in ip_list:
-        command = './test_rsync_win/bin/rsync.exe -av -e ./test_rsync_win/bin/ssh pi@' + ip + ':~/rsyncTests/ ./test_rsync_win/BackupDir/'
-        call(command.split(" "))
+    platform = sys.platform
+    sync_command = ''
+    backup_command = ''
 
-        command = './test_rsync_win/bin/rsync.exe -av -e ./test_rsync_win/bin/ssh ./test_rsync_win/BackupDir/ pi@' + ip + ':~/rsyncTests/'
-        call(command.split(" "))
+    for ip in ip_list:
+        if platform == 'win32':
+            sync_command = './test_rsync_win/bin/rsync.exe -av -e ./test_rsync_win/bin/ssh pi@{ip}'.format(
+                ip=ip) + ':~/rsyncTests/ ./test_rsync_win/BackupDir/'
+            backup_command = './test_rsync_win/bin/rsync.exe -av -e ./test_rsync_win/bin/ssh ' \
+                             './test_rsync_win/BackupDir/ pi@{ip}'.format(ip=ip) + ':~/rsyncTests/'
+        elif platform == 'linux':
+            sync_command = 'rsync -av -e ssh pi@{ip]'.format(ip=ip) + ':~/rsyncTests/ ./BackupDir/'
+            backup_command = 'rsync -av -e ssh ./BackupDir/ pi@{ip}'.format(ip=ip) + ':~/rsyncTests/'
+
+        call(sync_command.split(" "))
+        call(backup_command.split(" "))
 
 
 s = None
@@ -75,10 +85,10 @@ def main():
             tup = pickle.loads(client.recv(size))
 
             if tup[0] == 'Now':
-                print('Syncing now to:', tup[1])
+                print('\nSyncing now to:', tup[1])
                 sync(tup[1])
             else:
-                print('Sync scheduled for:', tup[0])
+                print('\nSync scheduled for:', tup[0])
 
             client.close()
         except ConnectionResetError:

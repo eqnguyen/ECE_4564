@@ -27,11 +27,11 @@ with open('password.json') as json_data:
 
 command = 'rsync -av -e ssh ' + username + '@' + ip + ':~/rsyncTests/ ./BackupDir/'
 print(command)
-call(command.split(" "));
+call(command.split(" "))
 
 command = 'rsync -av -e ssh ./BackupDir/ ' + username + '@' + ip + ':~/rsyncTests/'
 print(command)
-call(command.split(" "));
+call(command.split(" "))
 
 
 # rsync -av --delete -e ssh ./testFile.txt stephen@localhost:~/rsyncTests
