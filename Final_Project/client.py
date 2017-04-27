@@ -51,16 +51,20 @@ def main():
         sys.exit(1)
 
     while True:
-        s.recv(size)
         try:
+            s.recv(size)
             client, address = server_socket.accept()
             client.settimeout(5)
             data = client.recv(size)
             if data:
                 print(data)
             client.close()
-        except:
+        except socket.timeout:
             pass
+        except ConnectionResetError:
+            print('Server is offline')
+            raise
+            sys.exit(0)
 
 
 if __name__ == '__main__':
