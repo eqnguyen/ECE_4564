@@ -12,7 +12,7 @@ function serverResponded( data ) {
         for (var i = 0; i < data.client_list.length; i++) {
             var ip = data.client_list[i]
             $("#clients .client_list").append(ip
-                + "<form id='sync' name='" + ip + "' onsubmit='myFunction( event, this.name )'>"
+                + "<form id='sync' name='" + ip + "' onsubmit='scheduleSync( event, this.name )'>"
                 + " <input type='submit' value='Sync'>"
                 + " <input type='radio' name='" + ip + "' value='Now' checked>Now"
                 + " <input type='radio' name='" + ip + "' value='Later'>"
