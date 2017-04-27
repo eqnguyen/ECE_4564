@@ -42,7 +42,7 @@ def main():
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server_socket.bind((server_address, port))
-        server_socket.settimeout(5)
+        server_socket.settimeout(2)
         server_socket.listen(5)
     except socket.error as message:
         if server_socket:
@@ -68,6 +68,8 @@ def main():
                     client_list.append(address[0])
                     print("Client connected: ", address[0])
                     post_clients(client_list)
+                except KeyboardInterrupt:
+                    raise
                 except:
                     pass
             else:
