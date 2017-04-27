@@ -71,6 +71,20 @@ class CommandHandler(tornado.web.RequestHandler):
             backup_list = pickle.loads(self.request.body)['backup_list']
         elif url == 'com/clients':
             client_list = pickle.loads(self.request.body)['client_list']
+        elif url == 'com/sync':
+            client = self.get_argument('client', None)
+            time = self.get_argument('time', None)
+
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.connect((client, 25000))
+            except socket.error as message:
+                if s:
+                    s.close()
+                print("Unable to open socket: " + str(message))
+
+            s.send(time.encode())
+            s.close()
 
     # handle GET request
     def handleRequest(self):

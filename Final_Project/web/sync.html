@@ -27,14 +27,21 @@
     <div id="bodyWrapper">
         <div id="bodyContent">
             <!-- Button to request server status -->
-            <button id="request">Request Clients</button>
+            <button id="request">Refresh</button>
             <br>
 
             <div id="clients">
                 <b><u>Connected Clients:</u></b><br><br>
                 <div class="client_list">
                     {% for client in client_list %}
-                        {{ client }} <button id="sync">Sync</button><br>
+                    {{ client }}
+                    <form id="sync" name="{{ client }}" onsubmit="scheduleSync( event, this.name )">
+                        <input type="submit" value="Sync">
+                        <input type="radio" name="{{ client }}" value="Now" checked>Now
+                        <input type="radio" name="{{ client }}" value="Later">
+                        <input id="datetime" type="datetime-local" name="{{ client }}">
+                    </form>
+                    <br><br>
                     {% end %}
                 </div>
             </div>

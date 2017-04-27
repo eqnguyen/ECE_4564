@@ -146,9 +146,14 @@ div#bodyContent p{
 	font-weight: bold;
 }
 
-div#bodyContent button {
+div#bodyContent button#request {
   margin: 10px auto 0px;
   display: block;
+}
+
+form {
+    margin-left: 10px;
+    display: inline;
 }
 
 /****************************************************************************************************** */
@@ -240,9 +245,7 @@ ul#navMenu {
 
 .navigation li {
 	padding: 10px 16px;
-
 }
-
 
 /****************************************************************************************************** */
 /* WEBSITE BODY WRAPPER */
@@ -287,6 +290,16 @@ div#bodyContent p{
 	margin-left: 2%;
 	font-size: 5vw;
 	font-weight: bold;
+}
+
+div#bodyContent button#request {
+  margin: 10px auto 0px;
+  display: block;
+}
+
+form {
+    margin-left: 10px;
+    display: inline;
 }
 
 /****************************************************************************************************** */
