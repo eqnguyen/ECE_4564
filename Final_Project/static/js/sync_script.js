@@ -34,6 +34,7 @@ function scheduleSync( event, client ) {
         time = $("#datetime[name='" + client + "'").val();
         console.log("Sync " + client + " at " + $("#datetime[name='" + client + "'").val());
     } else {
+        alert("Date and time cannot be left empty")
         console.log("Date time is empty");
     }
 
