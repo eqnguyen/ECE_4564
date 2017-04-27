@@ -5,6 +5,7 @@
 import argparse
 import socket
 import sys
+from subprocess import call
 
 
 # Return the IP address of host
@@ -14,6 +15,15 @@ def get_ip():
     ip = s.getsockname()[0]
     s.close()
     return ip
+
+
+def sync(ip_list):
+    for ip in ip_list:
+        command = './test_rsync_win/bin/rsync.exe -av -e ./test_rsync_win/bin/ssh pi@' + ip + ':~/rsyncTests/ ./test_rsync_win/BackupDir/'
+        call(command.split(" "))
+
+        command = './test_rsync_win/bin/rsync.exe -av -e ./test_rsync_win/bin/ssh ./test_rsync_win/BackupDir/ pi@' + ip + ':~/rsyncTests/'
+        call(command.split(" "))
 
 
 s = None
@@ -61,9 +71,10 @@ def main():
             s.recv(size)
             client, address = server_socket.accept()
             client.settimeout(5)
-            data = client.recv(size)
-            if data:
-                print(data)
+            data = client.recv(size).decode()
+            if data == 'Now':
+                sync(['192.168.1.8'])
+
             client.close()
         except socket.timeout:
             pass
