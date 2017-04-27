@@ -3,24 +3,24 @@
 <head>
     <title>RasDrive</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ static_url("js/script.js") }}"></script>
-    <link rel="stylesheet" type="text/css" href="{{ static_url("css/styles.css") }}">
+    <script type="text/javascript" src="{{ static_url('js/script.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ static_url('css/styles.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{{ static_url('img/icon.png') }}">
 </head>
 <body>
     <div id="menuBar">
-        <img id="hamMenuPic" src="{{ static_url("img/hamb.png") }}">
+        <img id="hamMenuPic" src="{{ static_url('img/hamb.png') }}">
         <a href="index.html">
-            <img id="RasLogo" src="{{ static_url("img/RasLogo.png") }}">
+            <img id="RasLogo" src="{{ static_url('img/RasLogo.png') }}">
         </a>
     </div>
 
     <div id="dropdown">
         <ul class="navigation" id="navMenu">
-            <a href="index.html"><li>Home</li></a>
-            <a href="status.html"><li>Status</li></a>
-            <a href="sync.html"><li>Sync</li></a>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="status.html">Status</a></li>
+            <li><a href="sync.html">Sync</a></li>
         </ul>
     </div>
 
@@ -28,11 +28,11 @@
         <div id="bodyContent">
             <div id="homeStuff">
                 <a href="status.html">
-                    <img id="desktop" src="{{ static_url("img/status.png") }}">
+                    <img id="desktop" src="{{ static_url('img/status.png') }}">
                 </a>
                 <a href="sync.html">
-                    <img id="cloud" src="{{ static_url("img/syncCloud.png") }}">
-                </a>	
+                    <img id="cloud" src="{{ static_url('img/syncCloud.png') }}">
+                </a>
             </div>
         </div>
     </div>
