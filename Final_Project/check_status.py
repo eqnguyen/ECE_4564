@@ -16,47 +16,59 @@ import requests
 from aiocoap import *
 
 
-async def checkStatus():
-    # List of servers and backups on RasDrive network
-    # Static lists for now but potentially dynamic in the future
-    server_list = [RASD.RASD_Server('rasdserver1'), RASD.RASD_Server('rasdserver2')]
-    backup_list = [RASD.RASD_Backup('rasdbackup1'), RASD.RASD_Backup('rasdbackup2')]
+server_list = [RASD.RASD_Server('rasdserver1'), RASD.RASD_Server('rasdserver2')]
+backup_list = [RASD.RASD_Backup('rasdbackup1'), RASD.RASD_Backup('rasdbackup2')]
 
+s = requests.Session()
+
+
+async def checkStatus(list, index):
+    global server_list
+    global backup_list
+    
     protocol = await Context.create_client_context()
-    s = requests.Session()
+    node = list[index]
 
-    while True:
-        # Get statuses from all nodes on RasDrive network
-        for node in server_list + backup_list:
-            request = Message(code=GET, uri='coap://{hostname}.local/status'.format(hostname=node.hostname))
-
-            try:
-                response = await protocol.request(request).response
-            except:
-                # presumably server went offline...deal with it here
-                print('Failed to fetch resource from:', node.hostname)
-                node.status = None
-            else:
-                tup = pickle.loads(response.payload)
-                print(tup)
-                node.status = tup
-
-        # Post list of RasDrive nodes with updated statuses to web server every 10 seconds
-        payload = pickle.dumps({"server_list": server_list, "backup_list": backup_list})
-
-        try:
-            s.post("http://localhost:8888/com/status", data=payload)
-        except:
-            print('Could not post status to server')
-
-        sleep(5)
+    # Get statuses from all nodes on RasDrive network
+    request = Message(code=GET, uri='coap://{hostname}.local/status'.format(hostname=node.hostname))
+    
+    try:
+        response = await protocol.request(request).response
+    except:
+        # presumably server went offline...deal with it here
+        print('Failed to fetch resource from:', node.hostname)
+        node.status = None
+    else:
+        tup = pickle.loads(response.payload)
+        print(tup)
+        node.status = tup
+    
+    list[index] = node
 
 
 if __name__ == "__main__":
     try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(checkStatus())
+        while True:
+            tasks = [
+                asyncio.ensure_future(checkStatus(server_list, 0)),
+                asyncio.ensure_future(checkStatus(server_list, 1)),
+                asyncio.ensure_future(checkStatus(backup_list, 0)),
+                asyncio.ensure_future(checkStatus(backup_list, 1))
+            ]
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(asyncio.gather(*tasks))
+                
+            # Post list of RasDrive nodes with updated statuses to web server every 5 seconds
+            payload = pickle.dumps({"server_list": server_list, "backup_list": backup_list})
+
+            try:
+                s.post("http://localhost:8888/com/status", data=payload)
+            except:
+                print('Could not post status to server')
+            
+            sleep(5)
         loop.close()
     except:
         print('Exiting program...')
         sys.exit(1)
+
