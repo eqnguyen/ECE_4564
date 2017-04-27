@@ -3,10 +3,13 @@
 # Client script for connecting to RasDrive servers
 
 import argparse
+import datetime
 import pickle
 import socket
 import sys
+
 from subprocess import call
+from threading import Timer
 
 
 # Return the IP address of host
@@ -48,6 +51,7 @@ def main():
 
     global s
     global server_socket
+
     host = args.ip_address
     conn_port = 50000
     server_port = 25000
@@ -82,13 +86,19 @@ def main():
             s.recv(size)
             client, address = server_socket.accept()
             client.settimeout(5)
-            tup = pickle.loads(client.recv(size))
+            (t, ip_list) = pickle.loads(client.recv(size))
 
-            if tup[0] == 'Now':
-                print('\nSyncing now to:', tup[1])
-                sync(tup[1])
+            if t == 'Now':
+                print('\nSyncing now to:', ip_list)
+                sync(ip_list)
             else:
-                print('\nSync scheduled for:', tup[0])
+                scheduled_date, scheduled_time = t.split('T')
+                year, month, day = map(int, scheduled_date.split('-'))
+                hour, minute = map(int, scheduled_time.split(':'))
+                date = datetime.datetime(year, month, day, hour, minute)
+                delay = (date - datetime.datetime.now()).total_seconds()
+                print('\nSync scheduled for:', date, 'in', delay, 'seconds')
+                Timer(delay, sync, kwargs={'ip_list': ip_list}).start()
 
             client.close()
         except ConnectionResetError:
