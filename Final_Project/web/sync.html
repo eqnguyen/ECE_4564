@@ -27,14 +27,14 @@
     <div id="bodyWrapper">
         <div id="bodyContent">
             <!-- Button to request server status -->
-            <button>Request Clients</button>
+            <button id="request">Request Clients</button>
             <br>
 
             <div id="clients">
                 <b><u>Connected Clients:</u></b><br><br>
                 <div class="client_list">
                     {% for client in client_list %}
-                    {{ client }}<br>
+                        {{ client }} <button id="sync">Sync</button><br>
                     {% end %}
                 </div>
             </div>
