@@ -5,7 +5,7 @@ function serverResponded( data ) {
     */
     console.log( data );
 
-    /* check the server status, and report it on the screen */
+    /* write the list of connected clients to the page */
     if ( data.client_list ) {
         $("#clients .client_list").html('');
 
