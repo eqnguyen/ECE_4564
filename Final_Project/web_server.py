@@ -30,7 +30,9 @@ class IndexHandler(tornado.web.RequestHandler):
 # Send the status file
 class StatusHandler(tornado.web.RequestHandler):
     def get(self, url='/'):
-        self.render('web/status.html')
+        global server_list
+        global backup_list
+        self.render('web/status.html', server_list=server_list, backup_list=backup_list)
 
 
 # Initialize client list

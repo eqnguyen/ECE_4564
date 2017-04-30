@@ -32,33 +32,18 @@
 
             <!-- Text that displays server status -->
             <div id="status">
-                <b><u>Server 1 Status:</u></b> <span class="server_status_1">?</span> - 
-                <span class="server_ip_1">?</span><br><br>
-                CPU: <span class="server_cpu_1">?</span><br>
-                Disk Usage: <span class="server_disk_1">?</span><br>
-                Network Stats: <span class="server_net_1">?</span><br>
-                <br>
-
-                <b><u>Server 2 Status:</u></b> <span class="server_status_2">?</span> - 
-                <span class="server_ip_2">?</span><br><br>
-                CPU: <span class="server_cpu_2">?</span><br>
-                Disk Usage: <span class="server_disk_2">?</span><br>
-                Network Stats: <span class="server_net_2">?</span><br>
-                <br>
-
-                <b><u>Backup 1 Status:</u></b> <span class="backup_status_1">?</span> - 
-                <span class="backup_ip_1">?</span><br><br>
-                CPU: <span class="backup_cpu_1">?</span><br>
-                Disk Usage: <span class="backup_disk_1">?</span><br>
-                Network Stats: <span class="backup_net_1">?</span><br>
-                <br>
-
-                <b><u>Backup 2 Status:</u></b> <span class="backup_status_2">?</span> - 
-                <span class="backup_ip_2">?</span><br><br>
-                CPU: <span class="backup_cpu_2">?</span><br>
-                Disk Usage: <span class="backup_disk_2">?</span><br>
-                Network Stats: <span class="backup_net_2">?</span><br>
-                <br>
+                {% for node in server_list + backup_list %}
+                <b><u>{{ node.hostname }}:</u></b> <span class="{{ node.hostname }}_status">?</span> -
+                <span class="{{ node.hostname }}_ip">?</span><br><br>
+                CPU: <span class="{{ node.hostname }}_cpu">?</span><br>
+                Disk Usage: <span class="{{ node.hostname }}_disk">?</span><br>
+                Bytes Sent: <span class="{{ node.hostname }}_sent">?</span>
+                Bytes Received: <span class="{{ node.hostname }}_received">?</span><br>
+                Error In: <span class="{{ node.hostname }}_error_in">?</span>
+                Error Out: <span class="{{ node.hostname }}_error_out">?</span><br>
+                Drop In: <span class="{{ node.hostname }}_dtop_in">?</span>
+                Drop Out: <span class="{{ node.hostname }}_drop_out">?</span><br><br>
+                {% end %}
             </div>
         </div>
     </div>
