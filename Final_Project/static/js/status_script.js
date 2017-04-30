@@ -21,7 +21,7 @@ function serverResponded( data ) {
                 $("#status ." + server + "_drop_out").html(server.net_stats.dropout);
             }
             else {
-                $("#status ." + server + "_status").html("<font color='green'>OFFLINE<font>");
+                $("#status ." + server + "_status").html("<font color='red'>OFFLINE<font>");
                 $("#status ." + server + "_ip").html("N/A");
                 $("#status ." + server + "_cpu").html("N/A");
                 $("#status ." + server + "_disk").html("N/A");
@@ -36,6 +36,7 @@ function serverResponded( data ) {
     }
     if ( data.backups ){
         for (var backup in data.backups) {
+            console.log(backup)
             if ( backup.online ) {
                 $("#status ." + backup + "_status").html("<font color='green'>ONLINE<font>");
                 $("#status ." + backup + "_ip").html(backup.ip);
@@ -49,7 +50,7 @@ function serverResponded( data ) {
                 $("#status ." + backup + "_drop_out").html(backup.net_stats.dropout);
             }
             else {
-                $("#status ." + backup + "_status").html("<font color='green'>OFFLINE<font>");
+                $("#status ." + backup + "_status").html("<font color='red'>OFFLINE<font>");
                 $("#status ." + backup + "_ip").html("N/A");
                 $("#status ." + backup + "_cpu").html("N/A");
                 $("#status ." + backup + "_disk").html("N/A");
