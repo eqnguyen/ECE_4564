@@ -7,30 +7,58 @@ function serverResponded( data ) {
 
     /* check the server status, and report it on the screen */
     if ( data.servers ){
-        for (var i = 0; i < data.servers.length; i++) {
-            if ( data.servers.rasdserver1.online ) {
-                $("#status ." + data.servers[i].hostname + "_status").html("<font color='green'>ONLINE<font>");
-                $("##status ." + data.servers[i].hostname + "_ip").html(data.servers[i].ip);
-                $("#status ." + data.servers[i].hostname + "_cpu").html(data.servers[i].cpu + " %");
-                $("#status ." + data.servers[i].hostname + "_disk").html(data.servers[i].disk_usage + " %");
-                $("#status ." + data.servers[i].hostname + "_sent").html(data.servers[i].net_stats.bytes_sent);
-                $("#status ." + data.servers[i].hostname + "_received").html(data.servers[i].net_stats.bytes_recv);
-                $("#status ." + data.servers[i].hostname + "_error_in").html(data.servers[i].net_stats.errin);
-                $("#status ." + data.servers[i].hostname + "_error_out").html(data.servers[i].net_stats.errout);
-                $("#status ." + data.servers[i].hostname + "_drop_in").html(data.servers[i].net_stats.dropin);
-                $("#status ." + data.servers[i].hostname + "_drop_out").html(data.servers[i].net_stats.dropout);
+        for (var server in data.servers) {
+            if ( server.online ) {
+                $("#status ." + server + "_status").html("<font color='green'>ONLINE<font>");
+                $("#status ." + server + "_ip").html(server.ip);
+                $("#status ." + server + "_cpu").html(server.cpu + " %");
+                $("#status ." + server + "_disk").html(server.disk_usage + " %");
+                $("#status ." + server + "_sent").html(server.net_stats.bytes_sent);
+                $("#status ." + server + "_received").html(server.net_stats.bytes_recv);
+                $("#status ." + server + "_error_in").html(server.net_stats.errin);
+                $("#status ." + server + "_error_out").html(server.net_stats.errout);
+                $("#status ." + server + "_drop_in").html(server.net_stats.dropin);
+                $("#status ." + server + "_drop_out").html(server.net_stats.dropout);
             }
             else {
-                $("#status ." + data.servers[i].hostname + "_status").html("<font color='green'>OFFLINE<font>");
-                $("##status ." + data.servers[i].hostname + "_ip").html("N/A");
-                $("#status ." + data.servers[i].hostname + "_cpu").html("N/A");
-                $("#status ." + data.servers[i].hostname + "_disk").html("N/A");
-                $("#status ." + data.servers[i].hostname + "_sent").html("N/A");
-                $("#status ." + data.servers[i].hostname + "_received").html("N/A");
-                $("#status ." + data.servers[i].hostname + "_error_in").html("N/A");
-                $("#status ." + data.servers[i].hostname + "_error_out").html("N/A");
-                $("#status ." + data.servers[i].hostname + "_drop_in").html("N/A");
-                $("#status ." + data.servers[i].hostname + "_drop_out").html("N/A");
+                $("#status ." + server + "_status").html("<font color='green'>OFFLINE<font>");
+                $("#status ." + server + "_ip").html("N/A");
+                $("#status ." + server + "_cpu").html("N/A");
+                $("#status ." + server + "_disk").html("N/A");
+                $("#status ." + server + "_sent").html("N/A");
+                $("#status ." + server + "_received").html("N/A");
+                $("#status ." + server + "_error_in").html("N/A");
+                $("#status ." + server + "_error_out").html("N/A");
+                $("#status ." + server + "_drop_in").html("N/A");
+                $("#status ." + server + "_drop_out").html("N/A");
+            }
+        }
+    }
+    if ( data.backups ){
+        for (var backup in data.backups) {
+            if ( backup.online ) {
+                $("#status ." + backup + "_status").html("<font color='green'>ONLINE<font>");
+                $("#status ." + backup + "_ip").html(backup.ip);
+                $("#status ." + backup + "_cpu").html(backup.cpu + " %");
+                $("#status ." + backup + "_disk").html(backup.disk_usage + " %");
+                $("#status ." + backup + "_sent").html(backup.net_stats.bytes_sent);
+                $("#status ." + backup + "_received").html(backup.net_stats.bytes_recv);
+                $("#status ." + backup + "_error_in").html(backup.net_stats.errin);
+                $("#status ." + backup + "_error_out").html(backup.net_stats.errout);
+                $("#status ." + backup + "_drop_in").html(backup.net_stats.dropin);
+                $("#status ." + backup + "_drop_out").html(backup.net_stats.dropout);
+            }
+            else {
+                $("#status ." + backup + "_status").html("<font color='green'>OFFLINE<font>");
+                $("#status ." + backup + "_ip").html("N/A");
+                $("#status ." + backup + "_cpu").html("N/A");
+                $("#status ." + backup + "_disk").html("N/A");
+                $("#status ." + backup + "_sent").html("N/A");
+                $("#status ." + backup + "_received").html("N/A");
+                $("#status ." + backup + "_error_in").html("N/A");
+                $("#status ." + backup + "_error_out").html("N/A");
+                $("#status ." + backup + "_drop_in").html("N/A");
+                $("#status ." + backup + "_drop_out").html("N/A");
             }
         }
     }
