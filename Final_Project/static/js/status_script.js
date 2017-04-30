@@ -8,7 +8,7 @@ function serverResponded( data ) {
     /* check the server status, and report it on the screen */
     if ( data.servers ){
         for (var server in data.servers) {
-            if ( server.online ) {
+            if ( data.servers[server].online ) {
                 $("#status ." + server + "_status").html("<font color='green'>ONLINE<font>");
                 $("#status ." + server + "_ip").html(data.servers[server].ip);
                 $("#status ." + server + "_cpu").html(data.servers[server].cpu + " %");
@@ -36,18 +36,17 @@ function serverResponded( data ) {
     }
     if ( data.backups ){
         for (var backup in data.backups) {
-            console.log(backup)
-            if ( backup.online ) {
+            if ( data.backups[backup].online ) {
                 $("#status ." + backup + "_status").html("<font color='green'>ONLINE<font>");
-                $("#status ." + backup + "_ip").html(data.servers[backup].ip);
-                $("#status ." + backup + "_cpu").html(data.servers[backup].cpu + " %");
-                $("#status ." + backup + "_disk").html(data.servers[backup].disk_usage + " %");
-                $("#status ." + backup + "_sent").html(data.servers[backup].net_stats.bytes_sent);
-                $("#status ." + backup + "_received").html(data.servers[backup].net_stats.bytes_recv);
-                $("#status ." + backup + "_error_in").html(data.servers[backup].net_stats.errin);
-                $("#status ." + backup + "_error_out").html(data.servers[backup].net_stats.errout);
-                $("#status ." + backup + "_drop_in").html(data.servers[backup].net_stats.dropin);
-                $("#status ." + backup + "_drop_out").html(data.servers[backup].net_stats.dropout);
+                $("#status ." + backup + "_ip").html(data.backups[backup].ip);
+                $("#status ." + backup + "_cpu").html(data.backups[backup].cpu + " %");
+                $("#status ." + backup + "_disk").html(data.backups[backup].disk_usage + " %");
+                $("#status ." + backup + "_sent").html(data.backups[backup].net_stats.bytes_sent);
+                $("#status ." + backup + "_received").html(data.backups[backup].net_stats.bytes_recv);
+                $("#status ." + backup + "_error_in").html(data.backups[backup].net_stats.errin);
+                $("#status ." + backup + "_error_out").html(data.backups[backup].net_stats.errout);
+                $("#status ." + backup + "_drop_in").html(data.backups[backup].net_stats.dropin);
+                $("#status ." + backup + "_drop_out").html(data.backups[backup].net_stats.dropout);
             }
             else {
                 $("#status ." + backup + "_status").html("<font color='red'>OFFLINE<font>");
