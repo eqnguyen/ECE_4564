@@ -33,26 +33,26 @@
             <!-- Text that displays server status -->
             <div id="status">
                 {% for node in server_list + backup_list %}
-                {% if node.online %}
-                <b><u>{{ node.hostname }}:</u></b> <font color='green'>ONLINE<font> - {{ node.ip }}<br><br>
-                CPU: {{ node.cpu }} %<br>
-                Disk Usage: {{ node.disk_usage }} %<br>
-                Bytes Sent: {{ node.net_stats.bytes_sent }}<br>
-                Bytes Received: {{ node.net_stats.bytes_recv }}<br>
-                Error In: {{ node.net_stats.errin }}
-                Error Out: {{ node.net_stats.errout }}<br>
-                Drop In: {{ node.net_stats.dropin }}
-                Drop Out: {{ node.net_stats.dropout }}<br><br>
-                {% else %}
-                <b><u>{{ node.hostname }}:</u></b> <font color='red'>OFFLINE<font><br><br>
-                    CPU: N/A<br>
-                    Disk Usage: N/A<br>
-                    Bytes Sent: N/A<br>
-                    Bytes Received: N/A<br>
-                    Error In: N/A
-                    Error Out: N/A<br>
-                    Drop In: N/A
-                    Drop Out: N/A<br><br>
+                    {% if node.online %}
+                        <b><u>{{ node.hostname }}:</u></b> <font color='green'>ONLINE<font> - {{ node.ip }}<br><br>
+                        CPU: {{ node.cpu }} %<br>
+                        Disk Usage: {{ node.disk_usage }} %<br>
+                        Bytes Sent: {{ node.net_stats.bytes_sent }}<br>
+                        Bytes Received: {{ node.net_stats.bytes_recv }}<br>
+                        Error In: {{ node.net_stats.errin }}
+                        Error Out: {{ node.net_stats.errout }}<br>
+                        Drop In: {{ node.net_stats.dropin }}
+                        Drop Out: {{ node.net_stats.dropout }}<br><br>
+                    {% else %}
+                        <b><u>{{ node.hostname }}:</u></b> <font color='red'>OFFLINE<font><br><br>
+                        CPU: N/A<br>
+                        Disk Usage: N/A<br>
+                        Bytes Sent: N/A<br>
+                        Bytes Received: N/A<br>
+                        Error In: N/A
+                        Error Out: N/A<br>
+                        Drop In: N/A
+                        Drop Out: N/A<br><br>
                     {% end %}
                 {% end %}
             </div>
