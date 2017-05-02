@@ -6,59 +6,64 @@ function serverResponded( data ) {
     console.log( data );
 
     /* check the server status, and report it on the screen */
-    if ( data.servers ){
-        for (var server in data.servers) {
-            if ( data.servers[server].online ) {
-                $("#status ." + server + "_status").html("<font color='green'>ONLINE<font>");
-                $("#status ." + server + "_ip").html(data.servers[server].ip);
-                $("#status ." + server + "_cpu").html(data.servers[server].cpu + " %");
-                $("#status ." + server + "_disk").html(data.servers[server].disk_usage + " %");
-                $("#status ." + server + "_sent").html(data.servers[server].net_stats.bytes_sent);
-                $("#status ." + server + "_received").html(data.servers[server].net_stats.bytes_recv);
-                $("#status ." + server + "_error_in").html(data.servers[server].net_stats.errin);
-                $("#status ." + server + "_error_out").html(data.servers[server].net_stats.errout);
-                $("#status ." + server + "_drop_in").html(data.servers[server].net_stats.dropin);
-                $("#status ." + server + "_drop_out").html(data.servers[server].net_stats.dropout);
-            }
-            else {
-                $("#status ." + server + "_status").html("<font color='red'>OFFLINE<font>");
-                $("#status ." + server + "_ip").html("N/A");
-                $("#status ." + server + "_cpu").html("N/A");
-                $("#status ." + server + "_disk").html("N/A");
-                $("#status ." + server + "_sent").html("N/A");
-                $("#status ." + server + "_received").html("N/A");
-                $("#status ." + server + "_error_in").html("N/A");
-                $("#status ." + server + "_error_out").html("N/A");
-                $("#status ." + server + "_drop_in").html("N/A");
-                $("#status ." + server + "_drop_out").html("N/A");
+    if ( data ) {
+        $("#status").html('');
+        for ( var server in data.servers ) {
+            var node = data.servers[server];
+
+            if ( node.online ) {
+                $("#status").append(
+                    "<b><u>" + server + ":</u></b> <font color='green'>ONLINE</font> - " + node.ip + "<br><br>"
+                    + "CPU: " + node.cpu + "<br>"
+                    + "Disk Usage: " + node.disk_usage + "<br>"
+                    + "Bytes Sent: " + node.net_stats.bytes_sent + "<br>"
+                    + "Bytes Received: " + node.net_stats.bytes_recv + "<br>"
+                    + "Error In: " + node.net_stats.errin
+                    + "Error Out: " + node.net_stats.errout + "<br>"
+                    + "Drop In: " + node.net_stats.dropin
+                    + "Drop Out: " + node.net_stats.dropout + "<br><br>"
+                )
+            } else {
+                $("#status").append(
+                    "<b><u>" + server + ":</u></b> <font color='red'>OFFLINE</font><br><br>"
+                    + "CPU: N/A<br>"
+                    + "Disk Usage: N/A<br>"
+                    + "Bytes Sent: N/A<br>"
+                    + "Bytes Received: N/A<br>"
+                    + "Error In: N/A"
+                    + "Error Out: N/A<br>"
+                    + "Drop In: N/A"
+                    + "Drop Out: N/A<br><br>"
+                )
             }
         }
-    }
-    if ( data.backups ){
-        for (var backup in data.backups) {
-            if ( data.backups[backup].online ) {
-                $("#status ." + backup + "_status").html("<font color='green'>ONLINE<font>");
-                $("#status ." + backup + "_ip").html(data.backups[backup].ip);
-                $("#status ." + backup + "_cpu").html(data.backups[backup].cpu + " %");
-                $("#status ." + backup + "_disk").html(data.backups[backup].disk_usage + " %");
-                $("#status ." + backup + "_sent").html(data.backups[backup].net_stats.bytes_sent);
-                $("#status ." + backup + "_received").html(data.backups[backup].net_stats.bytes_recv);
-                $("#status ." + backup + "_error_in").html(data.backups[backup].net_stats.errin);
-                $("#status ." + backup + "_error_out").html(data.backups[backup].net_stats.errout);
-                $("#status ." + backup + "_drop_in").html(data.backups[backup].net_stats.dropin);
-                $("#status ." + backup + "_drop_out").html(data.backups[backup].net_stats.dropout);
-            }
-            else {
-                $("#status ." + backup + "_status").html("<font color='red'>OFFLINE<font>");
-                $("#status ." + backup + "_ip").html("N/A");
-                $("#status ." + backup + "_cpu").html("N/A");
-                $("#status ." + backup + "_disk").html("N/A");
-                $("#status ." + backup + "_sent").html("N/A");
-                $("#status ." + backup + "_received").html("N/A");
-                $("#status ." + backup + "_error_in").html("N/A");
-                $("#status ." + backup + "_error_out").html("N/A");
-                $("#status ." + backup + "_drop_in").html("N/A");
-                $("#status ." + backup + "_drop_out").html("N/A");
+        for ( var backup in data.backups ) {
+            var node = data.servers[server];
+
+            if ( node.online ) {
+                $("#status").append(
+                    "<b><u>" + backup + ":</u></b> <font color='green'>ONLINE</font> - " + node.ip + "<br><br>"
+                    + "CPU: " + node.cpu + "<br>"
+                    + "Disk Usage: " + node.disk_usage + "<br>"
+                    + "Bytes Sent: " + node.net_stats.bytes_sent + "<br>"
+                    + "Bytes Received: " + node.net_stats.bytes_recv + "<br>"
+                    + "Error In: " + node.net_stats.errin
+                    + "Error Out: " + node.net_stats.errout + "<br>"
+                    + "Drop In: " + node.net_stats.dropin
+                    + "Drop Out: " + node.net_stats.dropout + "<br><br>"
+                )
+            } else {
+                $("#status").append(
+                    "<b><u>" + backup + ":</u></b> <font color='red'>OFFLINE</font><br><br>"
+                    + "CPU: N/A<br>"
+                    + "Disk Usage: N/A<br>"
+                    + "Bytes Sent: N/A<br>"
+                    + "Bytes Received: N/A<br>"
+                    + "Error In: N/A"
+                    + "Error Out: N/A<br>"
+                    + "Drop In: N/A"
+                    + "Drop Out: N/A<br><br>"
+                )
             }
         }
     }
