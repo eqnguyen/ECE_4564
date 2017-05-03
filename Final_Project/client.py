@@ -33,7 +33,7 @@ def sync(ip_list):
             sync_command = './rsync/bin/rsync.exe -av -e ./rsync/bin/ssh pi@{ip}:~/rsyncTests/ ./BackupDir/'.format(
                 ip=ip)
         elif platform == 'linux':
-            sync_command = 'rsync -av -e ssh pi@{ip]:~/rsyncTests/ ./BackupDir/'.format(ip=ip)
+            sync_command = 'rsync -av -e ssh pi@{ip}:~/rsyncTests/ ./BackupDir/'.format(ip=ip)
         call(sync_command.split(" "))
 
     for ip in ip_list:
