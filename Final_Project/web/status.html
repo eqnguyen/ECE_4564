@@ -33,7 +33,7 @@
             <!-- Text that displays server status -->
             <div id="status">
                 {% for node in server_list + backup_list %}
-                    {% if node.status %}
+                    {% if node.status is not None %}
                         <b><u>{{ node.hostname }}:</u></b> <font color='green'>ONLINE</font> - {{ node.ip }}<br><br>
                         CPU: {{ node.status.cpu_percent }} %<br>
                         Disk Usage: {{ node.status.disk_usage }} %<br>

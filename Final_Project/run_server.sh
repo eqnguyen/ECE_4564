@@ -4,5 +4,5 @@
 
 ./web_server.py &
 ./status_server.py &
-./check_status.py &
+./check_status.py > /dev/null &
 ./tcp_server.py &

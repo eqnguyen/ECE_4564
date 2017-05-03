@@ -10,19 +10,19 @@ function serverResponded( data ) {
         $("#status").html('');
         for ( var server in data.servers ) {
             var node = data.servers[server];
-
+            
             if ( node.online ) {
                 $("#status").append(
                     "<b><u>" + server + ":</u></b> <font color='green'>ONLINE</font> - " + node.ip + "<br><br>"
-                    + "CPU: " + node.cpu + "<br>"
-                    + "Disk Usage: " + node.disk_usage + "<br>"
+                    + "CPU: " + node.cpu + " %<br>"
+                    + "Disk Usage: " + node.disk_usage + " %<br>"
                     + "Bytes Sent: " + node.net_stats.bytes_sent + "<br>"
                     + "Bytes Received: " + node.net_stats.bytes_recv + "<br>"
                     + "Error In: " + node.net_stats.errin
-                    + "Error Out: " + node.net_stats.errout + "<br>"
+                    + " Error Out: " + node.net_stats.errout + "<br>"
                     + "Drop In: " + node.net_stats.dropin
-                    + "Drop Out: " + node.net_stats.dropout + "<br><br>"
-                )
+                    + " Drop Out: " + node.net_stats.dropout + "<br><br>"
+                );
             } else {
                 $("#status").append(
                     "<b><u>" + server + ":</u></b> <font color='red'>OFFLINE</font><br><br>"
@@ -31,27 +31,27 @@ function serverResponded( data ) {
                     + "Bytes Sent: N/A<br>"
                     + "Bytes Received: N/A<br>"
                     + "Error In: N/A"
-                    + "Error Out: N/A<br>"
+                    + " Error Out: N/A<br>"
                     + "Drop In: N/A"
-                    + "Drop Out: N/A<br><br>"
-                )
+                    + " Drop Out: N/A<br><br>"
+                );
             }
         }
         for ( var backup in data.backups ) {
-            var node = data.servers[server];
-
+            var node = data.backups[backup];
+            
             if ( node.online ) {
                 $("#status").append(
                     "<b><u>" + backup + ":</u></b> <font color='green'>ONLINE</font> - " + node.ip + "<br><br>"
-                    + "CPU: " + node.cpu + "<br>"
-                    + "Disk Usage: " + node.disk_usage + "<br>"
+                    + "CPU: " + node.cpu + " %<br>"
+                    + "Disk Usage: " + node.disk_usage + " %<br>"
                     + "Bytes Sent: " + node.net_stats.bytes_sent + "<br>"
                     + "Bytes Received: " + node.net_stats.bytes_recv + "<br>"
                     + "Error In: " + node.net_stats.errin
-                    + "Error Out: " + node.net_stats.errout + "<br>"
+                    + " Error Out: " + node.net_stats.errout + "<br>"
                     + "Drop In: " + node.net_stats.dropin
-                    + "Drop Out: " + node.net_stats.dropout + "<br><br>"
-                )
+                    + " Drop Out: " + node.net_stats.dropout + "<br><br>"
+                );
             } else {
                 $("#status").append(
                     "<b><u>" + backup + ":</u></b> <font color='red'>OFFLINE</font><br><br>"
@@ -60,10 +60,10 @@ function serverResponded( data ) {
                     + "Bytes Sent: N/A<br>"
                     + "Bytes Received: N/A<br>"
                     + "Error In: N/A"
-                    + "Error Out: N/A<br>"
+                    + " Error Out: N/A<br>"
                     + "Drop In: N/A"
-                    + "Drop Out: N/A<br><br>"
-                )
+                    + " Drop Out: N/A<br><br>"
+                );
             }
         }
     }
@@ -74,9 +74,6 @@ var dropdown = false;
 $(document).ready( function() {
     /* get server ip address */
     ip = location.host;
-
-    params = { op: "status" };
-    $.getJSON( 'http://'+ ip + '/com' , params, serverResponded );
 
     /* handle the click event on the clickme */
     $("#request").click( function() {
