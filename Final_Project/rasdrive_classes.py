@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+
 class RASD_Client(object):
     def __init__(self, hostname, schedule=None):
         self.hostname = hostname
