@@ -42,3 +42,7 @@ Setup for Windows Client:
  
   Tip: You may need to run the rsync command once (or type yes the 
   first time you run the script) so the remote becomes a known host
+  
+  NOTE: This system requires mDNS to be available. On the server and backup RPis, avahi-daemon should be running.
+        This does not work on VT's eduroam wireless network, so we created our own access point when using this system
+        on campus.
