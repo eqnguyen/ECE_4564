@@ -1,0 +1,44 @@
+Required packages:
+  aiocoap
+  psutil
+  RPi.GPIO
+  requests
+  tornado.ioloop
+  tornado.web
+
+There are four components to this system: the server RPis, the backup RPis, the clients, and the web app. 
+
+
+To bring system online:
+  1. The servers need their hostnames to be "rasdserver1" and "rasdserver2". 
+  2. Likewise, the backup RPis need to change their hostname to "rasdbackup1" and "rasdbackup2".
+  3. On the servers, run "run_server.sh". 
+  4. Choose one server as the primary. After running "run_server.sh", the url for the web app will be 
+     printed to the console.
+  5. On the backups, run "status_server.py".
+  6. On the client(s), run "client.py" with the IP address of primary server as the only argument. 
+     If the client is running windows, see below instructions.
+
+
+To Backup/Sync:
+  1. Navigate to the web app.
+  2. Navigate to "sync" page.
+  3. Choose any of the connected clients and select time to backup/sync.
+  
+  
+Setup for Windows Client:
+  1. You should already have the bin folder in your rsync directory
+  2. Create a directory called "BackupDir" in "Final_Project"
+  3. Setup passwordless ssh - https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md
+    3a. go to rsync directory in windows cmd prompt
+    3b. run cwrsync.cmd to configure ssh
+    3c. go to the rsync/bin director in windows command prompt
+    3d. run "ssh-keygen.exe -t rsa -C "some text" then press enter 4 times
+    3e. Copy the text from rsync/home/{user}/.ssh/id_rsa.pub to ~/.ssh/authorized_keys on your pi
+  4. You may have to start the rsync daemon on the pi with:
+      sudo systemctl enable rsync
+      sudo systemctl start rsync
+  5. Run this script (from win cmd prompt you can enter "python test_rsync_win.py")
+ 
+  Tip: You may need to run the rsync command once (or type yes the 
+  first time you run the script) so the remote becomes a known host
